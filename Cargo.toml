@@ -1,0 +1,42 @@
+[package]
+name = "discord-backend"
+version = "0.1.0"
+edition = "2021"
+authors = ["Chloe Pratas <chloevision97@gmail.com>"]
+
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "discord-backend"
+
+
+
+[dependencies]
+actix-web = "4"
+actix-session = "0.5"
+actix-identity = "0.4"
+
+tokio = { version = "1.27.0", features = ["macros", "rt-multi-thread"] }
+config = { version = "0.13.3", features = ["yaml"] }
+serde = { version = "1.0", features = ["derive"] }
+dotenv = "0.15.0"
+
+uuid = { version = "1", features = ["serde", "v4"] }
+chrono = { version = "0.4.22", default-features = false, features = ["serde","clock"] }
+tracing = { version ="0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", features = [    "fmt",
+    "std",
+    "env-filter",
+    "registry",
+    'json',
+    'tracing-log',] }
+tracing-bunyan-formatter = "0.3"
+
+
+[dependencies.sqlx]
+version ="0.6"
+default-features = false
+features = ["postgres", "runtime-tokio-rustls", "macros", "chrono","uuid", "migrate"]
