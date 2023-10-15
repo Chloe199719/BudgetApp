@@ -1,7 +1,10 @@
 use actix_web::web;
 use sqlx::postgres;
 use sqlx;
-use crate::{ settings::{ Settings, DatabaseSettings }, routes::health_check };
+use crate::{
+    settings::{ Settings, DatabaseSettings },
+    routes::{ health_check, users::auth_routes_config },
+};
 use std::{ net::TcpListener, time::Duration };
 pub struct Application {
     port: u16,
@@ -62,6 +65,7 @@ async fn run(
             actix_web::App
                 ::new()
                 .service(health_check)
+                .configure(auth_routes_config)
                 .app_data(connection_pool.clone())
                 .app_data(redis_pool_data.clone())
         })

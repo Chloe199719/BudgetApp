@@ -8,10 +8,25 @@ pub struct Settings {
     pub debug: bool,
     pub database: DatabaseSettings,
     pub redis: RedisSettings,
+    pub secret: Secret,
+    pub email: EmailSettings,
+    pub frontend_url: String,
+}
+#[derive(Deserialize, Clone, Debug)]
+pub struct Secret {
+    pub secret_key: String,
+    pub token_expiration: i64,
+    pub hmac_secret: String,
 }
 
+#[derive(Deserialize, Clone, Debug)]
+pub struct EmailSettings {
+    pub host: String,
+    pub host_user: String,
+    pub host_user_password: String,
+}
 /// Redis settings for the entire app
-#[derive(serde::Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct RedisSettings {
     pub uri: String,
     pub pool_max_open: u64,
@@ -20,7 +35,7 @@ pub struct RedisSettings {
     pub pool_expire_seconds: u64,
 }
 /// Database settings for the entire app
-#[derive(serde::Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct DatabaseSettings {
     pub username: String,
     pub password: String,
