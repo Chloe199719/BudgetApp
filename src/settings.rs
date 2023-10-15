@@ -12,7 +12,7 @@ pub struct Settings {
 /// during and after development
 #[derive(Deserialize, Debug, Clone)]
 pub struct ApplicationSettings {
-    pub prot: u16,
+    pub port: u16,
     pub host: String,
     pub base_url: String,
     pub protocol: String,
