@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     is_superuser BOOLEAN  DEFAULT FALSE,
     thumbnail TEXT NULL,
     data_joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
-)
+);
 
 CREATE INDEX IF NOT EXISTS users_id_email_is_active_indx ON users (id, email, unique_name, is_active);
 
@@ -38,6 +38,6 @@ CREATE TABLE IF NOT EXISTS user_profile (
     pronouns TEXT NULL,
     about_me TEXT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-)
+);
 
 CREATE INDEX IF NOT EXISTS users_detail_id_user_id ON user_profile (id, user_id);

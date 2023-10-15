@@ -2,7 +2,7 @@ use actix_web::{ get, post, web, App, HttpServer };
 use discord_backend::{ settings, telemetry, startup::Application };
 use dotenv::dotenv;
 
-#[actix_web::main]
+#[tokio::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let settings = settings::get_settings().expect("Failed to load settings.");
