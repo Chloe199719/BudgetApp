@@ -1,4 +1,3 @@
-use actix_web::{ get, post, web, App, HttpServer };
 use discord_backend::{ settings, telemetry, startup::Application };
 use dotenv::dotenv;
 
