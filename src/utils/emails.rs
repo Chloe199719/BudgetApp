@@ -31,7 +31,7 @@ pub async fn send_email(
     let email = lettre::Message
         ::builder()
         .from(
-            format!("{} <{}>", "JohnWrites", if sender_email.is_some() {
+            format!("{} <{}>", "Chloe ", if sender_email.is_some() {
                 sender_email.unwrap()
             } else {
                 settings.email.host_user.clone()
