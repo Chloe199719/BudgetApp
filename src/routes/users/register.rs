@@ -10,6 +10,7 @@ pub struct NewUser {
     email: String,
     password: String,
     display_name: String,
+    unique_name: String,
 }
 
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -17,13 +18,14 @@ pub struct CreateNewUser {
     email: String,
     password: String,
     display_name: String,
+    unique_name: String,
 }
 #[tracing::instrument(name = "Adding a new user",
 skip( pool, new_user, redis_pool),
 fields(
     new_user_email = %new_user.email,
     new_user_display_name = %new_user.display_name,
-  
+    new_user_unique_name = %new_user.unique_name,
 ))]
 
 #[actix_web::post("/register/")]
@@ -47,6 +49,7 @@ pub async fn register_user(
         password: hashed_password,
         email: new_user.0.email,
         display_name: new_user.0.display_name,
+        unique_name: new_user.0.unique_name,
     };
 
     let user_id = match insert_created_user_into_db(&mut transaction, &create_new_user).await {
@@ -102,6 +105,7 @@ pub async fn register_user(
 #[tracing::instrument(name = "Inserting new user into DB.", skip(transaction, new_user),fields(
     new_user_email = %new_user.email,
     new_user_display_name = %new_user.display_name,
+    new_user_unique_name = %new_user.unique_name,
 
 ))]
 async fn insert_created_user_into_db(
@@ -111,12 +115,12 @@ async fn insert_created_user_into_db(
     let user_id = match
         sqlx
             ::query(
-                "INSERT INTO users (email, password, first_name) VALUES ($1, $2, $3) RETURNING id"
+                "INSERT INTO users (email, password, first_name, unique_name) VALUES ($1, $2, $3,$4) RETURNING id"
             )
             .bind(&new_user.email)
             .bind(&new_user.password)
             .bind(&new_user.display_name)
-
+            .bind(&new_user.unique_name)
             .map(|row: sqlx::postgres::PgRow| -> uuid::Uuid { row.get("id") })
             .fetch_one(&mut *transaction).await
     {
