@@ -9,8 +9,6 @@ use crate::{
     utils::auth::tokens::verify_confirmation_token_pasetor,
 };
 
-use super::register;
-
 #[derive(Deserialize, Debug, Clone)]
 pub struct Parameters {
     token: String,
