@@ -1,4 +1,5 @@
-use actix_web::web;
+use actix_session::{ storage::CookieSessionStore, SessionMiddleware };
+use actix_web::{ web, cookie };
 use sqlx::postgres;
 use sqlx;
 use crate::{
@@ -59,11 +60,23 @@ async fn run(
         .create_pool(Some(deadpool_redis::Runtime::Tokio1))
         .expect("Failed to create Redis pool.");
     let redis_pool_data = web::Data::new(redis_pool);
-
+    let secret_key = cookie::Key::from(settings.secret.hmac_secret.as_bytes());
     let server = actix_web::HttpServer
         ::new(move || {
             actix_web::App
                 ::new()
+                .wrap(
+                    if settings.debug {
+                        actix_session::SessionMiddleware
+                            ::builder(CookieSessionStore::default(), secret_key.clone())
+                            .cookie_http_only(true)
+                            .cookie_same_site(cookie::SameSite::None)
+                            .cookie_secure(true)
+                            .build()
+                    } else {
+                        SessionMiddleware::new(CookieSessionStore::default(), secret_key.clone())
+                    }
+                )
                 .service(health_check)
                 .configure(auth_routes_config)
                 .app_data(connection_pool.clone())
