@@ -1,5 +1,6 @@
+use actix_cors::Cors;
 use actix_session::{ storage::CookieSessionStore, SessionMiddleware };
-use actix_web::{ web, cookie };
+use actix_web::{ web, cookie, http::header };
 use sqlx::postgres;
 use sqlx;
 use crate::{
@@ -65,6 +66,16 @@ async fn run(
         ::new(move || {
             actix_web::App
                 ::new()
+                .wrap(
+                    Cors::default()
+                        .allowed_origin(&settings.frontend_url)
+                        .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                        .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                        .allowed_header(header::CONTENT_TYPE)
+                        .expose_headers(&[header::CONTENT_DISPOSITION])
+                        .supports_credentials()
+                        .max_age(3600)
+                )
                 .wrap(
                     if settings.debug {
                         actix_session::SessionMiddleware
