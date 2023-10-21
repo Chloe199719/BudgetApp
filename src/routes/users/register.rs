@@ -87,7 +87,6 @@ pub async fn register_user(
         user_id,
         create_new_user.email,
         create_new_user.display_name,
-
         "verification_email.html",
         &mut redis_con
     ).await.unwrap();
