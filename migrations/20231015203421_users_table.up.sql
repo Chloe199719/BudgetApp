@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL,
     display_name TEXT NOT NULL,
     unique_name TEXT NOT NULL UNIQUE,
-    is_active BOOLEAN  DEFAULT FALSE,
-    is_staff BOOLEAN  DEFAULT FALSE,
-    is_superuser BOOLEAN  DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL  DEFAULT FALSE,
+    is_staff BOOLEAN NOT NULL DEFAULT FALSE,
+    is_superuser BOOLEAN NOT NULL DEFAULT FALSE,
     thumbnail TEXT NULL,
     data_joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
