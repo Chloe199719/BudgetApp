@@ -1,5 +1,5 @@
 name: Test and Deploy
-run-name: Test and Deploy
+run-name: ${{github.event_name}} Test and Deploy
 on:
   push:
     branches: [main]
