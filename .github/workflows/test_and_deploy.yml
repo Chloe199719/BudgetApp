@@ -1,5 +1,5 @@
 name: Test and Deploy
-run-name: ${{github.triggering_actor}} Test and Deploy
+run-name: ${{github.ref_name}} Test and Deploy
 on:
   push:
     branches: [main]
