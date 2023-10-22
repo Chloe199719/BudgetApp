@@ -16,7 +16,7 @@ name = "discord-backend"
 
 [dependencies]
 actix-web = "4"
-actix-session = { version = "0.7", features = [ "redis-rs-session","redis-rs-tls-session",] }
+actix-session = { version = "0.7", features = [ "redis-rs-session","redis-rs-tls-session","cookie-session",] }
 actix-identity = "0.4"
 
 tokio = { version = "1", features = ["full"] }
@@ -46,6 +46,6 @@ actix-cors = "0.6.4"
 
 
 [dependencies.sqlx]
-version ="0.6"
+version ="0.7.2"
 default-features = false
 features = ["postgres", "runtime-tokio-rustls", "macros", "chrono","uuid", "migrate"]

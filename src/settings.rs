@@ -52,7 +52,7 @@ impl DatabaseSettings {
         } else {
             sqlx::postgres::PgSslMode::Prefer
         };
-        let mut options = sqlx::postgres::PgConnectOptions
+        let options = sqlx::postgres::PgConnectOptions
             ::new()
             .host(&self.host)
             .username(&self.username)
@@ -60,7 +60,7 @@ impl DatabaseSettings {
             .port(self.port)
             .ssl_mode(ssl_mode)
             .database(&self.database_name);
-        options.log_statements(tracing::log::LevelFilter::Trace);
+        options.clone().log_statements(tracing::log::LevelFilter::Trace);
         options
     }
 }
