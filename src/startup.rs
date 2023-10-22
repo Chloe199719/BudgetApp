@@ -1,13 +1,9 @@
 use actix_cors::Cors;
-use actix_session::{ storage::CookieSessionStore, SessionMiddleware };
 use actix_web::{ web, cookie, http::header };
 use sqlx::postgres;
 use sqlx;
-use crate::{
-    settings::{ Settings, DatabaseSettings },
-    routes::{ health_check, users::auth_routes_config },
-};
-use std::{ net::TcpListener, time::Duration };
+use crate::{ settings::Settings, routes::{ health_check, users::auth_routes_config } };
+use std::net::TcpListener;
 pub struct Application {
     port: u16,
     server: actix_web::dev::Server,
@@ -20,8 +16,6 @@ impl Application {
     ) -> Result<Self, std::io::Error> {
         let connection_pool = if let Some(pool) = test_pool {
             pool
-        } else if settings.debug {
-            get_connection_pool(&settings.database).await
         } else {
             let db_url = std::env::var("DATABASE_URL").expect("Failed to get DATABASE_URL.");
             match sqlx::postgres::PgPoolOptions::new().max_connections(5).connect(&db_url).await {
@@ -49,12 +43,6 @@ impl Application {
         self.server.await
     }
 }
-pub async fn get_connection_pool(settings: &DatabaseSettings) -> postgres::PgPool {
-    postgres::PgPoolOptions
-        ::new()
-        .acquire_timeout(Duration::from_secs(2))
-        .connect_lazy_with(settings.connect_to_db())
-}
 
 async fn run(
     listener: TcpListener,
@@ -63,14 +51,18 @@ async fn run(
 ) -> Result<actix_web::dev::Server, std::io::Error> {
     // Database connection pool applications state
     let connection_pool = web::Data::new(db_pool);
-
     // Redis connection pool applications state
-    let cfg = deadpool_redis::Config::from_url(&settings.redis.uri);
+    let redis_url = std::env::var("REDIS_URL").expect("Failed to get REDIS_URL.");
+    let cfg = deadpool_redis::Config::from_url(redis_url.clone());
     let redis_pool = cfg
         .create_pool(Some(deadpool_redis::Runtime::Tokio1))
         .expect("Failed to create Redis pool.");
     let redis_pool_data = web::Data::new(redis_pool);
+
     let secret_key = cookie::Key::from(settings.secret.hmac_secret.as_bytes());
+    let redis_store = actix_session::storage::RedisSessionStore
+        ::new(redis_url.clone()).await
+        .expect("Cannot unwrap redis session.");
     let server = actix_web::HttpServer
         ::new(move || {
             actix_web::App
@@ -86,21 +78,19 @@ async fn run(
                         .max_age(3600)
                 )
                 .wrap(
-                    if settings.debug {
-                        actix_session::SessionMiddleware
-                            ::builder(CookieSessionStore::default(), secret_key.clone())
-                            .cookie_http_only(true)
-                            .cookie_same_site(cookie::SameSite::None)
-                            .cookie_secure(true)
-                            .build()
-                    } else {
-                        SessionMiddleware::new(CookieSessionStore::default(), secret_key.clone())
-                    }
+                    actix_session::SessionMiddleware
+                        ::builder(redis_store.clone(), secret_key.clone())
+                        .cookie_http_only(true)
+                        .cookie_same_site(cookie::SameSite::None)
+                        .cookie_secure(true)
+                        .cookie_name("sessionid".to_string())
+                        .build()
                 )
                 .service(health_check)
                 .configure(auth_routes_config)
                 .app_data(connection_pool.clone())
                 .app_data(redis_pool_data.clone())
+                .wrap(actix_web::middleware::Logger::default())
         })
         .listen(listener)?
         .run();

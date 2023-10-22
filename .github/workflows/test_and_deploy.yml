@@ -1,0 +1,126 @@
+name: Rust CI/CD
+
+on:
+  push:
+    branches: [main]
+
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup config
+        run: |
+          envsubst < settings/base.example.yaml > settings/base.yaml
+          envsubst < settings/production.example.yaml > settings/production.yaml
+        env:
+          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_HOST_USER_PASSWORD: ${{ secrets.EMAIL_HOST_USER_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          TOKEN_EXPIRATION: ${{ secrets.TOKEN_EXPIRATION }}
+          HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      # - name: Check formatting
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     command: fmt
+      #     args: -- --check
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --verbose
+
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --verbose
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: chloe1997/zerotoprod:latest
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+
+#   deploy:
+#     needs: build
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#       - name: Setup config
+#         run: |
+#           envsubst < configuration.yaml.template > configuration.yaml
+#         env:
+#           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+#           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+#           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+#           LINODE_HOST: ${{ secrets.LINODE_HOST }}
+
+#       - name: Login to DockerHub
+#         uses: docker/login-action@v1
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+#       - name: Install Sshpass
+#         run: sudo apt-get install sshpass
+
+#       - name: Copy docker-compose.yml to Linode
+#         run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.LINODE_USERNAME }}@${{ secrets.LINODE_HOST }}:~
+#       - name: Copy docker-compose.yml to Linode
+#         run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no configuration.yaml ${{ secrets.LINODE_USERNAME }}@${{ secrets.LINODE_HOST }}:~
+
+#       - name: Deploy to Linode
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.LINODE_HOST }}
+#           username: ${{ secrets.LINODE_USERNAME }}
+#           password: ${{ secrets.LINODE_PASSWORD }}
+#           script: |
+#             cd ~
+#             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+#             export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+#             export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+#             export DATABASE_URL=${{ secrets.DATABASE_URL }}
+
+#             docker-compose down  || true
+#             docker-compose pull
+#             docker-compose up -d --force-recreate
+#   testing:
+#     needs: deploy
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check http code Status
+#         uses: lakuapik/gh-actions-http-status@v1
+#         with:
+#           sites: '["http://194.195.240.111:3000/health-check"]'
+#           expected: "[200,301]"

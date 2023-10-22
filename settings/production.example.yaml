@@ -1,0 +1,13 @@
+application:
+  protocol: https
+  host: 0.0.0.0
+  base_url: ""
+
+secret:
+  secret_key: ${SECRET_KEY}
+  token_expiration: ${TOKEN_EXPIRATION}
+  hmac_secret: ${HMAC_SECRET}
+
+frontend_url: ${FRONTEND_URL}
+
+debug: false

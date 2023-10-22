@@ -8,6 +8,6 @@ redis:
   pool_expire_seconds: 60
 
 email:
-  host: "smtp.gmail.com"
-  host_user: ""
-  host_user_password: ""
+  host: ${EMAIL_HOST}
+  host_user: ${EMAIL_HOST_USER}
+  host_user_password: ${EMAIL_HOST_USER_PASSWORD}
