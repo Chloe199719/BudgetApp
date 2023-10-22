@@ -31,8 +31,8 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - REDIS_URL=redis://redis:6379/
     volumes:
-      - /root/base.yaml:settings/base.yaml:ro
-      - /root/production.yaml:settings/production.yaml:ro
+      - /root/base.yaml:/app/settings/base.yaml:ro
+      - /root/production.yaml:/app/settings/production.yaml:ro
 volumes:
   db:
     driver: local
