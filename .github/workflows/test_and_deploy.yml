@@ -89,6 +89,7 @@ jobs:
           tags: chloe1997/discord-backend:latest
   deploy:
     needs: build
+    environment: Prod
     runs-on: ubuntu-latest
 
     steps:
