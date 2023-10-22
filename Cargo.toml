@@ -15,7 +15,8 @@ name = "discord-backend"
 
 
 [dependencies]
-actix-web = "4"
+actix-web = { version = "4", features = ["openssl"] }
+openssl = { version = "0.10", features = ["v110"] }
 actix-session = { version = "0.7", features = [ "redis-rs-session","redis-rs-tls-session","cookie-session",] }
 actix-identity = "0.4"
 
