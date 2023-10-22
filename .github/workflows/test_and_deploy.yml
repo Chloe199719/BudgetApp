@@ -97,8 +97,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup config
         run: |
-          envsubst < settings/base.example.yaml > settings/base.yaml
-             &&
+          envsubst < settings/base.example.yaml > settings/base.yaml &&
           envsubst < settings/production.example.yaml > settings/production.yaml
         env:
           EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
