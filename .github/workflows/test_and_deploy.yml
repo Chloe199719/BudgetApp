@@ -5,6 +5,8 @@ on:
     branches: [main]
 
 env:
+  SQLX_VERSION: 0.7.2
+  SQLX_FEATURES: "rustls,postgres"
   DATABASE_URL: postgresql://chloeadmin:chloeadmin@localhost:5432/discord
 
 jobs:
@@ -26,10 +28,16 @@ jobs:
           - 6379:6379
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
 
       - name: Install sqlx-cli
         run: cargo install sqlx-cli
+          --version=${{ env.SQLX_VERSION }}
+          --features ${{ env.SQLX_FEATURES }}
+          --no-default-features
+          --locked
 
       - name: Execute migration
         run: |
@@ -60,18 +68,19 @@ jobs:
       #   with:
       #     command: fmt
       #     args: -- --check
-
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --verbose
+        run: cargo build --verbose
+        # uses: actions-rs/cargo@v1
+        # with:
+        #   command: build
+        #   args: --verbose
 
       - name: Run tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --verbose
+        run: cargo test --verbose
+        # uses: actions-rs/cargo@v1
+        # with:
+        #   command: test
+        #   args: --verbose
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
