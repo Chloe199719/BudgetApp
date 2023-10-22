@@ -27,6 +27,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install sqlx-cli
+        run: cargo install sqlx-cli
+
+      - name: Execute migration
+        run: |
+          sqlx database create
+          sqlx migrate run
+
       - name: Setup config
         run: |
           envsubst < settings/base.example.yaml > settings/base.yaml
