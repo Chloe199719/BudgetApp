@@ -141,7 +141,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check http code Status
-        uses: lakuapik/gh-actions-http-status@v1
+        uses: trunkcode/check-http-status-action@v1.0.0
         with:
-          sites: '["https://${{ vars.LINODE_HOST }}:5000/health-check"]'
-          expected: "[200,301]"
+          urls: '["https://${{ vars.LINODE_HOST }}:5000/health-check"]'
