@@ -5,12 +5,24 @@ on:
     branches: [main]
 
 env:
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  DATABASE_URL: postgresql://chloeadmin:chloeadmin@localhost:5432/discord
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: chloeadmin
+          POSTGRES_PASSWORD: chloeadmin
+          POSTGRES_DB: discord
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,9 +36,9 @@ jobs:
           EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
           EMAIL_HOST_USER_PASSWORD: ${{ secrets.EMAIL_HOST_USER_PASSWORD }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          TOKEN_EXPIRATION: ${{ secrets.TOKEN_EXPIRATION }}
+          TOKEN_EXPIRATION: ${{ vars.TOKEN_EXPIRATION }}
           HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
 
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
@@ -61,14 +73,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: chloe1997/zerotoprod:latest
-          build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-
+    #   - name: Build and push Docker image
+    #     uses: docker/build-push-action@v2
+    #     with:
+    #       push: true
+    #       tags: chloe1997/zerotoprod:latest
+    #       build-args: |
+    #         DATABASE_URL=${{ secrets.DATABASE_URL }}
 #   deploy:
 #     needs: build
 #     runs-on: ubuntu-latest
