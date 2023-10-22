@@ -21,7 +21,7 @@ services:
       - redis:/data
   backend:
     container_name: discord_backend
-    image: chloe1997/discord_backend:latest
+    image: chloe1997/discord-backend:latest
     depends_on:
       - db
       - redis
