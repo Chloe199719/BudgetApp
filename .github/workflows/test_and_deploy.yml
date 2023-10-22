@@ -81,13 +81,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    #   - name: Build and push Docker image
-    #     uses: docker/build-push-action@v2
-    #     with:
-    #       push: true
-    #       tags: chloe1997/zerotoprod:latest
-    #       build-args: |
-    #         DATABASE_URL=${{ secrets.DATABASE_URL }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: chloe1997/discord-backend:latest
 #   deploy:
 #     needs: build
 #     runs-on: ubuntu-latest
