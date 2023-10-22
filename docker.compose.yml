@@ -19,6 +19,20 @@ services:
       - "6379:6379"
     volumes:
       - redis:/data
+  backend:
+    container_name: discord_backend
+    image: chloe1997/discord_backend:latest
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://redis:6379/
+    volumes:
+      - /root/settings/base.yaml:settings/base.yaml:ro
+      - /root/settings/production.yaml:settings/production.yaml:ro
 volumes:
   db:
     driver: local
