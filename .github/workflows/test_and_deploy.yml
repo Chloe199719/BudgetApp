@@ -153,9 +153,9 @@ jobs:
             export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             export DATABASE_URL=${{ secrets.DATABASE_URL }}
 
-            docker-compose down  || true
-            docker-compose pull
-            docker-compose up -d --force-recreate
+            docker compose down  || true
+            docker compose pull
+            docker compose up -d --force-recreate
 
 #   testing:
 #     needs: deploy
