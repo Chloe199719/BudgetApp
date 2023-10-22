@@ -126,6 +126,11 @@ jobs:
       - name: Install Sshpass
         run: sudo apt-get install sshpass
 
+      - name: Print working directory and list files
+        run: |
+          pwd
+          ls -al
+
       - name: Copy docker-compose.yml to Linode
         run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.LINODE_USERNAME }}@${{ vars.LINODE_HOST }}:~
 
