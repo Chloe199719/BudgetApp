@@ -109,7 +109,7 @@ jobs:
           envsubst < settings/base.example.yaml > settings/base.yaml &&
           envsubst < settings/production.example.yaml > settings/production.yaml
         env:
-          EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+          EMAIL_HOST: ${{ vars.EMAIL_HOST }}
           EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
           EMAIL_HOST_USER_PASSWORD: ${{ secrets.EMAIL_HOST_USER_PASSWORD }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
