@@ -1,5 +1,4 @@
 use serde::Deserialize;
-use sqlx::ConnectOptions;
 
 ///Global settings for exposing all pre configured variables
 #[derive(Deserialize, Debug, Clone)]

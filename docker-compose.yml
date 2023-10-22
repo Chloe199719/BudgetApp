@@ -33,6 +33,8 @@ services:
     volumes:
       - /root/base.yaml:/app/settings/base.yaml:ro
       - /root/production.yaml:/app/settings/production.yaml:ro
+      - /root/chloepratas.com.crt:/app/chloepratas.com.crt:ro
+      - /root/chloepratas.com.key:/app/chloepratas.com.key:ro
 volumes:
   db:
     driver: local
