@@ -55,8 +55,6 @@ jobs:
           HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
           FRONTEND_URL: ${{ vars.FRONTEND_URL }}
 
-      #     command: fmt
-      #     args: -- --check
       - name: Build
         run: cargo build --verbose
 
@@ -86,7 +84,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup config
         run: |
           envsubst < settings/base.example.yaml > settings/base.yaml &&
