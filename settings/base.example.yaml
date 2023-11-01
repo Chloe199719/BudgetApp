@@ -11,3 +11,7 @@ email:
   host: ${EMAIL_HOST}
   host_user: ${EMAIL_HOST_USER}
   host_user_password: ${EMAIL_HOST_USER_PASSWORD}
+
+axiom:
+  token: ${AXIOM_TOKEN}
+  dataset: ${AXIOM_DATASET}

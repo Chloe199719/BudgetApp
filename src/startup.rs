@@ -2,6 +2,7 @@ use actix_cors::Cors;
 use actix_web::{ web, cookie, http::header };
 use sqlx::postgres;
 use sqlx;
+use tracing_actix_web::TracingLogger;
 use crate::{ settings::Settings, routes::{ health_check, users::auth_routes_config } };
 use std::net::TcpListener;
 pub struct Application {
@@ -76,6 +77,7 @@ async fn run(
                     .supports_credentials()
                     .max_age(3600)
             )
+            .wrap(TracingLogger::default())
             .wrap(
                 actix_session::SessionMiddleware
                     ::builder(redis_store.clone(), secret_key.clone())

@@ -4,6 +4,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug, Clone)]
 pub struct Settings {
     pub application: ApplicationSettings,
+    pub axiom: AxiomSettings,
     pub debug: bool,
     pub redis: RedisSettings,
     pub secret: Secret,
@@ -41,6 +42,11 @@ pub struct ApplicationSettings {
     pub host: String,
     pub base_url: String,
     pub protocol: String,
+}
+#[derive(Deserialize, Debug, Clone)]
+pub struct AxiomSettings {
+    pub token: String,
+    pub dataset: String,
 }
 
 /// The possible runtime environment for our application
