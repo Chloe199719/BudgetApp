@@ -97,6 +97,8 @@ jobs:
           TOKEN_EXPIRATION: ${{ vars.TOKEN_EXPIRATION }}
           HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
           FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          AXIOM_DATASET: ${{ vars.AXIOM_DATASET }}
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
