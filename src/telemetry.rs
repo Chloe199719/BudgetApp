@@ -50,12 +50,11 @@ impl<S> Layer<S>
     for AxiomLayer
     where S: Subscriber + for<'span> tracing_subscriber::registry::LookupSpan<'span>
 {
-    fn on_event(&self, event: &Event, ctx: Context<S>) {
+    fn on_event(&self, event: &Event, _ctx: Context<S>) {
         let mut log_data = LogData {
             message: String::new(),
-            // Initialize other fields as needed
         };
-        println!("Event: {:?}", event);
+
         // Populate log_data by visiting the fields of the event
         event.record(&mut &mut log_data);
 

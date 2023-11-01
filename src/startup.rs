@@ -64,35 +64,37 @@ async fn run(
     let redis_store = actix_session::storage::RedisSessionStore
         ::new(redis_url.clone()).await
         .expect("Cannot unwrap redis session.");
-    let server = actix_web::HttpServer::new(move || {
-        actix_web::App
-            ::new()
-            .wrap(
-                Cors::default()
-                    .allowed_origin(&settings.frontend_url)
-                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-                    .allowed_header(header::CONTENT_TYPE)
-                    .expose_headers(&[header::CONTENT_DISPOSITION])
-                    .supports_credentials()
-                    .max_age(3600)
-            )
-            .wrap(TracingLogger::default())
-            .wrap(
-                actix_session::SessionMiddleware
-                    ::builder(redis_store.clone(), secret_key.clone())
-                    .cookie_http_only(true)
-                    .cookie_same_site(cookie::SameSite::None)
-                    .cookie_secure(true)
-                    .cookie_name("sessionid".to_string())
-                    .build()
-            )
-            .service(health_check)
-            .configure(auth_routes_config)
-            .app_data(connection_pool.clone())
-            .app_data(redis_pool_data.clone())
-        // .wrap(actix_web::middleware::Logger::default())
-    });
+    let server = actix_web::HttpServer
+        ::new(move || {
+            actix_web::App
+                ::new()
+                .wrap(
+                    Cors::default()
+                        .allowed_origin(&settings.frontend_url)
+                        .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                        .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                        .allowed_header(header::CONTENT_TYPE)
+                        .expose_headers(&[header::CONTENT_DISPOSITION])
+                        .supports_credentials()
+                        .max_age(3600)
+                )
+                .wrap(TracingLogger::default())
+                .wrap(
+                    actix_session::SessionMiddleware
+                        ::builder(redis_store.clone(), secret_key.clone())
+                        .cookie_http_only(true)
+                        .cookie_same_site(cookie::SameSite::None)
+                        .cookie_secure(true)
+                        .cookie_name("sessionid".to_string())
+                        .build()
+                )
+                .service(health_check)
+                .configure(auth_routes_config)
+                .app_data(connection_pool.clone())
+                .app_data(redis_pool_data.clone())
+            // .wrap(actix_web::middleware::Logger::default())
+        })
+        .workers(32);
 
     if settings.application.protocol == "http" {
         let server = server.listen(listener)?.run();
