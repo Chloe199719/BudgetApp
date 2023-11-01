@@ -105,7 +105,7 @@ pub async fn send_multipart_email(
     let settings = crate::settings::get_settings().expect("Unable to load settings.");
 
     let title = subject.clone();
-
+    println!("{}", title);
     let issued_token = match
         issue_confirmation_token_pasetors(user_id, redis_connection, None).await
     {
@@ -126,7 +126,7 @@ pub async fn send_multipart_email(
         if template_name == "password_reset_email.html" {
             format!("{}/users/password/confirm/change_password?token={}", web_address, issued_token)
         } else {
-            format!("{}/users/register/confirm/?token={}", web_address, issued_token)
+            format!("{}/users/register/confirm?token={}", web_address, issued_token)
         }
     };
     let current_date_time = chrono::Local::now();

@@ -89,7 +89,7 @@ async fn run(
             .configure(auth_routes_config)
             .app_data(connection_pool.clone())
             .app_data(redis_pool_data.clone())
-            .wrap(actix_web::middleware::Logger::default())
+        // .wrap(actix_web::middleware::Logger::default())
     });
 
     if settings.application.protocol == "http" {

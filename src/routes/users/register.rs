@@ -28,7 +28,7 @@ fields(
     new_user_unique_name = %new_user.unique_name,
 ))]
 
-#[actix_web::post("/register/")]
+#[actix_web::post("/register")]
 pub async fn register_user(
     pool: actix_web::web::Data<sqlx::postgres::PgPool>,
     new_user: actix_web::web::Json<NewUser>,
@@ -114,7 +114,7 @@ async fn insert_created_user_into_db(
     let user_id = match
         sqlx
             ::query(
-                "INSERT INTO users (email, password, first_name, unique_name) VALUES ($1, $2, $3,$4) RETURNING id"
+                "INSERT INTO users (email, password, display_name, unique_name) VALUES ($1, $2, $3,$4) RETURNING id"
             )
             .bind(&new_user.email)
             .bind(&new_user.password)
