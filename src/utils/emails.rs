@@ -99,11 +99,11 @@ pub async fn send_multipart_email(
     user_id: uuid::Uuid,
     recipient_email: String,
     recipient_display_name: String,
-
     template_name: &str,
     redis_connection: &mut deadpool_redis::redis::aio::Connection
 ) -> Result<(), String> {
     let settings = crate::settings::get_settings().expect("Unable to load settings.");
+
     let title = subject.clone();
 
     let issued_token = match
