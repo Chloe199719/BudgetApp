@@ -1,10 +1,12 @@
 use actix_cors::Cors;
 use actix_web::{ web, cookie, http::header };
+use aws_sdk_s3::config::{ Credentials, Region };
 use sqlx::postgres;
 use sqlx;
 use tracing_actix_web::TracingLogger;
-use crate::{ settings::Settings, routes::{ health_check, users::auth_routes_config } };
+use crate::{ settings::Settings, routes::{ health_check, users::auth_routes_config }, uploads };
 use std::net::TcpListener;
+
 pub struct Application {
     port: u16,
     server: actix_web::dev::Server,
@@ -45,6 +47,24 @@ impl Application {
     }
 }
 
+async fn configure_and_return_s3_client() -> uploads::client::Client {
+    // S3 client configuration
+    // Get id and secret key from environment variables
+    let aws_key = std::env::var("AWS_ACCESS_KEY_ID").expect("Failed to get AWS_ACCESS_KEY_ID.");
+    let aws_key_secret = std::env
+        ::var("AWS_SECRET_ACCESS_KEY")
+        .expect("Failed to get AWS_SECRET_ACCESS_KEY.");
+
+    let aws_cred = Credentials::new(aws_key, aws_key_secret, None, None, "loaded-from-custom-env");
+    let aws_region = Region::new(std::env::var("AWS_REGION").unwrap_or("eu-central-1".to_string()));
+    let aws_config_builder = aws_sdk_s3::config::Builder
+        ::new()
+        .region(aws_region)
+        .credentials_provider(aws_cred);
+    let aws_config = aws_config_builder.build();
+    uploads::client::Client::new(aws_config)
+}
+
 async fn run(
     listener: TcpListener,
     db_pool: postgres::PgPool,
@@ -64,6 +84,7 @@ async fn run(
     let redis_store = actix_session::storage::RedisSessionStore
         ::new(redis_url.clone()).await
         .expect("Cannot unwrap redis session.");
+    let s3_client = actix_web::web::Data::new(configure_and_return_s3_client().await);
     let server = actix_web::HttpServer
         ::new(move || {
             actix_web::App
@@ -92,6 +113,7 @@ async fn run(
                 .configure(auth_routes_config)
                 .app_data(connection_pool.clone())
                 .app_data(redis_pool_data.clone())
+                .app_data(s3_client.clone())
             // .wrap(actix_web::middleware::Logger::default())
         })
         .workers(32);
