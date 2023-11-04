@@ -4,6 +4,7 @@ pub mod startup;
 pub mod telemetry;
 pub mod utils;
 pub mod types;
+pub mod uploads;
 
 pub static ENV: once_cell::sync::Lazy<minijinja::Environment<'static>> = once_cell::sync::Lazy::new(
     || {
