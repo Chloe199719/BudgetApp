@@ -113,13 +113,13 @@ pub fn get_subscriber(debug: bool) -> impl tracing::Subscriber + Send + Sync {
     let env_filter = env_filter.add_directive("hyper=info".parse().expect("Invalid directive"));
     let stdout_layer = tracing_subscriber::fmt::layer().pretty();
     let subscriber = tracing_subscriber::Registry::default().with(env_filter).with(stdout_layer);
-    // let json_log = if !debug {
-    //     let json_log = tracing_subscriber::fmt::layer().json();
-    //     Some(json_log)
-    // } else {
-    //     None
-    // };
-    // let subscriber = subscriber.with(json_log);
+    let json_log = if !debug {
+        let json_log = tracing_subscriber::fmt::layer().json();
+        Some(json_log)
+    } else {
+        None
+    };
+    let subscriber = subscriber.with(json_log);
     let axiom_layer = AxiomLayer::new();
     let subscriber = subscriber.with(axiom_layer);
     subscriber
