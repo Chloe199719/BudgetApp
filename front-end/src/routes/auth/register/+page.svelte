@@ -45,7 +45,7 @@
         }
         if(isValid){
             loading.setLoading(true, "Please wait we are creating your account");
-            const [res,err] = await post($page.data.fetch, `${BASE_API_URI}/users/register/`, {email, password, unique_name, display_name});
+            const [res,err] = await post($page.data.fetch, `${BASE_API_URI}/users/register`, {email, password, unique_name, display_name});
             if (err.length > 0){
                 loading.setLoading(false);
                 errors = err;
@@ -55,9 +55,9 @@
                 $notification = {
                     ...$notification,
                     message: `Your account has been created successfully ${happyEmoji}`,
-                    borderColor: "border-green-500 bg-green-100",
-                    textTopColor: "text-green-800",
-                    textBottomColor: "text-green-600",
+                  
+                  
+                   
                 };
                 $apiResponse = {
                     message: response.message ? response.message : "",
