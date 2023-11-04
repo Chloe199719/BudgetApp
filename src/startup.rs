@@ -72,6 +72,7 @@ async fn run(
 ) -> Result<actix_web::dev::Server, std::io::Error> {
     // Database connection pool applications state
     let connection_pool = web::Data::new(db_pool);
+
     // Redis connection pool applications state
     let redis_url = std::env::var("REDIS_URL").expect("Failed to get REDIS_URL.");
     let cfg = deadpool_redis::Config::from_url(redis_url.clone());
@@ -84,7 +85,11 @@ async fn run(
     let redis_store = actix_session::storage::RedisSessionStore
         ::new(redis_url.clone()).await
         .expect("Cannot unwrap redis session.");
+
+    // S3 client configuration
     let s3_client = actix_web::web::Data::new(configure_and_return_s3_client().await);
+
+    // Server configuration
     let server = actix_web::HttpServer
         ::new(move || {
             actix_web::App
@@ -114,10 +119,10 @@ async fn run(
                 .app_data(connection_pool.clone())
                 .app_data(redis_pool_data.clone())
                 .app_data(s3_client.clone())
-            // .wrap(actix_web::middleware::Logger::default())
         })
         .workers(32);
 
+    // Server protocol configuration
     if settings.application.protocol == "http" {
         let server = server.listen(listener)?.run();
         return Ok(server);
