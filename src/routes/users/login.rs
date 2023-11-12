@@ -4,8 +4,8 @@ use serde::{ Deserialize, Serialize };
 use sqlx::PgPool;
 
 use crate::{
-    types::{ User, general::{ USER_ID_KEY, USER_EMAIL_KEY, ErrorResponse }, UserVisible },
-    utils::auth::password::verify_password,
+    types::{ general::{ USER_ID_KEY, USER_EMAIL_KEY, ErrorResponse }, UserVisible },
+    utils::{ auth::password::verify_password, users::get_active_user_from_db },
 };
 
 #[derive(Deserialize, Serialize)]
@@ -23,7 +23,7 @@ pub async fn login_user(
     session: Session
 ) -> HttpResponse {
     let password = user.password.clone();
-    match get_user_who_is_active(&pool, &user.email).await {
+    match get_active_user_from_db(Some(&pool),None,None, Some(&user.email)).await {
         Ok(logged_in_user) =>
          
             match tokio::task::spawn_blocking( move|| {
@@ -51,6 +51,7 @@ pub async fn login_user(
                         is_superuser: logged_in_user.is_superuser,
                         thumbnail: logged_in_user.thumbnail,
                         data_joined: logged_in_user.data_joined,
+                        profile: logged_in_user.profile,
                     })
                 }
                 Err(e) => {
@@ -65,34 +66,6 @@ pub async fn login_user(
                 HttpResponse::NotFound().json(ErrorResponse {
                     error: "User with those details doesn't exist".to_string(),
                 })
-        }
-    }
-}
-#[rustfmt::skip]
-#[tracing::instrument(name = "Getting a user from DB.", skip(pool,email), fields(user_email = %email))]
-pub async fn get_user_who_is_active(pool: &PgPool, email: &str ) -> Result<User, sqlx::Error>{
-    match sqlx::query!(
-        r#"
-        SELECT * FROM users WHERE email = $1 AND is_active = TRUE
-        "#,
-        email
-    ).fetch_one(pool).await {
-        Ok(user) => Ok(User {
-            id: user.id,
-            email: user.email,
-            password: user.password,
-            display_name: user.display_name,
-            unique_name: user.unique_name,
-            is_active: true,
-            is_staff: user.is_staff,
-            is_superuser: user.is_superuser,
-            thumbnail: user.thumbnail,
-            data_joined: user.data_joined,
-
-        }),
-        Err(e) => {
-            tracing::event!(target: "sqlx", tracing::Level::ERROR, "Failed to get user from DB: {:#?}", e);
-            Err(e)
         }
     }
 }

@@ -17,6 +17,7 @@ pub struct User {
     pub is_superuser: bool,
     pub thumbnail: Option<String>,
     pub data_joined: DateTime<chrono::Utc>,
+    pub profile: UserProfile,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UserVisible {
@@ -29,4 +30,16 @@ pub struct UserVisible {
     pub is_superuser: bool,
     pub thumbnail: Option<String>,
     pub data_joined: DateTime<chrono::Utc>,
+    pub profile: UserProfile,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserProfile {
+    pub id: Uuid,
+    pub phone_number: Option<String>,
+    pub birth_date: Option<chrono::NaiveDate>,
+    pub github_link: Option<String>,
+    pub about_me: Option<String>,
+    pub pronouns: Option<String>,
+    pub avatar_link: Option<String>,
 }

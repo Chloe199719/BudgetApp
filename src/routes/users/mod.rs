@@ -12,5 +12,6 @@ pub fn auth_routes_config(cfg: &mut actix_web::web::ServiceConfig) {
             .service(confirm_registration::config)
             .service(login::login_user)
             .service(logout::logout_user)
+            .service(update_user::update_users_details)
     );
 }
