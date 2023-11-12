@@ -25,7 +25,7 @@ pub async fn logout_user(session: Session) -> HttpResponse {
 }
 
 #[tracing::instrument(name = "Get user_id from session", skip(session))]
-async fn session_user_id(session: &Session) -> Result<Uuid, String> {
+pub async fn session_user_id(session: &Session) -> Result<Uuid, String> {
     match session.get(USER_ID_KEY) {
         Ok(user_id) =>
             match user_id {
