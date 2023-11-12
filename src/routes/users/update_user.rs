@@ -214,7 +214,6 @@ pub async fn update_users_details(
     HttpResponse::Ok().json(updated_user)
 }
 
-#[rustfmt::skip]
 #[tracing::instrument(name = "Updating user in DB.", skip(transaction))]
 async fn update_user_in_db(
     transaction: &mut Transaction<'_, Postgres>,
@@ -222,8 +221,10 @@ async fn update_user_in_db(
     user_profile_to_update: &UpdateUserProfile,
     user_id: Uuid
 ) -> Result<(), sqlx::Error> {
-    match sqlx::query(
-        r#"
+    match
+        sqlx
+            ::query(
+                r#"
         UPDATE users
         SET unique_name = COALESCE($1, unique_name), display_name = COALESCE($2, display_name)
         WHERE id = $3
@@ -239,23 +240,25 @@ async fn update_user_in_db(
                 display_name
         )
         "#
-    )
-    .bind(&user_to_update.unique_name)
-    .bind(&user_to_update.display_name)
-    .bind(user_id)
-    .execute(&mut *transaction.as_mut()).await
-        {
-            Ok(r) => {
-                tracing::event!(target: "sqlx", tracing::Level::INFO, "User has been updated successfully: {:#?}", r);
-            }
-            Err(e) => {
-                tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to update user into DB: {:#?}", e);
-                return Err(e);
-            }
+            )
+            .bind(&user_to_update.unique_name)
+            .bind(&user_to_update.display_name)
+            .bind(user_id)
+            .execute(&mut *transaction.as_mut()).await
+    {
+        Ok(r) => {
+            tracing::event!(target: "sqlx", tracing::Level::INFO, "User has been updated successfully: {:#?}", r);
         }
-    
-        match sqlx::query(
-            "
+        Err(e) => {
+            tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to update user into DB: {:#?}", e);
+            return Err(e);
+        }
+    }
+
+    match
+        sqlx
+            ::query(
+                "
             UPDATE 
                 user_profile 
             SET 
@@ -292,27 +295,25 @@ async fn update_user_in_db(
                         AND $6 IS DISTINCT
                     FROM
                         pronouns
-                )",
-        )
-        .bind(&user_profile_to_update.phone_number)
-        .bind(user_profile_to_update.birth_date)
-        .bind(&user_profile_to_update.github_link)
-        .bind(&user_profile_to_update.avatar_link)
-        .bind(&user_profile_to_update.about_me)
-        .bind(&user_profile_to_update.pronouns)
-        .bind(user_id)
-        .execute(&mut *transaction.as_mut())
-        .await
-        {
-            Ok(r) => {
-                tracing::event!(target: "sqlx", tracing::Level::INFO, "User profile has been updated successfully: {:#?}", r);
-            }
-            Err(e) => {
-                tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to update user profile into DB: {:#?}", e);
-                return Err(e);
-            }
+                )"
+            )
+            .bind(&user_profile_to_update.phone_number)
+            .bind(user_profile_to_update.birth_date)
+            .bind(&user_profile_to_update.github_link)
+            .bind(&user_profile_to_update.avatar_link)
+            .bind(&user_profile_to_update.about_me)
+            .bind(&user_profile_to_update.pronouns)
+            .bind(user_id)
+            .execute(&mut *transaction.as_mut()).await
+    {
+        Ok(r) => {
+            tracing::event!(target: "sqlx", tracing::Level::INFO, "User profile has been updated successfully: {:#?}", r);
         }
-    
-        Ok(())
-   
+        Err(e) => {
+            tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to update user profile into DB: {:#?}", e);
+            return Err(e);
+        }
+    }
+
+    Ok(())
 }
