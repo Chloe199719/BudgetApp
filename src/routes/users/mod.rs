@@ -2,6 +2,7 @@ pub mod register;
 pub mod confirm_registration;
 pub mod login;
 pub mod logout;
+mod update_user;
 
 pub fn auth_routes_config(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.service(
