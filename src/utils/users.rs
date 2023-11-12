@@ -14,11 +14,11 @@ pub async fn get_active_user_from_db(
     if let Some(id) = id {
         query_builder.push(" u.id=");
         query_builder.push_bind(id);
-    }
-
-    if let Some(e) = email {
+    } else if let Some(e) = email {
         query_builder.push(" u.email=");
         query_builder.push_bind(e);
+    } else {
+        return Err(sqlx::Error::RowNotFound);
     }
 
     let sqlx_query = query_builder.build().map(|row: PgRow| User {

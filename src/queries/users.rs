@@ -20,6 +20,6 @@ pub const USER_AND_USER_PROFILE_QUERY: &str =
 FROM
     users u
         LEFT JOIN
-    user_profile p ON u.id = p.user_id = u.id
+    user_profile p ON u.id = p.user_id
 WHERE
 u.is_active = true AND ";
