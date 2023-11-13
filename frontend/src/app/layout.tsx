@@ -5,6 +5,7 @@ import { Providers } from "@/lib/redux/providers";
 import { cookies } from "next/headers";
 import axios from "axios";
 import CheckUser from "@/components/auth/CheckUser";
+import Navbar from "@/components/navbar/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,7 +25,10 @@ export default async function RootLayout({
     <Providers>
       <CheckUser userData={userData} />
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <Navbar />
+          {children}
+        </body>
       </html>
     </Providers>
   );
@@ -36,7 +40,6 @@ async function getUserData(sessionId?: string) {
       withCredentials: true,
       headers: { Cookie: `sessionid=${sessionId}` },
     });
-    console.log(res.data);
     return res.data as CurrentUserData;
   } catch (error) {
     return;

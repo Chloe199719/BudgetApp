@@ -21,7 +21,6 @@ function TestLogin({}: Props) {
       },
       { withCredentials: true }
     );
-    console.log(res);
     const data = res.data as CurrentUserData;
     if (!data) return;
     dispatch(login({ ...data, isAuthenticated: true }));
