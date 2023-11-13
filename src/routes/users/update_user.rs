@@ -1,6 +1,6 @@
 use actix_multipart::form;
 use actix_web::{ patch, web::Data, HttpResponse };
-use chrono::NaiveDate;
+use chrono::{ NaiveDate, DateTime, Utc };
 use serde::Deserialize;
 use sqlx::{ PgPool, Postgres, Transaction };
 use uuid::Uuid;
@@ -20,7 +20,7 @@ pub struct UserForm {
     #[multipart(limit = "1 MiB")]
     avatar: Option<form::tempfile::TempFile>,
     phone_number: Option<form::text::Text<String>>,
-    birth_date: Option<form::text::Text<NaiveDate>>,
+    birth_date: Option<form::text::Text<DateTime<Utc>>>,
     github_link: Option<form::text::Text<String>>,
     about_me: Option<form::text::Text<String>>,
     pronouns: Option<form::text::Text<String>>,
@@ -35,7 +35,7 @@ pub struct UpdateUser {
 #[derive(Deserialize, Debug)]
 pub struct UpdateUserProfile {
     pub phone_number: Option<String>,
-    pub birth_date: Option<NaiveDate>,
+    pub birth_date: Option<DateTime<Utc>>,
     pub github_link: Option<String>,
     pub about_me: Option<String>,
     pub pronouns: Option<String>,
