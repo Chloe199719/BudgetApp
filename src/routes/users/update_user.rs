@@ -48,7 +48,7 @@ pub struct Avatar {
 }
 #[rustfmt::skip]
 
-#[tracing::instrument(name = "Updating an user", skip(pool, form, session))]
+#[tracing::instrument(name = "Updating an user", skip(pool, form, session, s3_client))]
 #[patch("/update_user")]
 pub async fn update_users_details(
     pool: Data<PgPool>,
@@ -264,9 +264,9 @@ async fn update_user_in_db(
             SET 
                 phone_number = COALESCE($1, phone_number), 
                 birth_date = $2, 
-                github_link = COALESCE($3, github_link)
-                avatar_link = COALESCE($4, avatar_link)
-                about_me = COALESCE($5, about_me)
+                github_link = COALESCE($3, github_link),
+                avatar_link = COALESCE($4, avatar_link),
+                about_me = COALESCE($5, about_me),
                 pronouns = COALESCE($6, pronouns)
             WHERE 
                 user_id = $7 
