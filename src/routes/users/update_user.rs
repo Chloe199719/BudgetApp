@@ -1,6 +1,6 @@
 use actix_multipart::form;
 use actix_web::{ patch, web::Data, HttpResponse };
-use chrono::{ NaiveDate, DateTime, Utc };
+use chrono::{ DateTime, Utc };
 use serde::Deserialize;
 use sqlx::{ PgPool, Postgres, Transaction };
 use uuid::Uuid;
