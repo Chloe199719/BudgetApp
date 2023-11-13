@@ -114,18 +114,18 @@ jobs:
         run: sudo apt-get install sshpass
 
       - name: Copy docker-compose.yml to Linode
-        run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.LINODE_USERNAME }}@${{ vars.LINODE_HOST }}:~
+        run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no docker-compose.yml ${{ secrets.LINODE_USERNAME }}@${{ secrets.LINODE_HOST }}:~
 
       - name: Copy base.yaml to Linode
-        run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no settings/production.yaml ${{ secrets.LINODE_USERNAME }}@${{ vars.LINODE_HOST }}:~
+        run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no settings/production.yaml ${{ secrets.LINODE_USERNAME }}@${{ secrets.LINODE_HOST }}:~
 
       - name: Copy production.yaml to Linode
-        run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no settings/base.yaml ${{ secrets.LINODE_USERNAME }}@${{ vars.LINODE_HOST }}:~
+        run: sshpass -v -p ${{ secrets.LINODE_PASSWORD }} scp -o StrictHostKeyChecking=no settings/base.yaml ${{ secrets.LINODE_USERNAME }}@${{ secrets.LINODE_HOST }}:~
 
       - name: Deploy to Linode
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ vars.LINODE_HOST }}
+          host: ${{ secrets.LINODE_HOST }}
           username: ${{ secrets.LINODE_USERNAME }}
           password: ${{ secrets.LINODE_PASSWORD }}
           script: |
@@ -151,4 +151,4 @@ jobs:
       - name: Check http code Status
         uses: trunkcode/check-http-status-action@v1.0.0
         with:
-          urls: '["https://${{ vars.LINODE_HOST }}:5000/health-check"]'
+          urls: '["https://${{ secrets.LINODE_HOST }}:5000/health-check"]'
