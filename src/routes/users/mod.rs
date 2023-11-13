@@ -4,6 +4,7 @@ pub mod login;
 pub mod logout;
 mod update_user;
 mod current_user;
+mod generate_new_token;
 
 pub fn auth_routes_config(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.service(
