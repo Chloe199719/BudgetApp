@@ -109,7 +109,7 @@ async fn run(
                     actix_session::SessionMiddleware
                         ::builder(redis_store.clone(), secret_key.clone())
                         .cookie_http_only(true)
-                        .cookie_same_site(cookie::SameSite::None)
+                        .cookie_same_site(cookie::SameSite::Lax)
                         .cookie_secure(true)
                         .cookie_name("sessionid".to_string())
                         .build()

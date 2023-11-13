@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/lib/redux/providers";
 import { cookies } from "next/headers";
 import axios from "axios";
+import CheckUser from "@/components/auth/CheckUser";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,10 +18,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = cookies();
-  const sessionId = cookieStore.get("sessionId");
+  const sessionId = cookieStore.get("sessionid");
   const userData = await getUserData(sessionId?.value);
   return (
     <Providers>
+      <CheckUser userData={userData} />
       <html lang="en">
         <body className={inter.className}>{children}</body>
       </html>
@@ -31,14 +33,16 @@ async function getUserData(sessionId?: string) {
   try {
     if (!sessionId) return;
     const res = await axios.get(BACKEND_URL + "users/current-user", {
-      headers: { Cookie: "sessionId=" + sessionId },
+      withCredentials: true,
+      headers: { Cookie: `sessionid=${sessionId}` },
     });
+    console.log(res.data);
     return res.data as CurrentUserData;
   } catch (error) {
     return;
   }
 }
-const BACKEND_URL = "http://localhost:5000/";
+export const BACKEND_URL = "http://localhost:5000/";
 
 export type CurrentUserData = {
   id: string;
