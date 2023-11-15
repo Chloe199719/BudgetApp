@@ -20,7 +20,7 @@ pub struct SimpleUser {
 }
 
 #[tracing::instrument(name = "Regenerate token for a user", skip(pool, redis_pool))]
-#[actix_web::post("/regenerate-token/")]
+#[actix_web::post("/regenerate-token")]
 pub async fn regenerate_token(
     pool: Data<PgPool>,
     user_email: actix_web::web::Json<UserEmail>,
