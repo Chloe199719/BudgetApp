@@ -1,4 +1,9 @@
-use discord_backend::{ settings, telemetry, startup::Application };
+use discord_backend::{
+    settings,
+    telemetry,
+    startup::Application,
+    utils::constant::BACK_END_TARGET,
+};
 use dotenv::dotenv;
 
 #[tokio::main]
@@ -11,7 +16,7 @@ async fn main() -> std::io::Result<()> {
     telemetry::init_subscriber(subscriber);
 
     let application = Application::build(settings, None).await?;
-    tracing::event!(target:"discord_backend", tracing::Level::INFO, "Listening on http://127.0.0.1:{}/", application.port());
+    tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Listening on http://127.0.0.1:{}/", application.port());
     application.run_until_stopped().await?;
 
     Ok(())

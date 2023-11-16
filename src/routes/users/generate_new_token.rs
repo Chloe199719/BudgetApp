@@ -2,7 +2,7 @@ use actix_web::{ web::Data, HttpResponse };
 use serde::Deserialize;
 use sqlx::PgPool;
 use uuid::Uuid;
-
+use crate::utils::constant::APP_NAME;
 use crate::{
     types::general::{ ErrorResponse, SuccessResponse },
     utils::emails::send_multipart_email,
@@ -38,7 +38,7 @@ pub async fn regenerate_token(
                 })
                 .expect("Redis connection cannot be gotten.");
             send_multipart_email(
-                format!("RustDisc - let's Get you verified").to_string(),
+                format!("{} - let's Get you verified", APP_NAME).to_string(),
                 visible_user_details.id,
                 visible_user_details.email,
                 visible_user_details.display_name,
