@@ -48,9 +48,13 @@ actix-cors = "0.6.4"
 aws-config = "0.57.1"
 aws-sdk-s3 = "0.35.0"
 actix-multipart = "0.6.1"
+reqwest = { version = "0.11.22", features = ["json", "cookies", "rustls-tls"] }
 
 
 [dependencies.sqlx]
 version ="0.7.2"
 default-features = false
 features = ["postgres", "runtime-tokio-rustls", "macros", "chrono","uuid", "migrate"]
+
+[dev-dependencies]
+fake = "2.9.1"
