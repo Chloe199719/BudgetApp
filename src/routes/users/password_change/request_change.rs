@@ -2,7 +2,7 @@ use serde::Deserialize;
 use actix_web::{post, web::{Data, Json}, HttpResponse};
 use sqlx::PgPool;
 
-use crate::{settings::get_settings, utils::{users::get_active_user_from_db, emails::send_multipart_email, constant::APP_NAME}, types::general::{ErrorResponse, SuccessResponse}};
+use crate::{settings::get_settings, utils::{users::get_active_user_from_db, emails::send_multipart_email, constant::{APP_NAME, BACK_END_TARGET}}, types::general::{ErrorResponse, SuccessResponse}};
 #[derive(Deserialize, Debug)]
 pub struct UserEmail {
     email: String,
@@ -18,7 +18,7 @@ redis_pool: Data<deadpool_redis::Pool>) -> HttpResponse {
     match get_active_user_from_db(Some(&pool), None, None, Some(&user_email.email)).await {
         Ok(visible_user_details) => {
             let mut redis_con = redis_pool.get().await.map_err(|e|{
-                tracing::error!("Failed to get redis connection: {}",e);
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR ,"Failed to get redis connection: {}",e);
                 HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Something went wrong. Please try again later".to_string(),
                 })
