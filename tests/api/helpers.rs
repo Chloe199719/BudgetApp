@@ -1,33 +1,32 @@
-use argon2::{password_hash::{rand_core::OsRng, SaltString}, Argon2, PasswordHasher};
-use discord_backend::{telemetry::{get_subscriber, init_subscriber}, settings::get_settings, startup::Application};
+use argon2::{ password_hash::{ rand_core::OsRng, SaltString }, Argon2, PasswordHasher };
+use discord_backend::{
+    telemetry::{ get_subscriber, init_subscriber },
+    settings::get_settings,
+    startup::Application,
+};
 use once_cell::sync::Lazy;
-use reqwest::{Client, Response, redirect::Policy};
+use reqwest::{ Client, Response, redirect::Policy };
 use serde::Serialize;
 use sqlx::PgPool;
 
-
-static TRACING: Lazy<()> = Lazy::new(||{
+static TRACING: Lazy<()> = Lazy::new(|| {
     let subscriber = get_subscriber(false);
     init_subscriber(subscriber);
 });
 
 pub struct TestApp {
-    pub address:String,
+    pub address: String,
     pub test_user: TestUser,
     pub api_client: Client,
 }
 
 impl TestApp {
-    pub async fn post_login<Body>(&self ,body: &Body) -> Response
-    where
-        Body: Serialize,
-    {
-        self.api_client.post(&format!("{}/users/login",&self.address))
+    pub async fn post_login<Body>(&self, body: &Body) -> Response where Body: Serialize {
+        self.api_client
+            .post(&format!("{}/users/login", &self.address))
             .json(body)
-            .send()
-            .await
+            .send().await
             .expect("Failed to execute request.")
-
     }
 }
 
@@ -38,22 +37,19 @@ pub async fn spawn_app(pool: PgPool) -> TestApp {
         let mut s = get_settings().expect("Failed to read settings.");
 
         //Use a Random OS Port
-        s.application.port = 12456;
+        s.application.port = 0;
         s
     };
 
-    let application = Application::build(settigs.clone(), Some(pool.clone()))
-        .await
-        .expect("Failed to build application.");
-    
-    let address = format!("http://127.0.0.1:{}",application.port());
+    let application = Application::build(settigs.clone(), Some(pool.clone())).await.expect(
+        "Failed to build application."
+    );
+
+    let address = format!("http://127.0.0.1:{}", application.port());
 
     let _ = tokio::spawn(application.run_until_stopped());
 
-    let client = Client::builder().redirect(Policy::none())
-        .cookie_store(true)
-        .build()
-        .unwrap();
+    let client = Client::builder().redirect(Policy::none()).cookie_store(true).build().unwrap();
 
     let test_app = TestApp {
         address,
@@ -64,7 +60,6 @@ pub async fn spawn_app(pool: PgPool) -> TestApp {
     test_app.test_user.store(&pool).await;
 
     test_app
-
 }
 
 pub struct TestUser {
@@ -83,7 +78,7 @@ impl TestUser {
             display_name: uuid::Uuid::new_v4().to_string(),
         }
     }
-
+    #[rustfmt::skip]
     async fn store(&self, pool: &PgPool){
         let salt = SaltString::generate(&mut OsRng);
 
@@ -111,6 +106,4 @@ impl TestUser {
             .await
             .expect("Failed to insert test user profile.");
     }
-
-
 }
