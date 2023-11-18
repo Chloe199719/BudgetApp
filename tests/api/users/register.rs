@@ -105,7 +105,6 @@ async fn test_register_user_failure_email(pool: PgPool) {
         .send().await
         .expect("Failed to execute request.");
 
-    println!("{:#?}", response_two.status());
     assert!(response_two.status().is_client_error());
 
     let error_response = response_two
