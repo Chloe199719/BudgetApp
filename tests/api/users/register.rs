@@ -1,17 +1,17 @@
-use fake::{faker::{internet::en::SafeEmail, name::en::NameWithTitle}, Fake};
-use serde::{Serialize, Deserialize};
+use discord_backend::types::general::ErrorResponse;
+use fake::{ faker::{ internet::en::SafeEmail, name::en::{ NameWithTitle, FirstName } }, Fake };
+use serde::{ Serialize, Deserialize };
 use sqlx::PgPool;
 use crate::helpers::spawn_app;
 
-
-#[derive(Serialize, Debug ,Deserialize)]
+#[derive(Serialize, Debug, Deserialize)]
 pub struct NewUser<'a> {
     email: &'a str,
     password: String,
     unique_name: String,
-    display_name:String,
+    display_name: String,
 }
-
+#[rustfmt::skip]
 #[sqlx::test]
 async fn test_register_user_success(pool:PgPool){
     let app = spawn_app(pool.clone()).await;
@@ -71,4 +71,46 @@ async fn test_register_user_success(pool:PgPool){
    assert_eq!(saved_user.p_avatar_link,None);
    assert_eq!(saved_user.u_id, saved_user.p_user_id);
    assert_eq!(saved_user.p_phone_number,None);
+}
+
+#[sqlx::test]
+async fn test_register_user_failure_email(pool: PgPool) {
+    let app = spawn_app(pool.clone()).await;
+
+    let email = "chloe@chloepratas.com".to_string();
+    let unique_name: String = FirstName().fake();
+    let display_name: String = FirstName().fake();
+    let password: String = NameWithTitle().fake();
+
+    let new_user = NewUser {
+        email: &email,
+        password,
+        unique_name,
+        display_name,
+    };
+
+    let response_one = app.api_client
+        .post(&format!("{}/users/register", &app.address))
+        .json(&new_user)
+        .header("Content-Type", "application/json")
+        .send().await
+        .expect("Failed to execute request.");
+
+    assert!(response_one.status().is_success());
+
+    let response_two = app.api_client
+        .post(&format!("{}/users/register", &app.address))
+        .json(&new_user)
+        .header("Content-Type", "application/json")
+        .send().await
+        .expect("Failed to execute request.");
+
+    println!("{:#?}", response_two.status());
+    assert!(response_two.status().is_client_error());
+
+    let error_response = response_two
+        .json::<ErrorResponse>().await
+        .expect("Failed to deserialize error response.");
+
+    assert_eq!(error_response.error, "A user with that email address already exists.")
 }
