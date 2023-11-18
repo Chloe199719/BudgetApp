@@ -58,6 +58,8 @@ jobs:
           TOKEN_EXPIRATION: ${{ vars.TOKEN_EXPIRATION }}
           HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
           FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          AXIOM_DATASET: ${{ vars.AXIOM_DATASET }}
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
 
       - name: Build
         run: cargo build --verbose
