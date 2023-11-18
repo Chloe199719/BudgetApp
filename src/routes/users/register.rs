@@ -39,7 +39,7 @@ pub async fn register_user(
         Err(e) => {
             tracing::event!(target: "discord_backend", tracing::Level::ERROR, "Unable to begin DB transaction: {:#?}", e);
             return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
-                error: "Something unexpected happend. Kindly try again.".to_string(),
+                error: "Something unexpected happened. Kindly try again.".to_string(),
             });
         }
     };
@@ -60,14 +60,14 @@ pub async fn register_user(
                 e.as_database_error().unwrap().code().unwrap().parse::<i32>().unwrap() == 23505
             {
                 ErrorResponse {
-                    error: "A user with that email address already exists".to_string(),
+                    error: "A user with that email address already exists.".to_string(),
                 }
             } else {
                 ErrorResponse {
                     error: "Error inserting user into the database".to_string(),
                 }
             };
-            return actix_web::HttpResponse::InternalServerError().json(error_message);
+            return actix_web::HttpResponse::BadRequest().json(error_message);
         }
     };
 
