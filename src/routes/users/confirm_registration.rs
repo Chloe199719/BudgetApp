@@ -85,10 +85,10 @@ pub async fn activate_new_user(
 ) -> Result<(), sqlx::Error> {
     match sqlx::query!(
                 r#"
-            UPDATE users
-            SET is_active = true
-            WHERE id = $1
-        "#,
+                    UPDATE users
+                    SET is_active = true
+                    WHERE id = $1
+                "#,
                 user_id
             )
             .execute(pool).await
