@@ -9,3 +9,4 @@ pub mod update_users;
 
 #[cfg(test)]
 pub mod logout;
+pub mod current_user;
