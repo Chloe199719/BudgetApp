@@ -36,6 +36,7 @@ pub struct UserVisible {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UserProfile {
     pub id: Uuid,
+    pub user_id: Uuid,
     pub phone_number: Option<String>,
     pub birth_date: Option<chrono::NaiveDate>,
     pub github_link: Option<String>,
