@@ -28,7 +28,7 @@ async fn test_register_user_success(pool:PgPool){
         unique_name,
         display_name,
     };
-    
+
     let response = app.api_client.post(&format!("{}/users/register",&app.address))
         .json(&new_user)
         .header("Content-Type","application/json")
@@ -39,26 +39,26 @@ async fn test_register_user_success(pool:PgPool){
     assert!(response.status().is_success());
 
    let saved_user = sqlx::query!(
-      "SELECT 
-            u.id AS u_id, 
-            u.email AS u_email, 
-            u.password AS u_password, 
+      "SELECT
+            u.id AS u_id,
+            u.email AS u_email,
+            u.password AS u_password,
             u.unique_name AS u_unique_name,
-            u.display_name AS u_display_name, 
-            u.is_active AS u_is_active, 
-            u.is_staff AS u_is_staff, 
-            u.is_superuser AS u_is_superuser, 
-            u.data_joined AS u_data_joined, 
-            p.id AS p_id, 
+            u.display_name AS u_display_name,
+            u.is_active AS u_is_active,
+            u.is_staff AS u_is_staff,
+            u.is_superuser AS u_is_superuser,
+            u.data_joined AS u_data_joined,
+            p.id AS p_id,
             p.avatar_link AS p_avatar_link,
-            p.user_id AS p_user_id, 
-            p.phone_number AS p_phone_number, 
-            p.birth_date AS p_birth_date, 
-            p.github_link AS p_github_link 
-        FROM 
-            users u 
+            p.user_id AS p_user_id,
+            p.phone_number AS p_phone_number,
+            p.birth_date AS p_birth_date,
+            p.github_link AS p_github_link
+        FROM
+            users u
             LEFT JOIN user_profile p ON p.user_id = u.id
-        WHERE 
+        WHERE
             u.is_active=false AND u.email=$1
     ",
     &email
