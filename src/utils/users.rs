@@ -34,6 +34,7 @@ pub async fn get_active_user_from_db(
         data_joined: row.get("u_data_joined"),
         profile: crate::types::UserProfile {
             id: row.get("p_id"),
+            user_id: row.get("p_user_id"),
             phone_number: row.get("p_phone_number"),
             birth_date: row.get("p_birth_date"),
             github_link: row.get("p_github_link"),
