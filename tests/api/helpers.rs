@@ -88,7 +88,7 @@ impl TestUser {
             .to_string();
 
         let user_id = sqlx::query!(
-            "INSERT INTO users (email, password, unique_name, display_name) VALUES ($1, $2, $3, $4) RETURNING id",
+            "INSERT INTO users (email, password, unique_name, display_name,is_active, is_staff, is_superuser) VALUES ($1, $2, $3, $4,true,true,true) RETURNING id",
             &self.email,
             password_hash,
             &self.unique_name,
@@ -97,7 +97,6 @@ impl TestUser {
             .fetch_one(pool)
             .await
             .expect("Failed to insert test user.");
-
         sqlx::query!(
             "INSERT INTO user_profile (user_id)
                     VALUES ($1)
