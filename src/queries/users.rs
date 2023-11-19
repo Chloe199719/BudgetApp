@@ -11,6 +11,7 @@ pub const USER_AND_USER_PROFILE_QUERY: &str =
     u.thumbnail as u_thumbnail,
     u.data_joined as u_data_joined,
     p.id as p_id,
+    p.user_id as p_user_id,
     p.phone_number as p_phone_number,
     p.birth_date as p_birth_date,
     p.github_link as p_github_link,
