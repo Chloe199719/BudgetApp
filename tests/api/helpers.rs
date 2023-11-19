@@ -23,7 +23,7 @@ pub struct TestApp {
 impl TestApp {
     pub async fn post_login<Body>(&self, body: &Body) -> Response where Body: Serialize {
         self.api_client
-            .post(&format!("{}/users/login", &self.address))
+            .post(&format!("{}/users/login/", &self.address))
             .json(body)
             .send().await
             .expect("Failed to execute request.")
