@@ -13,7 +13,6 @@ pub struct LoginUser {
     email: String,
     password: String,
 }
-#[rustfmt::skip]
 
 #[tracing::instrument(name = "Logging a user in", skip( pool, user, session), fields(user_email = %user.email))]
 #[actix_web::post("/login/")]
@@ -23,15 +22,18 @@ pub async fn login_user(
     session: Session
 ) -> HttpResponse {
     let password = user.password.clone();
-    match get_active_user_from_db(Some(&pool),None,None, Some(&user.email)).await {
+    match get_active_user_from_db(Some(&pool), None, None, Some(&user.email)).await {
         Ok(logged_in_user) =>
-         
-            match tokio::task::spawn_blocking( move|| {
-              return   verify_password(logged_in_user.password.as_ref(), password.as_bytes())
-            })
-            .await
-            .expect("Unable to unwrap JoinError.")
-                {
+            match
+                tokio::task
+                    ::spawn_blocking(move || {
+                        return verify_password(
+                            logged_in_user.password.as_ref(),
+                            password.as_bytes()
+                        );
+                    }).await
+                    .expect("Unable to unwrap JoinError.")
+            {
                 Ok(_) => {
                     tracing::event!(target:"Discord Backend", tracing::Level::INFO, "User successfully logged in.");
                     session.renew();
@@ -60,12 +62,12 @@ pub async fn login_user(
                         error: "Invalid email or password.".to_string(),
                     })
                 }
-            },
-            Err(e) => {
-                tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to get user from DB: {:#?}", e);
-                HttpResponse::NotFound().json(ErrorResponse {
-                    error: "User with those details doesn't exist".to_string(),
-                })
+            }
+        Err(e) => {
+            tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to get user from DB: {:#?}", e);
+            HttpResponse::NotFound().json(ErrorResponse {
+                error: "User with those details doesn't exist".to_string(),
+            })
         }
     }
 }
