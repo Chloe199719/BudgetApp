@@ -1,7 +1,7 @@
 pub const USER_AND_USER_PROFILE_QUERY: &str =
     "SELECT 
- u.id as u_id,
- u.email as u_email,
+    u.id as u_id,
+    u.email as u_email,
     u.password as u_password,
     u.display_name as u_display_name,
     u.unique_name as u_unique_name,
