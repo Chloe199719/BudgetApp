@@ -1,4 +1,4 @@
-mod create_category;
+pub mod create_category;
 use actix_web::web::ServiceConfig;
 
 pub fn categories_routes_config(cfg: &mut ServiceConfig) {
