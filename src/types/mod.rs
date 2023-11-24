@@ -5,6 +5,7 @@ use uuid::Uuid;
 pub mod tokens;
 pub mod general;
 pub mod upload;
+pub mod categories;
 #[derive(Serialize)]
 pub struct User {
     pub id: Uuid,
