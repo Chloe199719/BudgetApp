@@ -87,7 +87,7 @@ async fn test_create_category_error_wrong_fields(pool: PgPool) {
 
     assert!(login_response.status().is_success());
 
-    let login_response_body = login_response
+    let _login_response_body = login_response
         .json::<UserVisible>().await
         .expect("Failed to parse login response");
 
