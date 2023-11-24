@@ -1,15 +1,18 @@
-use actix_web::web::{ Data, Json };
+use actix_web::web::Data;
+use actix_web_validator::Json;
 use serde::{ Deserialize, Serialize };
 use sqlx::PgPool;
-
+use validator::Validate;
 use crate::{
     routes::users::logout::session_user_id,
     types::{ general::ErrorResponse, categories::Category },
     utils::constant::BACK_END_TARGET,
 };
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Validate)]
 pub struct CreateCategory {
+    #[validate(length(min = 3, max = 50))]
     pub name: String,
+    #[validate(length(min = 3, max = 500))]
     pub description: String,
 }
 
