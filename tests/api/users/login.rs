@@ -1,4 +1,4 @@
-use discord_backend::types::{general::ErrorResponse, UserVisible};
+use discord_backend::types::{ general::ErrorResponse, UserVisible };
 use fake::{ faker::{ name::en::NameWithTitle, internet::en::SafeEmail }, Fake };
 use serde::{ Serialize, Deserialize };
 use sqlx::PgPool;
@@ -7,8 +7,8 @@ use crate::helpers::spawn_app;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginUser {
-    email: String,
-    password: String,
+    pub email: String,
+    pub password: String,
 }
 
 #[sqlx::test]
@@ -55,7 +55,7 @@ async fn test_login_user_failure_not_found(pool: PgPool) {
 }
 
 #[sqlx::test]
-async fn test_login_user_success(pool:PgPool) {
+async fn test_login_user_success(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
     let login_body = LoginUser {
@@ -67,7 +67,7 @@ async fn test_login_user_success(pool:PgPool) {
 
     assert!(login_response.status().is_success());
 
-    //Check that there is a cookie present 
+    //Check that there is a cookie present
 
     let headers = login_response.headers();
     assert!(headers.get("set-cookie").is_some());
@@ -75,11 +75,11 @@ async fn test_login_user_success(pool:PgPool) {
     let cookie_str = headers.get("set-cookie").unwrap().to_str().unwrap();
     assert!(cookie_str.contains("sessionid="));
 
-    // Check response 
+    // Check response
 
     let response = login_response.json::<UserVisible>().await.expect("Failed to parse response");
 
     assert_eq!(response.email, app.test_user.email);
     assert!(response.is_active);
-    assert_eq!(response.id, response.profile.user_id); 
+    assert_eq!(response.id, response.profile.user_id);
 }
