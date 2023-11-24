@@ -4,7 +4,11 @@ use aws_sdk_s3::config::{ Credentials, Region };
 use sqlx::postgres;
 use sqlx;
 use tracing_actix_web::TracingLogger;
-use crate::{ settings::Settings, routes::{ health_check, users::auth_routes_config }, uploads };
+use crate::{
+    settings::Settings,
+    routes::{ health_check, users::auth_routes_config, categories::categories_routes_config },
+    uploads,
+};
 use std::net::TcpListener;
 
 pub struct Application {
@@ -116,6 +120,7 @@ async fn run(
                 )
                 .service(health_check)
                 .configure(auth_routes_config)
+                .configure(categories_routes_config)
                 .app_data(connection_pool.clone())
                 .app_data(redis_pool_data.clone())
                 .app_data(s3_client.clone())
