@@ -1,5 +1,5 @@
 use actix_web::web::{ Data, Json };
-use serde::Deserialize;
+use serde::{ Deserialize, Serialize };
 use sqlx::PgPool;
 
 use crate::{
@@ -7,10 +7,10 @@ use crate::{
     types::{ general::ErrorResponse, categories::Category },
     utils::constant::BACK_END_TARGET,
 };
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CreateCategory {
-    name: String,
-    description: String,
+    pub name: String,
+    pub description: String,
 }
 
 #[tracing::instrument(name = "Creating a category", skip(pool, session))]
