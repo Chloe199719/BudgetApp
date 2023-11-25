@@ -64,7 +64,7 @@ jobs:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
 
       - name: Build
-        run: cargo clean && cargo build
+        run: cargo build
 
       - name: Run tests
         run: cargo test

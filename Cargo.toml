@@ -25,8 +25,8 @@ tokio = { version = "1", features = ["full"] }
 config = { version = "0.13.3", features = ["yaml"] }
 serde = { version = "1.0", features = ["derive"] }
 dotenv = "0.15.0"
-# actix-web-validator = "5.0.1"
-# validator = { version = "0.16", features = ["derive"] }
+actix-web-validator = "5.0.1"
+validator = { version = "0.16", features = ["derive"] }
 uuid = { version = "1", features = ["serde", "v4"] }
 chrono = { version = "0.4.22", default-features = false, features = ["serde", "clock"] }
 tracing = { version ="0.1", features = ["log"] }
