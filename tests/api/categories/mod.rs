@@ -4,7 +4,7 @@ use fake::Fake;
 use sqlx::PgPool;
 use fake::faker::lorem::en::Sentence;
 mod create_category;
-
+mod delete_category;
 #[rustfmt::skip]
 pub async fn create_category_in_db(
     pool: &PgPool,
