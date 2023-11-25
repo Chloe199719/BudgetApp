@@ -125,7 +125,7 @@ async fn run(
                 .app_data(redis_pool_data.clone())
                 .app_data(s3_client.clone())
         })
-        .workers(32);
+        .workers(16);
 
     // Server protocol configuration
     if settings.application.protocol == "http" {
