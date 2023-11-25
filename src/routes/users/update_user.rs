@@ -4,7 +4,6 @@ use chrono::{ DateTime, Utc };
 use serde::Deserialize;
 use sqlx::{ PgPool, Postgres, Transaction };
 use uuid::Uuid;
-
 use crate::{
     uploads::client::Client,
     types::{ general::ErrorResponse, UserVisible },
