@@ -77,7 +77,8 @@ async fn test_register_user_success(pool:PgPool){
 async fn test_register_user_failure_email(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
-    let email = "chloe@chloepratas.com".to_string();
+    let email: String = SafeEmail().fake();
+
     let unique_name: String = FirstName().fake();
     let display_name: String = FirstName().fake();
     let password: String = NameWithTitle().fake();
