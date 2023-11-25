@@ -1,5 +1,6 @@
-use actix_web::web::{ Data, Json };
+use actix_web::web::Data;
 
+use actix_web_validator::Json;
 use serde::{ Deserialize, Serialize };
 use sqlx::PgPool;
 use validator::Validate;
