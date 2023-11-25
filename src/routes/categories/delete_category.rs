@@ -24,7 +24,7 @@ pub async fn delete_category(
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
-            return actix_web::HttpResponse::Unauthorized().json(ErrorResponse {
+            return HttpResponse::Unauthorized().json(ErrorResponse {
                 error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
             });
         }
@@ -32,13 +32,13 @@ pub async fn delete_category(
     match delete_category_in_db(&pool, data.category_id, session_uuid).await {
         Ok(_) => {
             tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Successfully deleted category");
-            return actix_web::HttpResponse::Ok().json(SuccessResponse {
+            return HttpResponse::Ok().json(SuccessResponse {
                 message: "Successfully deleted category".to_string(),
             });
         }
         Err(e) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to delete category: {:#?}", e);
-            return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
+            return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to delete category. Kindly try again.".to_string(),
             });
         }

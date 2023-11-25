@@ -25,7 +25,6 @@ async fn test_delete_category_success(pool: PgPool) {
     let category_id = create_category_in_db(&pool, login_response_body.id).await.expect(
         "Failed to create category"
     );
-    println!("category_id: {}", category_id);
     //Act - Part 3 - Delete category
     let delete_category_response = app.api_client
         .delete(&format!("{}/categories/delete/{}", app.address, category_id))

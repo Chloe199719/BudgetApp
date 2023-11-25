@@ -3,6 +3,7 @@ use fake::faker::name::en::Name;
 use fake::Fake;
 use sqlx::PgPool;
 use fake::faker::lorem::en::Sentence;
+
 mod create_category;
 mod delete_category;
 #[rustfmt::skip]
