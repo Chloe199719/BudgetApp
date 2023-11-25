@@ -9,5 +9,6 @@ pub fn categories_routes_config(cfg: &mut ServiceConfig) {
             ::scope("/categories")
             .service(create_category::create_category)
             .service(delete_category::delete_category)
+            .service(edit::edit_category)
     );
 }
