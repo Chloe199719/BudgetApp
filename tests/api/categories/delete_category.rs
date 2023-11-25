@@ -22,12 +22,12 @@ async fn test_delete_category_success(pool: PgPool) {
         .expect("Failed to parse login response");
 
     //Act - Part 2 - Create category
-    let category_id = create_category_in_db(&pool, login_response_body.id).await.expect(
+    let category = create_category_in_db(&pool, login_response_body.id).await.expect(
         "Failed to create category"
     );
     //Act - Part 3 - Delete category
     let delete_category_response = app.api_client
-        .delete(&format!("{}/categories/delete/{}", app.address, category_id))
+        .delete(&format!("{}/categories/delete/{}", app.address, category.category_id))
         .send().await
         .expect("Failed to execute request.");
 
