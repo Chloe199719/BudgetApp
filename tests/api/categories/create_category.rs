@@ -101,35 +101,35 @@ async fn test_create_category_error_wrong_fields(pool: PgPool) {
     assert!(create_category_response.status().is_client_error());
 }
 
-// #[sqlx::test]
-// async fn test_create_category_ir_error_field_validation_fail(pool: PgPool) {
-//     let app = spawn_app(pool.clone()).await;
+#[sqlx::test]
+async fn test_create_category_ir_error_field_validation_fail(pool: PgPool) {
+    let app = spawn_app(pool.clone()).await;
 
-//     //Act - Part 1 - Login
-//     let login_body = LoginUser {
-//         email: app.test_user.email.clone(),
-//         password: app.test_user.password.clone(),
-//     };
+    //Act - Part 1 - Login
+    let login_body = LoginUser {
+        email: app.test_user.email.clone(),
+        password: app.test_user.password.clone(),
+    };
 
-//     let login_response = app.post_login(&login_body).await;
+    let login_response = app.post_login(&login_body).await;
 
-//     assert!(login_response.status().is_success());
+    assert!(login_response.status().is_success());
 
-//     let _login_response_body = login_response
-//         .json::<UserVisible>().await
-//         .expect("Failed to parse login response");
+    let _login_response_body = login_response
+        .json::<UserVisible>().await
+        .expect("Failed to parse login response");
 
-//     //Act - Part 2 - Create category
-//     let create_category_body = CreateCategory {
-//         name: "ab".to_string(),
-//         description: Sentence(1..2).fake(),
-//     };
+    //Act - Part 2 - Create category
+    let create_category_body = CreateCategory {
+        name: "ab".to_string(),
+        description: Sentence(1..2).fake(),
+    };
 
-//     let create_category_response = app.api_client
-//         .post(&format!("{}/categories/create", app.address))
-//         .json(&create_category_body)
-//         .send().await
-//         .expect("Failed to execute request.");
+    let create_category_response = app.api_client
+        .post(&format!("{}/categories/create", app.address))
+        .json(&create_category_body)
+        .send().await
+        .expect("Failed to execute request.");
 
-//     assert!(create_category_response.status().is_client_error());
-// }
+    assert!(create_category_response.status().is_client_error());
+}
