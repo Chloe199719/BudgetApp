@@ -8,6 +8,7 @@ use once_cell::sync::Lazy;
 use reqwest::{ Client, Response, redirect::Policy };
 use serde::Serialize;
 use sqlx::PgPool;
+use dotenv::dotenv;
 
 static TRACING: Lazy<()> = Lazy::new(|| {
     let subscriber = get_subscriber(false);
@@ -31,7 +32,8 @@ impl TestApp {
 }
 
 pub async fn spawn_app(pool: PgPool) -> TestApp {
-    dotenv::from_filename(".env.test").ok();
+    dotenv().ok();
+
     Lazy::force(&TRACING);
     let settigs = {
         let mut s = get_settings().expect("Failed to read settings.");
