@@ -123,7 +123,7 @@ async fn insert_created_user_into_db(
             .bind(&new_user.display_name)
             .bind(&new_user.unique_name)
             .map(|row: sqlx::postgres::PgRow| -> uuid::Uuid { row.get("id") })
-            .fetch_one(&mut *transaction).await
+            .fetch_one(&mut *transaction.as_mut()).await
     {
         Ok(id) => id,
         Err(e) => {
@@ -143,7 +143,7 @@ async fn insert_created_user_into_db(
             )
             .bind(user_id)
             .map(|row: sqlx::postgres::PgRow| -> uuid::Uuid { row.get("user_id") })
-            .fetch_one(&mut *transaction).await
+            .fetch_one(&mut *transaction.as_mut()).await
     {
         Ok(id) => {
             tracing::event!(target: "sqlx",tracing::Level::INFO, "User profile created successfully {}.", id);

@@ -49,7 +49,7 @@ pub async fn get_active_user_from_db(
             sqlx_query.fetch_one(p).await
         } else {
             let t = transaction.unwrap();
-            sqlx_query.fetch_one(&mut *t).await
+            sqlx_query.fetch_one(&mut *t.as_mut()).await
         }
     };
     match fetched_query {
