@@ -9,6 +9,7 @@ jobs:
     environment: Prod
     env:
       SQLX_VERSION: 0.7.3
+      TEST: "true"
       SQLX_FEATURES: "rustls,postgres"
       APP_ENVIRONMENT: "development"
       DATABASE_URL: ${{ secrets.DATABASE_URL }}

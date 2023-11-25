@@ -81,15 +81,17 @@ pub async fn register_user(
             })
         })
         .expect("Redis connection cannot be gotten.");
-
-    send_multipart_email(
-        "Welcome To Discord Clone Please Verify your email 😀".to_string(),
-        user_id,
-        create_new_user.email,
-        create_new_user.display_name,
-        "verification_email.html",
-        &mut redis_con
-    ).await.unwrap();
+    let test = std::env::var("TEST").unwrap_or("false".to_string());
+    if test == "false" {
+        send_multipart_email(
+            "Welcome To Discord Clone Please Verify your email 😀".to_string(),
+            user_id,
+            create_new_user.email,
+            create_new_user.display_name,
+            "verification_email.html",
+            &mut redis_con
+        ).await.unwrap();
+    }
 
     if transaction.commit().await.is_err() {
         return actix_web::HttpResponse::InternalServerError().finish();
