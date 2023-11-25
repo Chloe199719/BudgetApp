@@ -244,7 +244,7 @@ async fn update_user_in_db(
             .bind(&user_to_update.unique_name)
             .bind(&user_to_update.display_name)
             .bind(user_id)
-            .execute(&mut *transaction.as_mut()).await
+            .execute(&mut *transaction).await
     {
         Ok(r) => {
             tracing::event!(target: "sqlx", tracing::Level::INFO, "User has been updated successfully: {:#?}", r);
@@ -304,7 +304,7 @@ async fn update_user_in_db(
             .bind(&user_profile_to_update.about_me)
             .bind(&user_profile_to_update.pronouns)
             .bind(user_id)
-            .execute(&mut *transaction.as_mut()).await
+            .execute(&mut *transaction).await
     {
         Ok(r) => {
             tracing::event!(target: "sqlx", tracing::Level::INFO, "User profile has been updated successfully: {:#?}", r);
