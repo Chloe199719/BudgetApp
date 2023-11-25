@@ -18,6 +18,12 @@ pub struct EditCategory {
     #[validate(length(min = 3, max = 500))]
     pub description: Option<String>,
 }
+impl EditCategory {
+    pub fn is_some(&self) -> bool {
+        self.name.is_some() || self.description.is_some()
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PathCategory {
     pub category_id: i32,
@@ -30,6 +36,13 @@ pub async fn edit_category(
     data: Path<PathCategory>,
     edit_category: Json<EditCategory>
 ) -> HttpResponse {
+    if !edit_category.is_some() {
+        tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "No fields to edit");
+        return HttpResponse::BadRequest().json(ErrorResponse {
+            error: "No fields to edit".to_string(),
+        });
+    }
+
     let mut transaction = match pool.begin().await {
         Ok(transaction) => transaction,
         Err(e) => {
