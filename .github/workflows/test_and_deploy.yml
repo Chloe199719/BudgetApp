@@ -40,9 +40,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      - name: Rust Version
-        run: rustc --version
-
       - name: Install sqlx-cli
         run: cargo install sqlx-cli
           --version=${{ env.SQLX_VERSION }}
