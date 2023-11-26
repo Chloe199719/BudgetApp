@@ -1,14 +1,17 @@
-use argon2::{ password_hash::{ rand_core::OsRng, SaltString }, Argon2, PasswordHasher };
+use argon2::{
+    password_hash::{rand_core::OsRng, SaltString},
+    Argon2, PasswordHasher,
+};
 use discord_backend::{
-    telemetry::{ get_subscriber, init_subscriber },
     settings::get_settings,
     startup::Application,
+    telemetry::{get_subscriber, init_subscriber},
 };
+use dotenv::dotenv;
 use once_cell::sync::Lazy;
-use reqwest::{ Client, Response, redirect::Policy };
+use reqwest::{redirect::Policy, Client, Response};
 use serde::Serialize;
 use sqlx::PgPool;
-use dotenv::dotenv;
 
 static TRACING: Lazy<()> = Lazy::new(|| {
     let subscriber = get_subscriber(false);
@@ -22,11 +25,15 @@ pub struct TestApp {
 }
 
 impl TestApp {
-    pub async fn post_login<Body>(&self, body: &Body) -> Response where Body: Serialize {
+    pub async fn post_login<Body>(&self, body: &Body) -> Response
+    where
+        Body: Serialize,
+    {
         self.api_client
             .post(&format!("{}/users/login/", &self.address))
             .json(body)
-            .send().await
+            .send()
+            .await
             .expect("Failed to execute request.")
     }
 }
@@ -43,15 +50,19 @@ pub async fn spawn_app(pool: PgPool) -> TestApp {
         s
     };
 
-    let application = Application::build(settigs.clone(), Some(pool.clone())).await.expect(
-        "Failed to build application."
-    );
+    let application = Application::build(settigs.clone(), Some(pool.clone()))
+        .await
+        .expect("Failed to build application.");
 
     let address = format!("http://127.0.0.1:{}", application.port());
 
     let _ = tokio::spawn(application.run_until_stopped());
 
-    let client = Client::builder().redirect(Policy::none()).cookie_store(true).build().unwrap();
+    let client = Client::builder()
+        .redirect(Policy::none())
+        .cookie_store(true)
+        .build()
+        .unwrap();
 
     let test_app = TestApp {
         address,

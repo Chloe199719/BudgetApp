@@ -10,7 +10,7 @@ impl UploadedFile {
     pub fn new(
         filename: impl Into<String>,
         s3_key: impl Into<String>,
-        s3_url: impl Into<String>
+        s3_url: impl Into<String>,
     ) -> Self {
         Self {
             filename: filename.into(),

@@ -71,10 +71,10 @@ impl TryFrom<String> for Environment {
         match s.to_lowercase().as_str() {
             "development" => Ok(Self::Development),
             "production" => Ok(Self::Production),
-            other =>
-                Err(
-                    format!("{} is not a supported environment. Use either `development` or `production`.", other)
-                ),
+            other => Err(format!(
+                "{} is not a supported environment. Use either `development` or `production`.",
+                other
+            )),
         }
     }
 }
@@ -99,19 +99,23 @@ pub fn get_settings() -> Result<Settings, config::ConfigError> {
 
     // Detect the current environment
     // Default to 'development' if unspecified
-    let environment: Environment = std::env
-        ::var("APP_ENVIRONMENT")
+    let environment: Environment = std::env::var("APP_ENVIRONMENT")
         .unwrap_or_else(|_| "development".into())
         .try_into()
         .expect("Failed to parse APP_ENVIRONMENT");
     let environment_filename = format!("{}.yaml", environment.as_str());
-    let settings = config::Config
-        ::builder()
+    let settings = config::Config::builder()
         .add_source(config::File::from(settings_directory.join("base.yaml")))
-        .add_source(config::File::from(settings_directory.join(environment_filename)))
+        .add_source(config::File::from(
+            settings_directory.join(environment_filename),
+        ))
         // Add in settings from environment variables(with a prefix of APP and '__' as separator)
         // E.g. `APP_APPLICATION__PORT=5001 would set `Settings.application.port`
-        .add_source(config::Environment::with_prefix("APP").prefix_separator("_").separator("__"))
+        .add_source(
+            config::Environment::with_prefix("APP")
+                .prefix_separator("_")
+                .separator("__"),
+        )
         .build()?;
     settings.try_deserialize::<Settings>()
 }

@@ -1,12 +1,16 @@
-use actix_web::{ delete, HttpResponse, web::{ Path, Data } };
-use serde::{ Deserialize, Serialize };
-use sqlx::{ PgPool, Postgres, Transaction };
+use actix_web::{
+    delete,
+    web::{Data, Path},
+    HttpResponse,
+};
+use serde::{Deserialize, Serialize};
+use sqlx::{PgPool, Postgres, Transaction};
 
 use crate::{
-    routes::users::logout::session_user_id,
-    types::general::{ ErrorResponse, SuccessResponse },
-    utils::constant::BACK_END_TARGET,
     queries::category::check_category_exists,
+    routes::users::logout::session_user_id,
+    types::general::{ErrorResponse, SuccessResponse},
+    utils::constant::BACK_END_TARGET,
 };
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -19,7 +23,7 @@ pub struct DeleteCategory {
 pub async fn delete_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
-    data: Path<DeleteCategory>
+    data: Path<DeleteCategory>,
 ) -> HttpResponse {
     let mut transaction = match pool.begin().await {
         Ok(transaction) => transaction,
@@ -35,21 +39,28 @@ pub async fn delete_category(
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again"
+                    .to_string(),
             });
         }
     };
     match check_category_exists(&mut transaction, data.category_id, session_uuid).await {
         Ok(true) => (),
         Ok(false) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
+            transaction
+                .rollback()
+                .await
+                .expect("Failed to rollback transaction");
             tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Category does not exist");
             return HttpResponse::BadRequest().json(ErrorResponse {
                 error: "Category does not exist".to_string(),
             });
         }
         Err(e) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
+            transaction
+                .rollback()
+                .await
+                .expect("Failed to rollback transaction");
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists: {:#?}", e);
             return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to delete category. Kindly try again.".to_string(),

@@ -4,5 +4,5 @@ pub mod register;
 
 pub mod update_users;
 
-pub mod logout;
 pub mod current_user;
+pub mod logout;

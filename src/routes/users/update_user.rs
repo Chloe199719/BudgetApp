@@ -1,14 +1,14 @@
-use actix_multipart::form;
-use actix_web::{ patch, web::Data, HttpResponse };
-use chrono::{ DateTime, Utc };
-use serde::Deserialize;
-use sqlx::{ PgPool, Postgres, Transaction };
-use uuid::Uuid;
 use crate::{
+    types::{general::ErrorResponse, UserVisible},
     uploads::client::Client,
-    types::{ general::ErrorResponse, UserVisible },
     utils::users::get_active_user_from_db,
 };
+use actix_multipart::form;
+use actix_web::{patch, web::Data, HttpResponse};
+use chrono::{DateTime, Utc};
+use serde::Deserialize;
+use sqlx::{PgPool, Postgres, Transaction};
+use uuid::Uuid;
 
 use super::logout::session_user_id;
 
@@ -218,12 +218,10 @@ async fn update_user_in_db(
     transaction: &mut Transaction<'_, Postgres>,
     user_to_update: &UpdateUser,
     user_profile_to_update: &UpdateUserProfile,
-    user_id: Uuid
+    user_id: Uuid,
 ) -> Result<(), sqlx::Error> {
-    match
-        sqlx
-            ::query(
-                r#"
+    match sqlx::query(
+        r#"
         UPDATE users
         SET unique_name = COALESCE($1, unique_name), display_name = COALESCE($2, display_name)
         WHERE id = $3
@@ -238,12 +236,13 @@ async fn update_user_in_db(
             FROM
                 display_name
         )
-        "#
-            )
-            .bind(&user_to_update.unique_name)
-            .bind(&user_to_update.display_name)
-            .bind(user_id)
-            .execute(&mut *transaction.as_mut()).await
+        "#,
+    )
+    .bind(&user_to_update.unique_name)
+    .bind(&user_to_update.display_name)
+    .bind(user_id)
+    .execute(&mut *transaction.as_mut())
+    .await
     {
         Ok(r) => {
             tracing::event!(target: "sqlx", tracing::Level::INFO, "User has been updated successfully: {:#?}", r);
@@ -254,10 +253,8 @@ async fn update_user_in_db(
         }
     }
 
-    match
-        sqlx
-            ::query(
-                "
+    match sqlx::query(
+        "
             UPDATE 
                 user_profile 
             SET 
@@ -294,16 +291,17 @@ async fn update_user_in_db(
                         AND $6 IS DISTINCT
                     FROM
                         pronouns
-                )"
-            )
-            .bind(&user_profile_to_update.phone_number)
-            .bind(user_profile_to_update.birth_date)
-            .bind(&user_profile_to_update.github_link)
-            .bind(&user_profile_to_update.avatar_link)
-            .bind(&user_profile_to_update.about_me)
-            .bind(&user_profile_to_update.pronouns)
-            .bind(user_id)
-            .execute(&mut *transaction.as_mut()).await
+                )",
+    )
+    .bind(&user_profile_to_update.phone_number)
+    .bind(user_profile_to_update.birth_date)
+    .bind(&user_profile_to_update.github_link)
+    .bind(&user_profile_to_update.avatar_link)
+    .bind(&user_profile_to_update.about_me)
+    .bind(&user_profile_to_update.pronouns)
+    .bind(user_id)
+    .execute(&mut *transaction.as_mut())
+    .await
     {
         Ok(r) => {
             tracing::event!(target: "sqlx", tracing::Level::INFO, "User profile has been updated successfully: {:#?}", r);
