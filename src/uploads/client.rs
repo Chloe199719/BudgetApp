@@ -1,6 +1,6 @@
 use actix_multipart::form::tempfile::TempFile;
 use aws_sdk_s3::primitives::ByteStream;
-use tokio::{ io::AsyncReadExt as _, fs::File };
+use tokio::{fs::File, io::AsyncReadExt as _};
 
 use crate::types::upload::UploadedFile;
 /// S3 client wrapper to expose semantic upload operations.
@@ -29,7 +29,9 @@ impl Client {
     pub async fn upload(&self, file: &TempFile, key_prefix: &str) -> UploadedFile {
         let filename = file.file_name.as_deref().expect("TODO");
         let key = format!("{key_prefix}{filename}");
-        let s3_url = self.put_object_from_file(file.file.path().to_str().unwrap(), &key).await;
+        let s3_url = self
+            .put_object_from_file(file.file.path().to_str().unwrap(), &key)
+            .await;
         UploadedFile::new(filename, key, s3_url)
     }
 
@@ -37,7 +39,8 @@ impl Client {
     async fn put_object_from_file(&self, local_path: &str, key: &str) -> String {
         let mut file = File::open(local_path).await.unwrap();
         let size_estimate = file
-            .metadata().await
+            .metadata()
+            .await
             .map(|md| md.len())
             .unwrap_or(1024)
             .try_into()
@@ -50,13 +53,20 @@ impl Client {
             .bucket(&self.bucket_name)
             .key(key)
             .body(ByteStream::from(contents))
-            .send().await
+            .send()
+            .await
             .expect("Failed to upload file");
 
         self.url(key)
     }
     /// Attempts to delete object from S3. Returns true if successful.
     pub async fn delete_file(&self, key: &str) -> bool {
-        self.s3.delete_object().bucket(&self.bucket_name).key(key).send().await.is_ok()
+        self.s3
+            .delete_object()
+            .bucket(&self.bucket_name)
+            .key(key)
+            .send()
+            .await
+            .is_ok()
     }
 }

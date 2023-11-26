@@ -1,12 +1,12 @@
-use argon2::password_hash::rand_core::{ OsRng, RngCore };
-use uuid::Uuid;
+use argon2::password_hash::rand_core::{OsRng, RngCore};
 use core::convert::TryFrom;
 use deadpool_redis::redis::AsyncCommands;
 use hex;
-use pasetors::claims::{ Claims, ClaimsValidationRules };
+use pasetors::claims::{Claims, ClaimsValidationRules};
 use pasetors::keys::SymmetricKey;
 use pasetors::token::UntrustedToken;
-use pasetors::{ local, version4::V4, Local };
+use pasetors::{local, version4::V4, Local};
+use uuid::Uuid;
 
 use crate::types::tokens::ConfirmationToken;
 
@@ -21,7 +21,7 @@ const SESSION_KEY_PREFIX: &str = "valid_session_key_for_{}";
 pub async fn issue_confirmation_token_pasetors(
     user_id: Uuid,
     redis_connection: &mut deadpool_redis::redis::aio::Connection,
-    is_for_password_change: Option<bool>
+    is_for_password_change: Option<bool>,
 ) -> Result<String, deadpool_redis::redis::RedisError> {
     // I just generate 128 bytes of random data for the session key
     // from something that is cryptographically secure (rand::CryptoRng)
@@ -39,7 +39,10 @@ pub async fn issue_confirmation_token_pasetors(
 
     let redis_key = {
         if is_for_password_change.is_some() {
-            format!("{}{}is_for_password_change", SESSION_KEY_PREFIX, session_key)
+            format!(
+                "{}{}is_for_password_change",
+                SESSION_KEY_PREFIX, session_key
+            )
         } else {
             format!("{}{}", SESSION_KEY_PREFIX, session_key)
         }
@@ -75,11 +78,21 @@ pub async fn issue_confirmation_token_pasetors(
 
     //Set custom expiration , default is 1 hour
     claims.expiration(&dt.to_rfc3339()).unwrap();
-    claims.add_additional("user_id", serde_json::json!(user_id)).unwrap();
-    claims.add_additional("session_key", serde_json::json!(session_key)).unwrap();
+    claims
+        .add_additional("user_id", serde_json::json!(user_id))
+        .unwrap();
+    claims
+        .add_additional("session_key", serde_json::json!(session_key))
+        .unwrap();
 
     let sk = SymmetricKey::<V4>::from(settings.secret.secret_key.as_bytes()).unwrap();
-    Ok(local::encrypt(&sk, &claims, None, Some(settings.secret.hmac_secret.as_bytes())).unwrap())
+    Ok(local::encrypt(
+        &sk,
+        &claims,
+        None,
+        Some(settings.secret.hmac_secret.as_bytes()),
+    )
+    .unwrap())
 }
 
 /// Verifies and destroys a token. A token is destroyed immediately
@@ -89,65 +102,67 @@ pub async fn issue_confirmation_token_pasetors(
 pub async fn verify_confirmation_token_pasetor(
     token: String,
     redis_connection: &mut deadpool_redis::redis::aio::Connection,
-    is_password: Option<bool>
+    is_password: Option<bool>,
 ) -> Result<ConfirmationToken, String> {
     let settings = crate::settings::get_settings().expect("Cannot load settings.");
     let sk = SymmetricKey::<V4>::from(settings.secret.secret_key.as_bytes()).unwrap();
 
     let validation_rules = ClaimsValidationRules::new();
-    let untrusted_token = UntrustedToken::<Local, V4>
-        ::try_from(&token)
-        .map_err(|e| { format!("TokenValidation: {}", e) })?;
+    let untrusted_token = UntrustedToken::<Local, V4>::try_from(&token)
+        .map_err(|e| format!("TokenValidation: {}", e))?;
 
-    let trusted_token = local
-        ::decrypt(
-            &sk,
-            &untrusted_token,
-            &validation_rules,
-            None,
-            Some(settings.secret.hmac_secret.as_bytes())
-        )
-        .map_err(|e| format!("Pasetor: {}", e))?;
+    let trusted_token = local::decrypt(
+        &sk,
+        &untrusted_token,
+        &validation_rules,
+        None,
+        Some(settings.secret.hmac_secret.as_bytes()),
+    )
+    .map_err(|e| format!("Pasetor: {}", e))?;
 
     let claims = trusted_token.payload_claims().unwrap();
 
     let uid = serde_json::to_value(claims.get_claim("user_id").unwrap()).unwrap();
 
     match serde_json::from_value::<String>(uid) {
-        Ok(uuid_string) =>
-            match uuid::Uuid::parse_str(&uuid_string) {
-                Ok(user_uuid) => {
-                    let sss_key = serde_json
-                        ::to_value(claims.get_claim("session_key").unwrap())
-                        .unwrap();
-                    let session_key = match serde_json::from_value::<String>(sss_key) {
-                        Ok(session_key) => session_key,
-                        Err(e) => {
-                            return Err(format!("{}", e));
-                        }
-                    };
-
-                    let redis_key = {
-                        if is_password.is_some() {
-                            format!("{}{}is_for_password_change", SESSION_KEY_PREFIX, session_key)
-                        } else {
-                            format!("{}{}", SESSION_KEY_PREFIX, session_key)
-                        }
-                    };
-
-                    if
-                        redis_connection
-                            .get::<_, Option<String>>(redis_key.clone()).await
-                            .map_err(|e| format!("{}", e))?
-                            .is_none()
-                    {
-                        return Err("Token has been used or expired.".to_string());
+        Ok(uuid_string) => match uuid::Uuid::parse_str(&uuid_string) {
+            Ok(user_uuid) => {
+                let sss_key =
+                    serde_json::to_value(claims.get_claim("session_key").unwrap()).unwrap();
+                let session_key = match serde_json::from_value::<String>(sss_key) {
+                    Ok(session_key) => session_key,
+                    Err(e) => {
+                        return Err(format!("{}", e));
                     }
-                    redis_connection.del(redis_key.clone()).await.map_err(|e| format!("{}", e))?;
-                    Ok(ConfirmationToken { user_id: user_uuid })
+                };
+
+                let redis_key = {
+                    if is_password.is_some() {
+                        format!(
+                            "{}{}is_for_password_change",
+                            SESSION_KEY_PREFIX, session_key
+                        )
+                    } else {
+                        format!("{}{}", SESSION_KEY_PREFIX, session_key)
+                    }
+                };
+
+                if redis_connection
+                    .get::<_, Option<String>>(redis_key.clone())
+                    .await
+                    .map_err(|e| format!("{}", e))?
+                    .is_none()
+                {
+                    return Err("Token has been used or expired.".to_string());
                 }
-                Err(e) => Err(format!("{}", e)),
+                redis_connection
+                    .del(redis_key.clone())
+                    .await
+                    .map_err(|e| format!("{}", e))?;
+                Ok(ConfirmationToken { user_id: user_uuid })
             }
+            Err(e) => Err(format!("{}", e)),
+        },
 
         Err(e) => Err(format!("{}", e)),
     }

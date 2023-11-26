@@ -1,8 +1,8 @@
 use sqlx::Row;
 
 use crate::{
-    utils::{ emails::send_multipart_email, auth::password::hash },
-    types::general::{ SuccessResponse, ErrorResponse },
+    types::general::{ErrorResponse, SuccessResponse},
+    utils::{auth::password::hash, emails::send_multipart_email},
 };
 
 #[derive(serde::Deserialize, Debug, serde::Serialize)]
@@ -27,12 +27,11 @@ fields(
     new_user_display_name = %new_user.display_name,
     new_user_unique_name = %new_user.unique_name,
 ))]
-
 #[actix_web::post("/register")]
 pub async fn register_user(
     pool: actix_web::web::Data<sqlx::postgres::PgPool>,
     new_user: actix_web::web::Json<NewUser>,
-    redis_pool: actix_web::web::Data<deadpool_redis::Pool>
+    redis_pool: actix_web::web::Data<deadpool_redis::Pool>,
 ) -> actix_web::HttpResponse {
     let mut transaction = match pool.begin().await {
         Ok(transaction) => transaction,
@@ -56,8 +55,14 @@ pub async fn register_user(
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "sqlx",tracing::Level::ERROR, "Failed to insert user into DB: {:#?}", e);
-            let error_message = if
-                e.as_database_error().unwrap().code().unwrap().parse::<i32>().unwrap() == 23505
+            let error_message = if e
+                .as_database_error()
+                .unwrap()
+                .code()
+                .unwrap()
+                .parse::<i32>()
+                .unwrap()
+                == 23505
             {
                 ErrorResponse {
                     error: "A user with that email address already exists.".to_string(),
@@ -73,7 +78,8 @@ pub async fn register_user(
 
     // send confirmation email to the new user.
     let mut redis_con = redis_pool
-        .get().await
+        .get()
+        .await
         .map_err(|e| {
             tracing::event!(target: "discord_backend", tracing::Level::ERROR, "{}", e);
             actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
@@ -89,8 +95,10 @@ pub async fn register_user(
             create_new_user.email,
             create_new_user.display_name,
             "verification_email.html",
-            &mut redis_con
-        ).await.unwrap();
+            &mut redis_con,
+        )
+        .await
+        .unwrap();
     }
 
     if transaction.commit().await.is_err() {
@@ -111,7 +119,7 @@ pub async fn register_user(
 ))]
 async fn insert_created_user_into_db(
     transaction: &mut sqlx::Transaction<'_, sqlx::Postgres>,
-    new_user: &CreateNewUser
+    new_user: &CreateNewUser,
 ) -> Result<uuid::Uuid, sqlx::Error> {
     let user_id = match
         sqlx
@@ -132,18 +140,17 @@ async fn insert_created_user_into_db(
         }
     };
 
-    match
-        sqlx
-            ::query(
-                "INSERT INTO user_profile (user_id) 
+    match sqlx::query(
+        "INSERT INTO user_profile (user_id) 
                 VALUES ($1) 
             ON CONFLICT (user_id) 
             DO NOTHING
-            RETURNING user_id"
-            )
-            .bind(user_id)
-            .map(|row: sqlx::postgres::PgRow| -> uuid::Uuid { row.get("user_id") })
-            .fetch_one(&mut *transaction.as_mut()).await
+            RETURNING user_id",
+    )
+    .bind(user_id)
+    .map(|row: sqlx::postgres::PgRow| -> uuid::Uuid { row.get("user_id") })
+    .fetch_one(&mut *transaction.as_mut())
+    .await
     {
         Ok(id) => {
             tracing::event!(target: "sqlx",tracing::Level::INFO, "User profile created successfully {}.", id);

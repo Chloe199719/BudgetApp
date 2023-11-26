@@ -1,6 +1,9 @@
-use discord_backend::types::{ general::ErrorResponse, UserVisible };
-use fake::{ faker::{ name::en::NameWithTitle, internet::en::SafeEmail }, Fake };
-use serde::{ Serialize, Deserialize };
+use discord_backend::types::{general::ErrorResponse, UserVisible};
+use fake::{
+    faker::{internet::en::SafeEmail, name::en::NameWithTitle},
+    Fake,
+};
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::helpers::spawn_app;
@@ -26,7 +29,8 @@ async fn test_login_user_failure_bad_request(pool: PgPool) {
     assert!(login_response.status().is_client_error());
 
     let error_response = login_response
-        .json::<ErrorResponse>().await
+        .json::<ErrorResponse>()
+        .await
         .expect("Failed to parse error response");
 
     assert_eq!(error_response.error, "Invalid email or password.");
@@ -48,10 +52,14 @@ async fn test_login_user_failure_not_found(pool: PgPool) {
     assert!(login_response.status().is_client_error());
 
     let error_response = login_response
-        .json::<ErrorResponse>().await
+        .json::<ErrorResponse>()
+        .await
         .expect("Failed to parse error response");
 
-    assert_eq!(error_response.error, "User with those details doesn't exist");
+    assert_eq!(
+        error_response.error,
+        "User with those details doesn't exist"
+    );
 }
 
 #[sqlx::test]
@@ -77,7 +85,10 @@ async fn test_login_user_success(pool: PgPool) {
 
     // Check response
 
-    let response = login_response.json::<UserVisible>().await.expect("Failed to parse response");
+    let response = login_response
+        .json::<UserVisible>()
+        .await
+        .expect("Failed to parse response");
 
     assert_eq!(response.email, app.test_user.email);
     assert!(response.is_active);

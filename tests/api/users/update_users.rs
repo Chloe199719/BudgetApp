@@ -1,6 +1,6 @@
-use discord_backend::types::{ general::ErrorResponse, UserVisible };
+use discord_backend::types::{general::ErrorResponse, UserVisible};
 use reqwest::multipart::Form;
-use serde::{ Deserialize, Serialize };
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::helpers::spawn_app;
@@ -20,15 +20,18 @@ async fn test_update_user_failure_not_logged_in(pool: PgPool) {
 
     // multipart form data
     let form = get_multipart_form_data();
-    let update_user_response = app.api_client
+    let update_user_response = app
+        .api_client
         .patch(&format!("{}/users/update_user", app.address))
         .multipart(form)
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     //Check response
     let response = update_user_response
-        .json::<ErrorResponse>().await
+        .json::<ErrorResponse>()
+        .await
         .expect("Failed to deserialize response");
 
     assert_eq!(
@@ -62,16 +65,19 @@ async fn test_update_user_success(pool: PgPool) {
     // multipart form
     let form = get_multipart_form_data();
 
-    let update_user_response = app.api_client
+    let update_user_response = app
+        .api_client
         .patch(&format!("{}/users/update_user", &app.address))
         .multipart(form)
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     // Check response
 
     let response = update_user_response
-        .json::<UserVisible>().await
+        .json::<UserVisible>()
+        .await
         .expect("Cannot get user response");
 
     assert_eq!(response.email, app.test_user.email);
@@ -80,7 +86,10 @@ async fn test_update_user_success(pool: PgPool) {
     assert_eq!(response.profile.github_link, Some(GITHUB_LINK.to_string()));
     assert_eq!(response.profile.about_me, Some(ABOUT_ME.to_string()));
     assert_eq!(response.profile.pronouns, Some(PRONOUNS.to_string()));
-    assert_eq!(response.profile.phone_number, Some(PHONE_NUMBER.to_string()));
+    assert_eq!(
+        response.profile.phone_number,
+        Some(PHONE_NUMBER.to_string())
+    );
 }
 
 fn get_multipart_form_data() -> Form {

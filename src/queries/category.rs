@@ -1,6 +1,6 @@
-use sqlx::{ Transaction, Postgres };
+use sqlx::{Postgres, Transaction};
 
-use crate::{ utils::constant::BACK_END_TARGET, types::categories::Category };
+use crate::{types::categories::Category, utils::constant::BACK_END_TARGET};
 
 #[rustfmt::skip]
 

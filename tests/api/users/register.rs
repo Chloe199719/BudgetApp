@@ -1,8 +1,14 @@
-use discord_backend::types::general::ErrorResponse;
-use fake::{ faker::{ internet::en::SafeEmail, name::en::{ NameWithTitle, FirstName } }, Fake };
-use serde::{ Serialize, Deserialize };
-use sqlx::PgPool;
 use crate::helpers::spawn_app;
+use discord_backend::types::general::ErrorResponse;
+use fake::{
+    faker::{
+        internet::en::SafeEmail,
+        name::en::{FirstName, NameWithTitle},
+    },
+    Fake,
+};
+use serde::{Deserialize, Serialize};
+use sqlx::PgPool;
 
 #[derive(Serialize, Debug, Deserialize)]
 pub struct NewUser<'a> {
@@ -92,27 +98,35 @@ async fn test_register_user_failure_email(pool: PgPool) {
         display_name,
     };
 
-    let response_one = app.api_client
+    let response_one = app
+        .api_client
         .post(&format!("{}/users/register", &app.address))
         .json(&new_user)
         .header("Content-Type", "application/json")
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     assert!(response_one.status().is_success());
 
-    let response_two = app.api_client
+    let response_two = app
+        .api_client
         .post(&format!("{}/users/register", &app.address))
         .json(&new_user)
         .header("Content-Type", "application/json")
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     assert!(response_two.status().is_client_error());
 
     let error_response = response_two
-        .json::<ErrorResponse>().await
+        .json::<ErrorResponse>()
+        .await
         .expect("Failed to deserialize error response.");
 
-    assert_eq!(error_response.error, "A user with that email address already exists.")
+    assert_eq!(
+        error_response.error,
+        "A user with that email address already exists."
+    )
 }

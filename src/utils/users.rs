@@ -1,13 +1,13 @@
+use crate::{queries::users::USER_AND_USER_PROFILE_QUERY, types::User};
 use sqlx::postgres::PgRow;
 use sqlx::Row;
-use crate::{ queries::users::USER_AND_USER_PROFILE_QUERY, types::User };
 
 #[tracing::instrument(name = "Getting an active user from the DB.", skip(pool))]
 pub async fn get_active_user_from_db(
     pool: Option<&sqlx::postgres::PgPool>,
     transaction: Option<&mut sqlx::Transaction<'_, sqlx::Postgres>>,
     id: Option<uuid::Uuid>,
-    email: Option<&String>
+    email: Option<&String>,
 ) -> Result<crate::types::User, sqlx::Error> {
     let mut query_builder = sqlx::query_builder::QueryBuilder::new(USER_AND_USER_PROFILE_QUERY);
 

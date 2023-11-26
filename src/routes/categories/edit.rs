@@ -1,13 +1,17 @@
-use actix_web::{ web::{ Path, Data }, put, HttpResponse };
+use actix_web::{
+    put,
+    web::{Data, Path},
+    HttpResponse,
+};
 use actix_web_validator::Json;
-use serde::{ Deserialize, Serialize };
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use validator::Validate;
 
 use crate::{
-    routes::users::logout::session_user_id,
-    types::{ general::ErrorResponse, categories::Category },
     queries::category::check_category_exists_return_it,
+    routes::users::logout::session_user_id,
+    types::{categories::Category, general::ErrorResponse},
     utils::constant::BACK_END_TARGET,
 };
 
@@ -34,7 +38,7 @@ pub async fn edit_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
     data: Path<PathCategory>,
-    edit_category: Json<EditCategory>
+    edit_category: Json<EditCategory>,
 ) -> HttpResponse {
     if !edit_category.is_some() {
         tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "No fields to edit");
@@ -57,18 +61,20 @@ pub async fn edit_category(
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again"
+                    .to_string(),
             });
         }
     };
     match check_category_exists_return_it(&mut transaction, data.category_id, session_uuid).await {
         Ok(category) => {
             let edit_category = edit_category.clone();
-            if
-                category.description ==
-                    edit_category.description.unwrap_or(category.description.clone()) &&
-                category.category_name ==
-                    edit_category.name.unwrap_or(category.category_name.clone())
+            if category.description
+                == edit_category
+                    .description
+                    .unwrap_or(category.description.clone())
+                && category.category_name
+                    == edit_category.name.unwrap_or(category.category_name.clone())
             {
                 tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "No fields to edit");
                 return HttpResponse::BadRequest().json(ErrorResponse {
@@ -77,19 +83,30 @@ pub async fn edit_category(
             }
         }
         Err(e) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
+            transaction
+                .rollback()
+                .await
+                .expect("Failed to rollback transaction");
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists: {:#?}", e);
             return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to edit category. Kindly try again.".to_string(),
             });
         }
     }
-    let return_data = match
-        edit_category_in_db(&mut transaction, data.category_id, session_uuid, &edit_category).await
+    let return_data = match edit_category_in_db(
+        &mut transaction,
+        data.category_id,
+        session_uuid,
+        &edit_category,
+    )
+    .await
     {
         Ok(e) => e,
         Err(e) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
+            transaction
+                .rollback()
+                .await
+                .expect("Failed to rollback transaction");
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to edit category in DB: {:#?}", e);
             return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to edit category. Kindly try again.".to_string(),

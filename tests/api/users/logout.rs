@@ -5,16 +5,17 @@ use sqlx::PgPool;
 use crate::helpers::spawn_app;
 
 #[derive(Debug, Deserialize, Serialize)]
-struct  LoginUser {
+struct LoginUser {
     email: String,
     password: String,
 }
 #[sqlx::test]
-async fn tesst_logout_failure(pool:PgPool){
+async fn tesst_logout_failure(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
-    //Test Logout User 
-    let logout_response = app.api_client
+    //Test Logout User
+    let logout_response = app
+        .api_client
         .post(&format!("{}/users/logout/", app.address))
         .send()
         .await
@@ -26,14 +27,12 @@ async fn tesst_logout_failure(pool:PgPool){
         .json::<ErrorResponse>()
         .await
         .expect("Failed to deserialize response");
-    
-    assert_eq!(response.error, "Failed to log user out.");
-  
 
+    assert_eq!(response.error, "Failed to log user out.");
 }
 
 #[sqlx::test]
-async fn test_logout_sucess(pool:PgPool) {
+async fn test_logout_sucess(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
     //First login
@@ -52,13 +51,14 @@ async fn test_logout_sucess(pool:PgPool) {
     assert!(cookie_str.contains("sessionid="));
 
     //Test Logout users
-    let logout_response = app.api_client
+    let logout_response = app
+        .api_client
         .post(&format!("{}/users/logout/", app.address))
         .send()
         .await
         .expect("Failed to execute request.");
 
-    //Check response 
+    //Check response
 
     let response = logout_response
         .json::<SuccessResponse>()

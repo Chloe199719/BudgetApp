@@ -1,11 +1,11 @@
 use chrono::DateTime;
-use serde::{ Deserialize, Serialize };
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-pub mod tokens;
-pub mod general;
-pub mod upload;
 pub mod categories;
+pub mod general;
+pub mod tokens;
+pub mod upload;
 #[derive(Serialize)]
 pub struct User {
     pub id: Uuid,

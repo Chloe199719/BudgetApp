@@ -1,11 +1,11 @@
+use crate::{helpers::spawn_app, users::login::LoginUser};
 use discord_backend::{
-    types::{ UserVisible, categories::Category, general::ErrorResponse },
     routes::categories::create_category::CreateCategory,
+    types::{categories::Category, general::ErrorResponse, UserVisible},
 };
 use fake::faker::name::en::Name;
-use sqlx::PgPool;
 use fake::Fake;
-use crate::{ helpers::spawn_app, users::login::LoginUser };
+use sqlx::PgPool;
 // use fake::faker::lorem::en::Paragraph;
 use fake::faker::lorem::en::Sentence;
 #[sqlx::test]
@@ -23,7 +23,8 @@ async fn test_create_category_success(pool: PgPool) {
     assert!(login_response.status().is_success());
 
     let login_response_body = login_response
-        .json::<UserVisible>().await
+        .json::<UserVisible>()
+        .await
         .expect("Failed to parse login response");
 
     //Act - Part 2 - Create category
@@ -32,21 +33,33 @@ async fn test_create_category_success(pool: PgPool) {
         description: Sentence(1..2).fake(),
     };
 
-    let create_category_response = app.api_client
+    let create_category_response = app
+        .api_client
         .post(&format!("{}/categories/create", app.address))
         .json(&create_category_body)
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     assert!(create_category_response.status().is_success());
 
     let create_category_response_body = create_category_response
-        .json::<Category>().await
+        .json::<Category>()
+        .await
         .expect("Failed to parse create category response");
 
-    assert_eq!(create_category_response_body.category_name, create_category_body.name);
-    assert_eq!(create_category_response_body.description, create_category_body.description);
-    assert_eq!(create_category_response_body.user_id, login_response_body.id);
+    assert_eq!(
+        create_category_response_body.category_name,
+        create_category_body.name
+    );
+    assert_eq!(
+        create_category_response_body.description,
+        create_category_body.description
+    );
+    assert_eq!(
+        create_category_response_body.user_id,
+        login_response_body.id
+    );
 }
 
 #[sqlx::test]
@@ -58,15 +71,18 @@ async fn test_create_category_error_not_logged_in(pool: PgPool) {
         description: Sentence(1..2).fake(),
     };
 
-    let create_category_response = app.api_client
+    let create_category_response = app
+        .api_client
         .post(&format!("{}/categories/create", app.address))
         .json(&create_category_body)
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     assert!(create_category_response.status().is_client_error());
     let create_category_response_body = create_category_response
-        .json::<ErrorResponse>().await
+        .json::<ErrorResponse>()
+        .await
         .expect("Failed to parse create category response");
     assert_eq!(
         create_category_response_body.error,
@@ -88,14 +104,17 @@ async fn test_create_category_error_wrong_fields(pool: PgPool) {
     assert!(login_response.status().is_success());
 
     let _login_response_body = login_response
-        .json::<UserVisible>().await
+        .json::<UserVisible>()
+        .await
         .expect("Failed to parse login response");
 
     //Act - Part 2 - Create category
 
-    let create_category_response = app.api_client
+    let create_category_response = app
+        .api_client
         .post(&format!("{}/categories/create", app.address))
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     assert!(create_category_response.status().is_client_error());
@@ -116,7 +135,8 @@ async fn test_create_category_ir_error_field_validation_fail(pool: PgPool) {
     assert!(login_response.status().is_success());
 
     let _login_response_body = login_response
-        .json::<UserVisible>().await
+        .json::<UserVisible>()
+        .await
         .expect("Failed to parse login response");
 
     //Act - Part 2 - Create category
@@ -125,10 +145,12 @@ async fn test_create_category_ir_error_field_validation_fail(pool: PgPool) {
         description: Sentence(1..2).fake(),
     };
 
-    let create_category_response = app.api_client
+    let create_category_response = app
+        .api_client
         .post(&format!("{}/categories/create", app.address))
         .json(&create_category_body)
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     assert!(create_category_response.status().is_client_error());

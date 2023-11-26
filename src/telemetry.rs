@@ -1,15 +1,17 @@
-use std::sync::Arc;
-use serde::{ Serialize, Deserialize };
-use serde_json::json;
-use tracing::field::{ Field, Visit };
 use axiom_rs::Client;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use std::sync::Arc;
 use tokio::spawn;
-use tracing::{ Subscriber, Event };
-use tracing_subscriber::{ layer::{ SubscriberExt, Context }, Layer };
+use tracing::field::{Field, Visit};
+use tracing::{Event, Subscriber};
+use tracing_subscriber::{
+    layer::{Context, SubscriberExt},
+    Layer,
+};
 
 struct LogData {
     message: String,
-
     // Add other fields as needed
 }
 
@@ -46,9 +48,9 @@ struct ReturnAxiom {
     metadata: String,
     target: String,
 }
-impl<S> Layer<S>
-    for AxiomLayer
-    where S: Subscriber + for<'span> tracing_subscriber::registry::LookupSpan<'span>
+impl<S> Layer<S> for AxiomLayer
+where
+    S: Subscriber + for<'span> tracing_subscriber::registry::LookupSpan<'span>,
 {
     fn on_event(&self, event: &Event, _ctx: Context<S>) {
         let mut log_data = LogData {
@@ -62,31 +64,31 @@ impl<S> Layer<S>
         let json_log = match event.metadata().level() {
             &tracing::Level::ERROR => {
                 json!({
-                    "error": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),     
+                    "error": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
             &tracing::Level::WARN => {
                 json!({
-                    "warn": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),     
+                    "warn": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
             &tracing::Level::INFO => {
                 json!({
-                    "info": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),     
+                    "info": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
             &tracing::Level::DEBUG => {
                 json!({
-                    "debug": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),     
+                    "debug": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
             &tracing::Level::TRACE => {
                 json!({
-                    "trace": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),     
+                    "trace": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
@@ -103,16 +105,20 @@ impl<S> Layer<S>
 }
 
 pub fn get_subscriber(debug: bool) -> impl tracing::Subscriber + Send + Sync {
-    let env_filter = if debug { "trace".to_string() } else { "info".to_string() };
-    let env_filter = tracing_subscriber::EnvFilter
-        ::try_from_default_env()
+    let env_filter = if debug {
+        "trace".to_string()
+    } else {
+        "info".to_string()
+    };
+    let env_filter = tracing_subscriber::EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new(env_filter));
-    let env_filter = env_filter.add_directive(
-        "actix_http=info".parse().expect("Invalid directive")
-    );
+    let env_filter =
+        env_filter.add_directive("actix_http=info".parse().expect("Invalid directive"));
     let env_filter = env_filter.add_directive("hyper=info".parse().expect("Invalid directive"));
     let stdout_layer = tracing_subscriber::fmt::layer().pretty();
-    let subscriber = tracing_subscriber::Registry::default().with(env_filter).with(stdout_layer);
+    let subscriber = tracing_subscriber::Registry::default()
+        .with(env_filter)
+        .with(stdout_layer);
     let json_log = if !debug {
         let json_log = tracing_subscriber::fmt::layer().json();
         Some(json_log)

@@ -1,5 +1,4 @@
-pub const USER_AND_USER_PROFILE_QUERY: &str =
-    "SELECT 
+pub const USER_AND_USER_PROFILE_QUERY: &str = "SELECT 
     u.id as u_id,
     u.email as u_email,
     u.password as u_password,

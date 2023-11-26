@@ -1,8 +1,5 @@
 use discord_backend::{
-    settings,
-    telemetry,
-    startup::Application,
-    utils::constant::BACK_END_TARGET,
+    settings, startup::Application, telemetry, utils::constant::BACK_END_TARGET,
 };
 use dotenv::dotenv;
 

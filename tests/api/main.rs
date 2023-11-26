@@ -1,3 +1,3 @@
+mod categories;
 mod helpers;
 mod users;
-mod categories;

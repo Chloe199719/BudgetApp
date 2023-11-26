@@ -1,5 +1,5 @@
-use discord_backend::types::{ general::ErrorResponse, UserVisible };
-use serde::{ Serialize, Deserialize };
+use discord_backend::types::{general::ErrorResponse, UserVisible};
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::helpers::spawn_app;
@@ -15,14 +15,17 @@ async fn test_get_current_user_failure(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
     // Then get current user
-    let get_user_response = app.api_client
+    let get_user_response = app
+        .api_client
         .get(&format!("{}/users/current-user", &app.address))
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     // Check response
     let response = get_user_response
-        .json::<ErrorResponse>().await
+        .json::<ErrorResponse>()
+        .await
         .expect("Cannot get user response");
 
     assert_eq!(
@@ -44,13 +47,18 @@ async fn test_get_current_user_success(pool: PgPool) {
     assert!(login_response.status().is_success());
 
     // Then get current user
-    let get_user_response = app.api_client
+    let get_user_response = app
+        .api_client
         .get(&format!("{}/users/current-user", &app.address))
-        .send().await
+        .send()
+        .await
         .expect("Failed to execute request.");
 
     // Check response
-    let response = get_user_response.json::<UserVisible>().await.expect("Cannot get user response");
+    let response = get_user_response
+        .json::<UserVisible>()
+        .await
+        .expect("Cannot get user response");
 
     assert_eq!(response.email, app.test_user.email);
     assert!(response.is_active);

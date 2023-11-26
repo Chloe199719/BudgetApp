@@ -1,12 +1,12 @@
-use actix_web::{ web::Data, HttpResponse };
+use crate::utils::constant::APP_NAME;
+use crate::{
+    types::general::{ErrorResponse, SuccessResponse},
+    utils::emails::send_multipart_email,
+};
+use actix_web::{web::Data, HttpResponse};
 use serde::Deserialize;
 use sqlx::PgPool;
 use uuid::Uuid;
-use crate::utils::constant::APP_NAME;
-use crate::{
-    types::general::{ ErrorResponse, SuccessResponse },
-    utils::emails::send_multipart_email,
-};
 
 #[derive(Deserialize, Debug)]
 pub struct UserEmail {
@@ -24,7 +24,7 @@ pub struct SimpleUser {
 pub async fn regenerate_token(
     pool: Data<PgPool>,
     user_email: actix_web::web::Json<UserEmail>,
-    redis_pool: Data<deadpool_redis::Pool>
+    redis_pool: Data<deadpool_redis::Pool>,
 ) -> HttpResponse {
     match get_user_who_is_not_active(&pool, &user_email.email).await {
         Ok(visible_user_details) => {
@@ -43,8 +43,10 @@ pub async fn regenerate_token(
                 visible_user_details.email,
                 visible_user_details.display_name,
                 "verification_email.html",
-                &mut redis_con
-            ).await.unwrap();
+                &mut redis_con,
+            )
+            .await
+            .unwrap();
             HttpResponse::Ok().json(SuccessResponse {
                 message: "We have sent you a new verification email.".to_string(),
             });
