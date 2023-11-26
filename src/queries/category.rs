@@ -3,7 +3,19 @@ use sqlx::PgPool;
 use crate::{ types::categories::Category, utils::constant::BACK_END_TARGET };
 
 #[rustfmt::skip]
-
+/// Check if a category exists in the database for a given category ID and user ID.
+///
+/// # Arguments
+///
+/// * `pool` - A reference to the PostgreSQL connection pool.
+/// * `category_id` - The ID of the category to check.
+/// * `user_id` - The ID of the user associated with the category.
+///
+/// # Returns
+///
+/// Returns a `Result` indicating whether the category exists or not. If the category exists, it
+/// returns `Ok(true)`, otherwise it returns `Ok(false)`. If there is an error while querying the
+/// database, it returns an `Err` containing the `sqlx::Error`.
 #[tracing::instrument(name = "Check if category exists", skip(pool))]
 pub async fn check_category_exists (
     pool: &PgPool,
