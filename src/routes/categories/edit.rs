@@ -42,16 +42,6 @@ pub async fn edit_category(
             error: "No fields to edit".to_string(),
         });
     }
-
-    let mut transaction = match pool.begin().await {
-        Ok(transaction) => transaction,
-        Err(e) => {
-            tracing::event!(target: "discord_backend", tracing::Level::ERROR, "Unable to begin DB transaction: {:#?}", e);
-            return HttpResponse::InternalServerError().json(ErrorResponse {
-                error: "Something unexpected happened. Kindly try again.".to_string(),
-            });
-        }
-    };
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
         Err(e) => {
@@ -77,7 +67,6 @@ pub async fn edit_category(
             }
         }
         Err(e) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists: {:#?}", e);
             return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to edit category. Kindly try again.".to_string(),
@@ -85,35 +74,25 @@ pub async fn edit_category(
         }
     }
     let return_data = match
-        edit_category_in_db(&mut transaction, data.category_id, session_uuid, &edit_category).await
+        edit_category_in_db(&pool, data.category_id, session_uuid, &edit_category).await
     {
         Ok(e) => e,
         Err(e) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to edit category in DB: {:#?}", e);
             return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to edit category. Kindly try again.".to_string(),
             });
         }
     };
-    match transaction.commit().await.is_ok() {
-        true => {
-            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Successfully edited category");
-            return HttpResponse::Ok().json(return_data);
-        }
-        false => {
-            tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to commit transaction");
-            return HttpResponse::InternalServerError().json(ErrorResponse {
-                error: "Failed to edit category. Kindly try again.".to_string(),
-            });
-        }
-    }
+
+    tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Successfully edited category");
+    return HttpResponse::Ok().json(return_data);
 }
 
 #[rustfmt::skip]
-#[tracing::instrument(name = "Edit category on DB", skip(transaction))]
+#[tracing::instrument(name = "Edit category on DB", skip(pool))]
 async fn edit_category_in_db(
-    transaction: &mut sqlx::Transaction<'_, sqlx::Postgres>,
+    pool: &PgPool,
     category_id: i32,
     user_id: uuid::Uuid,
     edit_data: &EditCategory
@@ -133,7 +112,7 @@ async fn edit_category_in_db(
         category_id,
         user_id
     )
-    .fetch_one(transaction.as_mut())
+    .fetch_one(pool)
     .await
     {
         Ok(e) => {
