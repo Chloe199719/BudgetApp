@@ -1,12 +1,12 @@
-use sqlx::{Postgres, Transaction};
+use sqlx::{ Postgres, Transaction, PgPool };
 
-use crate::{types::categories::Category, utils::constant::BACK_END_TARGET};
+use crate::{ types::categories::Category, utils::constant::BACK_END_TARGET };
 
 #[rustfmt::skip]
 
-#[tracing::instrument(name = "Check if category exists", skip(transaction))]
+#[tracing::instrument(name = "Check if category exists", skip(pool))]
 pub async fn check_category_exists (
-    transaction: &mut Transaction<'_, Postgres>,
+    pool: &PgPool,
     category_id: i32,
     user_id: uuid::Uuid
 ) -> Result<bool, sqlx::Error> {
@@ -21,7 +21,7 @@ pub async fn check_category_exists (
                 category_id,
                 user_id
             )
-            .fetch_one(transaction.as_mut()).await
+            .fetch_one(pool).await
     {
         Ok(e) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Successfully checked if category exists");
@@ -35,9 +35,9 @@ pub async fn check_category_exists (
 }
 #[rustfmt::skip]
 
-#[tracing::instrument(name = "Check if category exists", skip(transaction))]
+#[tracing::instrument(name = "Check if category exists", skip(pool))]
 pub async fn check_category_exists_return_it (
-    transaction: &mut Transaction<'_, Postgres>,
+    pool:  &sqlx::PgPool,
     category_id: i32,
     user_id: uuid::Uuid
 ) -> Result<Category, sqlx::Error> {
@@ -51,7 +51,7 @@ pub async fn check_category_exists_return_it (
                 category_id,
                 user_id
             )
-            .fetch_one(transaction.as_mut()).await
+            .fetch_one(pool).await
     {
         Ok(e) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Category exits returning it");
