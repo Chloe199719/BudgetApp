@@ -11,5 +11,6 @@ pub fn categories_routes_config(cfg: &mut ServiceConfig) {
             .service(create_category::create_category)
             .service(delete_category::delete_category)
             .service(edit::edit_category)
+            .service(get_category_by_id::get_category_by_id)
     );
 }

@@ -1,6 +1,6 @@
 use actix_web::{ delete, web::{ Data, Path }, HttpResponse };
 use serde::{ Deserialize, Serialize };
-use sqlx::{ PgPool, Postgres, Transaction };
+use sqlx::PgPool;
 
 use crate::{
     queries::category::check_category_exists,

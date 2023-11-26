@@ -1,4 +1,4 @@
-use sqlx::{ Postgres, Transaction, PgPool };
+use sqlx::PgPool;
 
 use crate::{ types::categories::Category, utils::constant::BACK_END_TARGET };
 
