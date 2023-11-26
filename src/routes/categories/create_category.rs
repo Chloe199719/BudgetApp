@@ -2,11 +2,11 @@ use actix_web::web::Data;
 
 use crate::{
     routes::users::logout::session_user_id,
-    types::{categories::Category, general::ErrorResponse},
+    types::{ categories::Category, general::ErrorResponse },
     utils::constant::BACK_END_TARGET,
 };
 use actix_web_validator::Json;
-use serde::{Deserialize, Serialize};
+use serde::{ Deserialize, Serialize };
 use sqlx::PgPool;
 use validator::Validate;
 #[derive(Debug, Deserialize, Serialize, Validate)]
@@ -22,15 +22,14 @@ pub struct CreateCategory {
 pub async fn create_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
-    data: Json<CreateCategory>,
+    data: Json<CreateCategory>
 ) -> actix_web::HttpResponse {
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return actix_web::HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again"
-                    .to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
             });
         }
     };
