@@ -7,11 +7,11 @@ use validator::Validate;
 use crate::{
     routes::users::logout::session_user_id,
     types::{ general::ErrorResponse, categories::Category },
-    queries::category::check_category_exists,
+    queries::category::check_category_exists_return_it,
     utils::constant::BACK_END_TARGET,
 };
 
-#[derive(Debug, Deserialize, Serialize, Validate)]
+#[derive(Debug, Deserialize, Serialize, Validate, Clone)]
 pub struct EditCategory {
     #[validate(length(min = 3, max = 50))]
     pub name: Option<String>,
@@ -61,14 +61,20 @@ pub async fn edit_category(
             });
         }
     };
-    match check_category_exists(&mut transaction, data.category_id, session_uuid).await {
-        Ok(true) => (),
-        Ok(false) => {
-            transaction.rollback().await.expect("Failed to rollback transaction");
-            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Category does not exist");
-            return HttpResponse::BadRequest().json(ErrorResponse {
-                error: "Category does not exist".to_string(),
-            });
+    match check_category_exists_return_it(&mut transaction, data.category_id, session_uuid).await {
+        Ok(category) => {
+            let edit_category = edit_category.clone();
+            if
+                category.description ==
+                    edit_category.description.unwrap_or(category.description.clone()) &&
+                category.category_name ==
+                    edit_category.name.unwrap_or(category.category_name.clone())
+            {
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "No fields to edit");
+                return HttpResponse::BadRequest().json(ErrorResponse {
+                    error: "No fields to edit".to_string(),
+                });
+            }
         }
         Err(e) => {
             transaction.rollback().await.expect("Failed to rollback transaction");
