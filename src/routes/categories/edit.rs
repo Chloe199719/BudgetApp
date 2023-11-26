@@ -119,10 +119,7 @@ async fn edit_category_in_db(
             SET
                 category_name = COALESCE($1, category_name),
                 description = COALESCE($2, description)
-            WHERE category_id = $3 AND user_id = $4 AND (
-                $1 IS DISTINCT FROM category_name OR
-                $2 IS DISTINCT FROM description
-            )
+            WHERE category_id = $3 AND user_id = $4 
             RETURNING *
         "#,
         edit_data.name,
