@@ -134,8 +134,8 @@ async fn insert_created_user_into_db(
     match
         sqlx
             ::query(
-                " INSERT INTO categories (category_name, description, user_id)
-            VALUES ($1, $2, $3)"
+                " INSERT INTO categories (category_name, description, user_id, is_default)
+            VALUES ($1, $2, $3, false)"
             )
             .bind("DEFAULT")
             .bind("Default Category")
