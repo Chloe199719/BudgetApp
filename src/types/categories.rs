@@ -9,5 +9,6 @@ pub struct Category {
     pub description: String,
     pub user_id: Uuid,
     pub created_at: DateTime<chrono::Utc>,
+    pub updated_at: DateTime<chrono::Utc>,
 }
 //TODO: add updated_at
