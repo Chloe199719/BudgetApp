@@ -1,15 +1,11 @@
-use actix_web::{
-    delete,
-    web::{Data, Path},
-    HttpResponse,
-};
-use serde::{Deserialize, Serialize};
-use sqlx::{PgPool, Postgres, Transaction};
+use actix_web::{ delete, web::{ Data, Path }, HttpResponse };
+use serde::{ Deserialize, Serialize };
+use sqlx::PgPool;
 
 use crate::{
     queries::category::check_category_exists,
     routes::users::logout::session_user_id,
-    types::general::{ErrorResponse, SuccessResponse},
+    types::general::{ ErrorResponse, SuccessResponse },
     utils::constant::BACK_END_TARGET,
 };
 
@@ -23,44 +19,26 @@ pub struct DeleteCategory {
 pub async fn delete_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
-    data: Path<DeleteCategory>,
+    data: Path<DeleteCategory>
 ) -> HttpResponse {
-    let mut transaction = match pool.begin().await {
-        Ok(transaction) => transaction,
-        Err(e) => {
-            tracing::event!(target: "discord_backend", tracing::Level::ERROR, "Unable to begin DB transaction: {:#?}", e);
-            return HttpResponse::InternalServerError().json(ErrorResponse {
-                error: "Something unexpected happened. Kindly try again.".to_string(),
-            });
-        }
-    };
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again"
-                    .to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
             });
         }
     };
-    match check_category_exists(&mut transaction, data.category_id, session_uuid).await {
+    match check_category_exists(&pool, data.category_id, session_uuid).await {
         Ok(true) => (),
         Ok(false) => {
-            transaction
-                .rollback()
-                .await
-                .expect("Failed to rollback transaction");
             tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Category does not exist");
             return HttpResponse::BadRequest().json(ErrorResponse {
                 error: "Category does not exist".to_string(),
             });
         }
         Err(e) => {
-            transaction
-                .rollback()
-                .await
-                .expect("Failed to rollback transaction");
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists: {:#?}", e);
             return HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to delete category. Kindly try again.".to_string(),
@@ -68,18 +46,8 @@ pub async fn delete_category(
         }
     }
 
-    match delete_category_in_db(&mut transaction, data.category_id, session_uuid).await {
+    match delete_category_in_db(&pool, data.category_id, session_uuid).await {
         Ok(_) => {
-            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Successfully deleted category");
-            match transaction.commit().await.is_ok() {
-                true => (),
-                false => {
-                    tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to commit transaction");
-                    return HttpResponse::InternalServerError().json(ErrorResponse {
-                        error: "Failed to delete category. Kindly try again.".to_string(),
-                    });
-                }
-            }
             return HttpResponse::Ok().json(SuccessResponse {
                 message: "Successfully deleted category".to_string(),
             });
@@ -94,9 +62,9 @@ pub async fn delete_category(
 }
 #[rustfmt::skip]
 
-#[tracing::instrument(name = "Deleting a category in DB", skip(transaction))]
+#[tracing::instrument(name = "Deleting a category in DB", skip(pool))]
 async fn delete_category_in_db(
-    transaction: &mut Transaction<'_, Postgres>,
+    pool: &PgPool,
     category_id: i32,
     user_id: uuid::Uuid
 ) -> Result<(), sqlx::Error> {
@@ -109,7 +77,7 @@ async fn delete_category_in_db(
                 category_id,
                 user_id
             )
-            .execute(transaction.as_mut()).await
+            .execute(pool).await
     {
         Ok(_) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Successfully deleted category");
