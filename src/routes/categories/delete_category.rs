@@ -72,7 +72,7 @@ async fn delete_category_in_db(
         sqlx::query!(
                 r#"
                     DELETE FROM categories
-                    WHERE category_id = $1 AND user_id = $2
+                    WHERE category_id = $1 AND user_id = $2 AND is_default = false
             "#,
                 category_id,
                 user_id
