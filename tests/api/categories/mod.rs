@@ -9,6 +9,10 @@ mod create_category;
 mod delete_category;
 mod edit_category;
 
+mod get_category_by_id;
+pub const TEST_CATEGORY_NAME: &str = "Test Category";
+pub const TEST_CATEGORY_DESCRIPTION: &str = "Test Description";
+
 #[rustfmt::skip]
 pub async fn create_category_in_db(
     pool: &PgPool,
