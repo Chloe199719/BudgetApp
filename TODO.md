@@ -4,7 +4,7 @@
 
 1. ADD tests to make sure no default categories can be deleted ❌
 2. Add tests to make sure there default category when creating a new user ✅
-3. Add tests to get categories by id ✅
+3. Add tests to get categories by id ✅ #20
 
 ## Api to create
 
