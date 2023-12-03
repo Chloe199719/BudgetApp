@@ -1,3 +1,5 @@
-mod categories;
-mod helpers;
-mod users;
+pub mod helpers;
+
+
+pub mod categories;
+pub mod users;
