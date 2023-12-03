@@ -94,7 +94,7 @@ async fn test_delete_category_error_category_dosent_exist(pool: PgPool) {
     //Act - Part 2 - Delete category
     let delete_category_response = app
         .api_client
-        .delete(&format!("{}/categories/delete/{}", app.address, 1))
+        .delete(&format!("{}/categories/delete/{}", app.address, 99))
         .send()
         .await
         .expect("Failed to execute request.");

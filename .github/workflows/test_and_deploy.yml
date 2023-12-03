@@ -70,8 +70,11 @@ jobs:
       - name: Build
         run: cargo build
 
-      - name: Run tests
-        run: cargo test -- --test-threads=32
+      - name: Run tests Authentication
+        run: cargo test -- --test-threads=32 api users
+
+      - name: Run tests Categories
+        run: cargo test -- --test-threads=32 api categories
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3

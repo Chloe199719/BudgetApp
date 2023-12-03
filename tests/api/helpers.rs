@@ -12,7 +12,8 @@ use once_cell::sync::Lazy;
 use reqwest::{redirect::Policy, Client, Response};
 use serde::Serialize;
 use sqlx::PgPool;
-
+use super::categories::TEST_CATEGORY_DESCRIPTION;
+use super::categories::TEST_CATEGORY_NAME;
 static TRACING: Lazy<()> = Lazy::new(|| {
     let subscriber = get_subscriber(false);
     init_subscriber(subscriber);
@@ -117,5 +118,17 @@ impl TestUser {
             .execute(pool)
             .await
             .expect("Failed to insert test user profile.");
+        sqlx::query!(
+            "INSERT INTO categories (category_name, description, user_id, is_default)
+                    VALUES ($1, $2, $3 , $4)",
+                    TEST_CATEGORY_NAME,
+                    TEST_CATEGORY_DESCRIPTION,
+                    user_id.id,
+                    false)
+                    .execute(pool)
+                    .await
+                    .expect("Failed to insert test category.");
+                    
+        
     }
 }
