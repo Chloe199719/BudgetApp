@@ -141,7 +141,7 @@ async fn run(
     // Server protocol configuration
     if settings.application.protocol == "http" {
         let server = server.listen(listener)?.run();
-        return Ok(server);
+        Ok(server)
     } else {
         let mut builder =
             openssl::ssl::SslAcceptor::mozilla_intermediate(openssl::ssl::SslMethod::tls())
@@ -153,6 +153,6 @@ async fn run(
             .set_certificate_chain_file("chloepratas.com.crt")
             .expect("Failed to set certificate chain file");
         let server = server.listen_openssl(listener, builder)?.run();
-        return Ok(server);
+        Ok(server)
     }
 }

@@ -61,32 +61,32 @@ where
         event.record(&mut &mut log_data);
 
         // Convert log_data into a JSON string
-        let json_log = match event.metadata().level() {
-            &tracing::Level::ERROR => {
+        let json_log = match *event.metadata().level() {
+            tracing::Level::ERROR => {
                 json!({
                     "error": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
-            &tracing::Level::WARN => {
+            tracing::Level::WARN => {
                 json!({
                     "warn": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
-            &tracing::Level::INFO => {
+            tracing::Level::INFO => {
                 json!({
                     "info": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
-            &tracing::Level::DEBUG => {
+            tracing::Level::DEBUG => {
                 json!({
                     "debug": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
                 })
             }
-            &tracing::Level::TRACE => {
+            tracing::Level::TRACE => {
                 json!({
                     "trace": format!("message - {} | metadata - {} | target - {}",log_data.message,event.metadata().name().to_string(),
                     event.metadata().target().to_string())
@@ -127,8 +127,8 @@ pub fn get_subscriber(debug: bool) -> impl tracing::Subscriber + Send + Sync {
     };
     let subscriber = subscriber.with(json_log);
     let axiom_layer = AxiomLayer::new();
-    let subscriber = subscriber.with(axiom_layer);
-    subscriber
+    
+    subscriber.with(axiom_layer)
 }
 
 pub fn init_subscriber(subscriber: impl tracing::Subscriber + Send + Sync) {
