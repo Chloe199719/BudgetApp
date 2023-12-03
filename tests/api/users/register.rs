@@ -19,7 +19,7 @@ pub struct NewUser<'a> {
 }
 #[rustfmt::skip]
 #[sqlx::test]
-#[ignore]
+// #[ignore]
 async fn test_register_user_success(pool:PgPool){
     let app = spawn_app(pool.clone()).await;
 
@@ -81,7 +81,7 @@ async fn test_register_user_success(pool:PgPool){
 }
 
 #[sqlx::test]
-#[ignore]
+// #[ignore]
 async fn test_register_user_failure_email(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
