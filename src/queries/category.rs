@@ -1,6 +1,6 @@
 use sqlx::PgPool;
 
-use crate::{ types::categories::Category, utils::constant::BACK_END_TARGET };
+use crate::{types::categories::Category, utils::constant::BACK_END_TARGET};
 
 #[rustfmt::skip]
 /// Check if a category exists in the database for a given category ID and user ID.
@@ -74,6 +74,45 @@ pub async fn check_category_exists_return_it (
             match e {
                 sqlx::Error::RowNotFound => {
                     tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Category does not exist");
+                    Err(e)
+                
+                }
+                _ => {
+                    tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists in DB: {:#?}", e);
+                    Err(e)
+                }
+            }
+        }
+    }
+}
+#[rustfmt::skip]
+
+#[tracing::instrument(name = "Check if category exists", skip(pool))]
+pub async fn get_all_categories_by_user_id (
+    pool:  &sqlx::PgPool,
+    user_id: uuid::Uuid
+) -> Result<Vec<Category>, sqlx::Error> {
+    match
+        sqlx::query_as!(
+            Category,
+                    r#"
+                        SELECT * FROM categories
+                        WHERE user_id = $1
+                        ORDER BY created_at ASC
+                    "#,
+                user_id
+            )
+            .fetch_all(pool).await
+    {
+        Ok(e) => {
+            tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Getting all categories by user id");
+            Ok(e)
+        },
+        Err(e) => {
+           
+            match e {
+                sqlx::Error::RowNotFound => {
+                    tracing::event!(target:BACK_END_TARGET, tracing::Level::WARN, "User does not have any categories");
                     Err(e)
                 
                 }
