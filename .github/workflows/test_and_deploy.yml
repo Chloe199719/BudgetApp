@@ -89,8 +89,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: chloe1997/discord-backend:latest
-          cache-from: type=registry,ref=chloe1997/discord-backend:latest
+          tags: chloe1997/budget_app:latest
+          cache-from: type=registry,ref=chloe1997/budget_app:latest
           cache-to: type=inline
   deploy:
     needs: build

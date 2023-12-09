@@ -14,7 +14,7 @@ RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 # Build our project
 # ENV SQLX_OFFLINE true
-RUN cargo build --release --bin discord-backend
+RUN cargo build --release --bin budget_app
 FROM debian:bookworm AS runtime
 WORKDIR /app
 RUN apt-get update -y \
@@ -23,9 +23,9 @@ RUN apt-get update -y \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/target/release/discord-backend discord-backend
-COPY settings settings
+COPY --from=builder /app/target/release/budget_app budget_app
+# COPY settings settings
 COPY templates templates
 ENV APP_ENVIRONMENT production
 ENV APP_DEBUG false
-ENTRYPOINT ["./discord-backend"]
+ENTRYPOINT ["./budget_app"]
