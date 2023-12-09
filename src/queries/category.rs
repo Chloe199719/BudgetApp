@@ -91,18 +91,18 @@ pub async fn check_category_exists_return_it (
 pub async fn get_all_categories_by_user_id (
     pool:  &sqlx::PgPool,
     user_id: uuid::Uuid
-) -> Result<Category, sqlx::Error> {
+) -> Result<Vec<Category>, sqlx::Error> {
     match
         sqlx::query_as!(
             Category,
                     r#"
                         SELECT * FROM categories
                         WHERE user_id = $1
-                
+                        ORDER BY created_at ASC
                     "#,
                 user_id
             )
-            .fetch_one(pool).await
+            .fetch_all(pool).await
     {
         Ok(e) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Getting all categories by user id");
