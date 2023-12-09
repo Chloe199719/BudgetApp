@@ -1,12 +1,16 @@
-use discord_backend::types::{UserVisible, categories::Category};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+use BudgetAppBe::types::{categories::Category, UserVisible};
 
-use crate::{helpers::spawn_app, users::login::LoginUser, categories::{create_category_in_db, TEST_CATEGORY_NAME, TEST_CATEGORY_DESCRIPTION}};
+use crate::{
+    categories::{create_category_in_db, TEST_CATEGORY_DESCRIPTION, TEST_CATEGORY_NAME},
+    helpers::spawn_app,
+    users::login::LoginUser,
+};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct EditCategory {
-    id: i32
+    id: i32,
 }
 
 #[sqlx::test]
@@ -47,19 +51,13 @@ async fn test_get_category_by_id_success(pool: PgPool) {
         .await
         .expect("Failed to parse get category response");
 
-        println!("{:?}", get_category_response_body);
+    println!("{:?}", get_category_response_body);
     assert_eq!(
         get_category_response_body.category_name,
         category.category_name
     );
-    assert_eq!(
-        get_category_response_body.description,
-        category.description
-    );
-    assert_eq!(
-        get_category_response_body.user_id,
-        category.user_id
-    );
+    assert_eq!(get_category_response_body.description, category.description);
+    assert_eq!(get_category_response_body.user_id, category.user_id);
 }
 
 #[sqlx::test]
@@ -76,10 +74,7 @@ async fn test_get_category_by_id_default_success(pool: PgPool) {
 
     let get_category_response = app
         .api_client
-        .get(&format!(
-            "{}/categories/get/{}",
-            app.address, 1
-        ))
+        .get(&format!("{}/categories/get/{}", app.address, 1))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -91,8 +86,11 @@ async fn test_get_category_by_id_default_success(pool: PgPool) {
         .await
         .expect("Failed to parse get category response");
 
-        println!("{:?}", get_category_response_body);
-        
+    println!("{:?}", get_category_response_body);
+
     assert_eq!(get_category_response_body.category_name, TEST_CATEGORY_NAME);
-    assert_eq!(get_category_response_body.description, TEST_CATEGORY_DESCRIPTION);
+    assert_eq!(
+        get_category_response_body.description,
+        TEST_CATEGORY_DESCRIPTION
+    );
 }

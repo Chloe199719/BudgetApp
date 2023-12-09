@@ -3,6 +3,44 @@
 version = 3
 
 [[package]]
+name = "BudgetApp"
+version = "0.1.0"
+dependencies = [
+ "actix-cors",
+ "actix-identity",
+ "actix-multipart",
+ "actix-session",
+ "actix-web",
+ "actix-web-validator",
+ "argon2",
+ "aws-config",
+ "aws-sdk-s3",
+ "axiom-rs",
+ "chrono",
+ "config",
+ "deadpool-redis",
+ "dotenv",
+ "fake",
+ "hex",
+ "lettre",
+ "minijinja",
+ "once_cell",
+ "openssl",
+ "pasetors",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "tracing",
+ "tracing-actix-web",
+ "tracing-bunyan-formatter",
+ "tracing-subscriber",
+ "uuid",
+ "validator",
+]
+
+[[package]]
 name = "actix-codec"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1436,44 +1474,6 @@ dependencies = [
  "const-oid",
  "crypto-common",
  "subtle",
-]
-
-[[package]]
-name = "discord-backend"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-identity",
- "actix-multipart",
- "actix-session",
- "actix-web",
- "actix-web-validator",
- "argon2",
- "aws-config",
- "aws-sdk-s3",
- "axiom-rs",
- "chrono",
- "config",
- "deadpool-redis",
- "dotenv",
- "fake",
- "hex",
- "lettre",
- "minijinja",
- "once_cell",
- "openssl",
- "pasetors",
- "reqwest",
- "serde",
- "serde_json",
- "sqlx",
- "tokio",
- "tracing",
- "tracing-actix-web",
- "tracing-bunyan-formatter",
- "tracing-subscriber",
- "uuid",
- "validator",
 ]
 
 [[package]]
