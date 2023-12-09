@@ -1,5 +1,5 @@
 use crate::{helpers::spawn_app, users::login::LoginUser};
-use discord_backend::{
+use budget_app::{
     routes::categories::create_category::CreateCategory,
     types::{categories::Category, general::ErrorResponse, UserVisible},
 };
