@@ -20,7 +20,6 @@ async fn test_edit_category_one_field_name_success(pool: PgPool) {
     let login_response = app.post_login(&login_body).await;
 
     assert!(login_response.status().is_success());
-
     let login_response_body = login_response
         .json::<UserVisible>()
         .await
