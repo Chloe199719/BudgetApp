@@ -1,11 +1,15 @@
-use actix_web::{ delete, web::{ Data, Path }, HttpResponse };
-use serde::{ Deserialize, Serialize };
+use actix_web::{
+    delete,
+    web::{Data, Path},
+    HttpResponse,
+};
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::{
-    queries::category::check_category_exists,
+    queries::category::{check_category_exists, check_category_exists_return_it},
     routes::users::logout::session_user_id,
-    types::general::{ ErrorResponse, SuccessResponse },
+    types::general::{ErrorResponse, SuccessResponse},
     utils::constant::BACK_END_TARGET,
 };
 
@@ -19,29 +23,33 @@ pub struct DeleteCategory {
 pub async fn delete_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
-    data: Path<DeleteCategory>
+    data: Path<DeleteCategory>,
 ) -> HttpResponse {
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again"
+                    .to_string(),
             });
         }
     };
-    match check_category_exists(&pool, data.category_id, session_uuid).await {
-        Ok(true) => (),
-        Ok(false) => {
-            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Category does not exist");
-            return HttpResponse::BadRequest().json(ErrorResponse {
-                error: "Category does not exist".to_string(),
-            });
+    match check_category_exists_return_it(&pool, data.category_id, session_uuid).await {
+        Ok(category) => {
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::DEBUG, "CHECK CATEGORY {:#?}",category);
+            println!("{:?}", category);
+            if category.is_default {
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Tried to delete default category");
+                return HttpResponse::BadRequest().json(ErrorResponse {
+                    error: "You cannot delete your default category".to_string(),
+                });
+            }
         }
         Err(e) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists: {:#?}", e);
-            return HttpResponse::InternalServerError().json(ErrorResponse {
-                error: "Failed to delete category. Kindly try again.".to_string(),
+            return HttpResponse::BadRequest().json(ErrorResponse {
+                error: "Category does not exist.".to_string(),
             });
         }
     }
