@@ -87,26 +87,26 @@ pub async fn config(
     }
 }
 
-#[rustfmt::skip]
 #[tracing::instrument(name = "Mark a user active", skip(pool),fields (new_user_user_id = %user_id))]
 pub async fn activate_new_user(
     pool: &postgres::PgPool,
-    user_id: uuid::Uuid
+    user_id: uuid::Uuid,
 ) -> Result<(), sqlx::Error> {
     match sqlx::query!(
-                r#"
+        r#"
                     UPDATE users
                     SET is_active = true
                     WHERE id = $1
                 "#,
-                user_id
-            )
-            .execute(pool).await
+        user_id
+    )
+    .execute(pool)
+    .await
     {
         Ok(_) => Ok(()),
         Err(e) => {
             tracing::error!("Failed to execute query: {:#?}", e);
-             Err(e)
+            Err(e)
         }
     }
 }
