@@ -2,7 +2,7 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHasher,
 };
-use discord_backend::{
+use budget_app::{
     settings::get_settings,
     startup::Application,
     telemetry::{get_subscriber, init_subscriber},
