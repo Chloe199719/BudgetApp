@@ -1,5 +1,5 @@
 use crate::helpers::spawn_app;
-use discord_backend::types::general::ErrorResponse;
+use budget_app::types::general::ErrorResponse;
 use fake::{
     faker::{
         internet::en::SafeEmail,
