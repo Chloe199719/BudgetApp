@@ -68,28 +68,28 @@ pub async fn delete_category(
         }
     }
 }
-#[rustfmt::skip]
 
 #[tracing::instrument(name = "Deleting a category in DB", skip(pool))]
 async fn delete_category_in_db(
     pool: &PgPool,
     category_id: i32,
-    user_id: uuid::Uuid
+    user_id: uuid::Uuid,
 ) -> Result<(), sqlx::Error> {
-    match
-        sqlx::query!(
-                r#"
+    match sqlx::query!(
+        r#"
                     DELETE FROM categories
                     WHERE category_id = $1 AND user_id = $2 AND is_default = false
             "#,
-                category_id,
-                user_id
-            )
-            .execute(pool).await
+        category_id,
+        user_id
+    )
+    .execute(pool)
+    .await
     {
         Ok(_) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::INFO, "Successfully deleted category");
-            Ok(())},
+            Ok(())
+        }
         Err(e) => {
             tracing::event!(target:BACK_END_TARGET, tracing::Level::ERROR, "Failed to delete category in DB: {:#?}", e);
             Err(e)
