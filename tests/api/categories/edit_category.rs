@@ -1,6 +1,6 @@
-use discord_backend::types::{categories::Category, UserVisible};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+use BudgetApp::types::{categories::Category, UserVisible};
 
 use crate::{categories::create_category_in_db, helpers::spawn_app, users::login::LoginUser};
 #[derive(Debug, Deserialize, Serialize)]
