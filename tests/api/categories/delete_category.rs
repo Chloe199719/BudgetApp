@@ -1,4 +1,4 @@
-use discord_backend::types::{
+use budget_app::types::{
     general::{ErrorResponse, SuccessResponse},
     UserVisible,
 };
