@@ -1,3 +1,4 @@
+pub mod change_category_default;
 pub mod create_category;
 pub mod delete_category;
 pub mod edit;
