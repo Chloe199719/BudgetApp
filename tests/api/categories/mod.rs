@@ -16,32 +16,28 @@ mod get_category_by_id;
 pub const TEST_CATEGORY_NAME: &str = "Test Category";
 pub const TEST_CATEGORY_DESCRIPTION: &str = "Test Description";
 
-#[rustfmt::skip]
 pub async fn create_category_in_db(
     pool: &PgPool,
-    user_id: uuid::Uuid
+    user_id: uuid::Uuid,
 ) -> Result<Category, sqlx::Error> {
     let create_category = CreateCategory {
         name: Name().fake(),
         description: Sentence(1..2).fake(),
     };
-    match
-        sqlx::query_as!(
-            Category,"
+    match sqlx::query_as!(
+        Category,
+        "
                 INSERT INTO categories (category_name, description, user_id)
                 VALUES ($1, $2, $3)
                 RETURNING *;",
-                create_category.name,
-                create_category.description,
-                user_id
-            )
-            .fetch_one(pool).await
+        create_category.name,
+        create_category.description,
+        user_id
+    )
+    .fetch_one(pool)
+    .await
     {
-        Ok(e) => {
-            Ok(e)
-        }
-        Err(e) => {
-            Err(e)
-        }
+        Ok(e) => Ok(e),
+        Err(e) => Err(e),
     }
 }
