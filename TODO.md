@@ -9,7 +9,7 @@
 ## Api to create
 
 1. Api to get all categories ✅
-2. Api change another category to default Transaction required be careful with tests on this one ❌
+2. Api change another category to default Transaction required be careful with tests on this one ✅
 
 ## Workflows
 
