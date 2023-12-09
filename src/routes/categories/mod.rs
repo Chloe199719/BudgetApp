@@ -13,6 +13,7 @@ pub fn categories_routes_config(cfg: &mut ServiceConfig) {
             .service(delete_category::delete_category)
             .service(edit::edit_category)
             .service(get_category_by_id::get_category_by_id)
-            .service(get_all_categories::get_all_category_by_user_id),
+            .service(get_all_categories::get_all_category_by_user_id)
+            .service(change_category_default::change_category_default),
     );
 }
