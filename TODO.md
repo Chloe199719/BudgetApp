@@ -15,3 +15,5 @@
 
 1. Add staging environment workflow on github actions for PRs ❌
 2. Edit so tests run on main run on a staging environment ❌
+
+## Rework User Profile
