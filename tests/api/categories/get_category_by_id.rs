@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use BudgetAppBe::types::{categories::Category, UserVisible};
+use BudgetApp::types::{categories::Category, UserVisible};
 
 use crate::{
     categories::{create_category_in_db, TEST_CATEGORY_DESCRIPTION, TEST_CATEGORY_NAME},
