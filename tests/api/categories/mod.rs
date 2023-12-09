@@ -9,6 +9,7 @@ mod create_category;
 mod delete_category;
 mod edit_category;
 
+mod change_default_category;
 mod get_all_categories_by_user_id;
 mod get_category_by_id;
 
