@@ -1,4 +1,4 @@
-use discord_backend::types::{categories::Category, UserVisible};
+use budget_app::types::{categories::Category, UserVisible};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
