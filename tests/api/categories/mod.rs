@@ -11,6 +11,7 @@ mod edit_category;
 
 mod get_all_categories_by_user_id;
 mod get_category_by_id;
+
 pub const TEST_CATEGORY_NAME: &str = "Test Category";
 pub const TEST_CATEGORY_DESCRIPTION: &str = "Test Description";
 
