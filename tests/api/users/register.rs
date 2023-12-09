@@ -17,36 +17,38 @@ pub struct NewUser<'a> {
     unique_name: String,
     display_name: String,
 }
-#[rustfmt::skip]
+
 #[sqlx::test]
 // #[ignore]
-async fn test_register_user_success(pool:PgPool){
+async fn test_register_user_success(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
 
     // Request data
-    let email:String = SafeEmail().fake();
-    let unique_name:String = fake::faker::name::en::Name().fake();
-    let display_name:String = fake::faker::name::en::Name().fake();
-    let password:String = NameWithTitle().fake();
+    let email: String = SafeEmail().fake();
+    let unique_name: String = fake::faker::name::en::Name().fake();
+    let display_name: String = fake::faker::name::en::Name().fake();
+    let password: String = NameWithTitle().fake();
 
-    let new_user = NewUser{
+    let new_user = NewUser {
         email: &email,
         password,
         unique_name,
         display_name,
     };
 
-    let response = app.api_client.post(&format!("{}/users/register",&app.address))
+    let response = app
+        .api_client
+        .post(&format!("{}/users/register", &app.address))
         .json(&new_user)
-        .header("Content-Type","application/json")
+        .header("Content-Type", "application/json")
         .send()
         .await
         .expect("Failed to execute request.");
 
     assert!(response.status().is_success());
 
-   let saved_user = sqlx::query!(
-      "SELECT
+    let saved_user = sqlx::query!(
+        "SELECT
             u.id AS u_id,
             u.email AS u_email,
             u.password AS u_password,
@@ -68,16 +70,16 @@ async fn test_register_user_success(pool:PgPool){
         WHERE
             u.is_active=false AND u.email=$1
     ",
-    &email
-        )
-        .fetch_one(&pool)
-        .await
-        .expect("Failed to fetch saved user.");
-   assert_eq!(saved_user.u_email,email);
-   assert_eq!(saved_user.u_is_active,false);
-   assert_eq!(saved_user.p_avatar_link,None);
-   assert_eq!(saved_user.u_id, saved_user.p_user_id);
-   assert_eq!(saved_user.p_phone_number,None);
+        &email
+    )
+    .fetch_one(&pool)
+    .await
+    .expect("Failed to fetch saved user.");
+    assert_eq!(saved_user.u_email, email);
+    assert_eq!(saved_user.u_is_active, false);
+    assert_eq!(saved_user.p_avatar_link, None);
+    assert_eq!(saved_user.u_id, saved_user.p_user_id);
+    assert_eq!(saved_user.p_phone_number, None);
 }
 
 #[sqlx::test]

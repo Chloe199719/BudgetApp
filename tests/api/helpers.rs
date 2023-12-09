@@ -124,7 +124,7 @@ impl TestUser {
                     TEST_CATEGORY_NAME,
                     TEST_CATEGORY_DESCRIPTION,
                     user_id.id,
-                    false)
+                    true)
                     .execute(pool)
                     .await
                     .expect("Failed to insert test category.");

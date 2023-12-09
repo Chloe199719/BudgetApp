@@ -45,7 +45,6 @@ pub struct UpdateUserProfile {
 pub struct Avatar {
     pub avatar: Option<String>,
 }
-#[rustfmt::skip]
 
 #[tracing::instrument(name = "Updating an user", skip(pool, form, session, s3_client))]
 #[patch("/update_user")]
@@ -53,14 +52,15 @@ pub async fn update_users_details(
     pool: Data<PgPool>,
     form: actix_multipart::form::MultipartForm<UserForm>,
     session: actix_session::Session,
-    s3_client: Data<Client>
+    s3_client: Data<Client>,
 ) -> actix_web::HttpResponse {
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return actix_web::HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again"
+                    .to_string(),
             });
         }
     };
@@ -92,19 +92,17 @@ pub async fn update_users_details(
     };
 
     if let Some(avatar) = &form.0.avatar {
-
         //Get the user's current avatar
-        let user_current_avatar = match
-            sqlx
-                ::query!(
-                    r#"
+        let user_current_avatar = match sqlx::query!(
+            r#"
                 SELECT avatar_link
                 FROM user_profile
                 WHERE user_id = $1
             "#,
-                    session_uuid
-                )
-                .fetch_one(&mut *transaction).await
+            session_uuid
+        )
+        .fetch_one(&mut *transaction)
+        .await
         {
             Ok(user_current_avatar) => user_current_avatar.avatar_link,
             Err(e) => {
@@ -127,8 +125,8 @@ pub async fn update_users_details(
 
         let s3_key_prefix = format!("media/discord_backend/avatar/{session_uuid}/");
 
-        let uploaded_file = s3_client.upload(avatar,&s3_key_prefix).await;
-        user_profile.avatar_link= Some(uploaded_file.s3_url)
+        let uploaded_file = s3_client.upload(avatar, &s3_key_prefix).await;
+        user_profile.avatar_link = Some(uploaded_file.s3_url)
     }
 
     // Update the unique_name // TODO: Add a limited number of times a user can change their unique_name per week
@@ -147,7 +145,7 @@ pub async fn update_users_details(
     }
 
     // Update the birth_date
-    if let Some(birth_date) =form.0.birth_date {
+    if let Some(birth_date) = form.0.birth_date {
         user_profile.birth_date = Some(birth_date.0);
     }
 
@@ -182,7 +180,9 @@ pub async fn update_users_details(
         Some(&mut transaction),
         Some(session_uuid),
         None,
-    ).await {
+    )
+    .await
+    {
         Ok(user) => {
             tracing::event!(target: "discord-backend", tracing::Level::INFO, "User retrieved from the DB.");
             UserVisible {
