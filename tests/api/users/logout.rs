@@ -1,4 +1,4 @@
-use discord_backend::types::general::{ErrorResponse, SuccessResponse};
+use budget_app::types::general::{ErrorResponse, SuccessResponse};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
