@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::{
-    queries::category::{check_category_exists, check_category_exists_return_it},
+    queries::category::check_category_exists_return_it,
     routes::users::logout::session_user_id,
     types::general::{ErrorResponse, SuccessResponse},
     utils::constant::BACK_END_TARGET,
