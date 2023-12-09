@@ -1,5 +1,5 @@
 [package]
-name = "discord-backend"
+name = "BudgetApp Be"
 version = "0.1.0"
 edition = "2021"
 authors = ["Chloe Pratas <chloevision97@gmail.com>"]
@@ -10,7 +10,7 @@ path = "src/lib.rs"
 
 [[bin]]
 path = "src/main.rs"
-name = "discord-backend"
+name = "BudgetApp Be"
 
 
 
