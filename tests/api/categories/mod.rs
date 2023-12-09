@@ -1,5 +1,5 @@
-use discord_backend::routes::categories::create_category::CreateCategory;
-use discord_backend::types::categories::Category;
+use budget_app::routes::categories::create_category::CreateCategory;
+use budget_app::types::categories::Category;
 use fake::faker::lorem::en::Sentence;
 use fake::faker::name::en::Name;
 use fake::Fake;
