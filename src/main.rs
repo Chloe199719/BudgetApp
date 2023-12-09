@@ -1,5 +1,5 @@
+use budget_app::{settings, startup::Application, telemetry, utils::constant::BACK_END_TARGET};
 use dotenv::dotenv;
-use BudgetApp::{settings, startup::Application, telemetry, utils::constant::BACK_END_TARGET};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
