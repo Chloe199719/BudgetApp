@@ -1,7 +1,0 @@
-{
-  "useTabs": false,
-  "tabWidth": 4,
-  "printWidth": 100,
-  "endOfLine": "lf",
-  "skip_macro_calls": ["query_as!"]
-}
