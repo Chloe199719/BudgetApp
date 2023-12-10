@@ -1,4 +1,4 @@
-name: Test and Deploy
+name: Pull Request tests
 on:
   pull_request:
     branches: [main]
@@ -75,6 +75,3 @@ jobs:
 
       - name: Run tests Categories
         run: cargo test -- --test-threads=32 api categories
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
