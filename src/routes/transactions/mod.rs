@@ -1,3 +1,5 @@
+pub mod create_transaction;
+
 use actix_web::web::ServiceConfig;
 
 pub fn transactions_routes_config(cfg: &mut ServiceConfig) {
