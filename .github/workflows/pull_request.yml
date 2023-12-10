@@ -1,0 +1,77 @@
+name: Pull Request tests
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    environment: Prod
+    env:
+      SQLX_VERSION: 0.7.3
+      TEST: "true"
+
+      APP_DEBUG: true
+
+      SQLX_FEATURES: "rustls,postgres"
+      APP_ENVIRONMENT: "development"
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_S3_BUCKET_NAME: ${{ vars.AWS_S3_BUCKET_NAME }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install sqlx-cli
+        run: cargo install sqlx-cli
+          --version=${{ env.SQLX_VERSION }}
+          --features ${{ env.SQLX_FEATURES }}
+          --no-default-features
+          --locked
+
+      - name: Execute migration
+        run: |
+          sqlx database create
+          sqlx migrate run
+
+      - name: Setup config
+        run: |
+          envsubst < settings/base.example.yaml > settings/base.yaml &&
+          envsubst < settings/production.example.yaml > settings/production.yaml
+        env:
+          EMAIL_HOST: ${{ vars.EMAIL_HOST }}
+          EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_HOST_USER_PASSWORD: ${{ secrets.EMAIL_HOST_USER_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          TOKEN_EXPIRATION: ${{ vars.TOKEN_EXPIRATION }}
+          HMAC_SECRET: ${{ secrets.HMAC_SECRET }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          AXIOM_DATASET: ${{ vars.AXIOM_DATASET }}
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+
+      - name: Build
+        run: cargo build
+
+      - name: Run tests Authentication
+        run: cargo test -- --test-threads=32 api users
+
+      - name: Run tests Categories
+        run: cargo test -- --test-threads=32 api categories
