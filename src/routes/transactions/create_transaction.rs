@@ -1,10 +1,7 @@
 use actix_multipart::form;
 use actix_web::{post, web::Data, HttpResponse};
 use chrono::Utc;
-use sqlx::{
-    postgres::{PgHasArrayType, PgTypeInfo},
-    PgPool,
-};
+use sqlx::PgPool;
 
 use crate::{
     routes::users::logout::session_user_id, types::general::ErrorResponse, uploads::client::Client,
