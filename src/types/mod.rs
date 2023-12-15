@@ -5,6 +5,7 @@ use uuid::Uuid;
 pub mod categories;
 pub mod general;
 pub mod tokens;
+pub mod transactions;
 pub mod upload;
 #[derive(Serialize)]
 pub struct User {
