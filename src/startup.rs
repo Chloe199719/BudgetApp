@@ -1,5 +1,8 @@
 use crate::{
-    routes::{categories::categories_routes_config, health_check, users::auth_routes_config},
+    routes::{
+        categories::categories_routes_config, health_check,
+        transactions::transactions_routes_config, users::auth_routes_config,
+    },
     settings::Settings,
     uploads,
 };
@@ -132,6 +135,7 @@ async fn run(
             .service(health_check)
             .configure(auth_routes_config)
             .configure(categories_routes_config)
+            .configure(transactions_routes_config)
             .app_data(connection_pool.clone())
             .app_data(redis_pool_data.clone())
             .app_data(s3_client.clone())

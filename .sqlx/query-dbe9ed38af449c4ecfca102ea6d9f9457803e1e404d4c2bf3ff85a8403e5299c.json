@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT currency as \"currency: _\"\n        FROM user_profile\n        WHERE user_id = $1\n       \n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "currency: _",
+        "type_info": {
+          "Custom": {
+            "name": "currencys_type",
+            "kind": {
+              "Enum": [
+                "EUR",
+                "USD",
+                "WON",
+                "YEN",
+                "POUND"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "dbe9ed38af449c4ecfca102ea6d9f9457803e1e404d4c2bf3ff85a8403e5299c"
+}

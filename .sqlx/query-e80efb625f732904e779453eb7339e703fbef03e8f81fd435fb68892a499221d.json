@@ -1,0 +1,84 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE transactions\n        SET receipt_id = $1\n        WHERE transaction_id = $2\n    \n        returning transaction_id, amount, category_id, description, date, transaction_type as \"transaction_type: _\", receipt_id, user_id , currency as \"currency: _\" ;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "transaction_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "amount",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 2,
+        "name": "category_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "transaction_type: _",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "receipt_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 7,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "currency: _",
+        "type_info": {
+          "Custom": {
+            "name": "currencys_type",
+            "kind": {
+              "Enum": [
+                "EUR",
+                "USD",
+                "WON",
+                "YEN",
+                "POUND"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "e80efb625f732904e779453eb7339e703fbef03e8f81fd435fb68892a499221d"
+}
