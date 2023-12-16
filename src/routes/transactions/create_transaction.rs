@@ -8,10 +8,7 @@ use crate::{
     routes::users::logout::session_user_id,
     types::{
         general::ErrorResponse,
-        transactions::create::{
-            Transaction, TransactionCurrency, TransactionOutcome, TransactionOutcomeWithReceipt,
-            TransactionType,
-        },
+        transactions::create::{Transaction, TransactionCurrency, TransactionType},
     },
     uploads::client::Client,
     utils::transactions::utils::{
