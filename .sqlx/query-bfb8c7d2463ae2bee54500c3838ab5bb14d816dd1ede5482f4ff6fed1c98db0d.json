@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT category_id\n        FROM categories\n        WHERE user_id = $1 AND is_default = true;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "category_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "bfb8c7d2463ae2bee54500c3838ab5bb14d816dd1ede5482f4ff6fed1c98db0d"
+}
