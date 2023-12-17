@@ -11,9 +11,12 @@ use crate::{
         transactions::create::{Transaction, TransactionCurrency, TransactionType},
     },
     uploads::client::Client,
-    utils::transactions::utils::{
-        get_users_default_category, get_users_default_currency, save_recipe_url,
-        save_transaction_without_recipe,
+    utils::{
+        constant::BACK_END_TARGET,
+        transactions::utils::{
+            get_users_default_category, get_users_default_currency, save_recipe_url,
+            save_transaction_without_recipe,
+        },
     },
 };
 
@@ -54,7 +57,7 @@ pub async fn create_transaction(
     let mut transaction = match pool.begin().await {
         Ok(transaction) => transaction,
         Err(e) => {
-            tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to begin DB transaction: {:#?}", e);
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to begin DB transaction: {:#?}", e);
             return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Something unexpected happened. Kindly try again.".to_string(),
             });
@@ -84,7 +87,7 @@ pub async fn create_transaction(
         {
             Ok(category_id) => Some(category_id),
             Err(e) => {
-                tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to get default category: {:#?}", e);
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to get default category: {:#?}", e);
                 return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                     error: "Something unexpected happened. Kindly try again.".to_string(),
                 });
@@ -103,7 +106,7 @@ pub async fn create_transaction(
         {
             Ok(currency) => Some(currency),
             Err(e) => {
-                tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to get default currency: {:#?}", e);
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to get default currency: {:#?}", e);
                 return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                     error: "Something unexpected happened. Kindly try again.".to_string(),
                 });
@@ -122,7 +125,7 @@ pub async fn create_transaction(
         Ok(transaction) => transaction,
         Err(e) => {
             transaction.rollback().await.unwrap();
-            tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to save transaction: {:#?}", e);
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to save transaction: {:#?}", e);
             return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Something unexpected happened. Kindly try again.".to_string(),
             });
@@ -147,11 +150,11 @@ pub async fn create_transaction(
         {
             Ok(transaction_outcome) => match transaction.commit().await {
                 Ok(_) => {
-                    tracing::event!(target: "backend", tracing::Level::INFO, "Transaction committed successfully");
+                    tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Transaction committed successfully");
                     return actix_web::HttpResponse::Ok().json(transaction_outcome);
                 }
                 Err(e) => {
-                    tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to commit transaction: {:#?}", e);
+                    tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to commit transaction: {:#?}", e);
                     return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                         error: "Something unexpected happened. Kindly try again.".to_string(),
                     });
@@ -159,7 +162,7 @@ pub async fn create_transaction(
             },
             Err(e) => {
                 transaction.rollback().await.unwrap();
-                tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to save recipe url: {:#?}", e);
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to save recipe url: {:#?}", e);
                 return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                     error: "Something unexpected happened. Kindly try again.".to_string(),
                 });
@@ -170,11 +173,11 @@ pub async fn create_transaction(
     //Commit transaction if no recipe provided and return transaction
     match transaction.commit().await {
         Ok(_) => {
-            tracing::event!(target: "backend", tracing::Level::INFO, "Transaction committed successfully");
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Transaction committed successfully");
             HttpResponse::Ok().json(save_transaction)
         }
         Err(e) => {
-            tracing::event!(target: "backend", tracing::Level::ERROR, "Unable to commit transaction: {:#?}", e);
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to commit transaction: {:#?}", e);
             return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Something unexpected happened. Kindly try again.".to_string(),
             });

@@ -1,0 +1,89 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n    SELECT\n        transactions.transaction_id as transaction_id,\n        amount,\n        transactions.category_id,\n        transactions.description,\n        date,\n        transaction_type as \"transaction_type: _\",\n        receipt_id,\n        transactions.user_id as user_id,\n        currency as \"currency: _\",\n        receipts.receipt_url as \"receipt_url?\"\n    from\n        transactions\n        LEFT JOIN categories ON transactions.category_id = categories.category_id\n        LEFT JOIN receipts ON transactions.receipt_id = receipts.id\n    WHERE\n        transactions.user_id = $1\n        and categories.is_default = TRUE\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "transaction_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "amount",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 2,
+        "name": "category_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "transaction_type: _",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "receipt_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 7,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "currency: _",
+        "type_info": {
+          "Custom": {
+            "name": "currencys_type",
+            "kind": {
+              "Enum": [
+                "EUR",
+                "USD",
+                "WON",
+                "YEN",
+                "POUND"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "receipt_url?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "f1e0734d40563133a1b4d45a14985393ef9bbb015c245072e3cfad73669aec94"
+}
