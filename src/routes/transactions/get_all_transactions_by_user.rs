@@ -38,7 +38,7 @@ pub async fn get_all_transactions_by_user(
     }
 }
 
-#[tracing::instrument(name = "Get All Transactions By User", skip(pool))]
+#[tracing::instrument(name = "Get All Transactions By User from db", skip(pool))]
 pub async fn get_all_transactions_by_user_db(
     user_id: &uuid::Uuid,
     pool: &PgPool,
@@ -67,15 +67,6 @@ pub async fn get_all_transactions_by_user_db(
         user_id,
     )
     .fetch_all(pool)
-    .await;
-    match transactions {
-        Ok(transactions) => {
-            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Successfully got transactions from DB");
-            Ok(transactions)
-        }
-        Err(e) => {
-            tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to get transactions from DB: {:#?}", e);
-            return Err(e);
-        }
-    }
+    .await?;
+    Ok(transactions)
 }
