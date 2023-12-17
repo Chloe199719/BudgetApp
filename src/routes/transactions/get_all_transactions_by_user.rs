@@ -46,12 +46,23 @@ pub async fn get_all_transactions_by_user_db(
     let transactions = sqlx::query_as!(
         TransactionOutcomeWithReceipt,
         r#"
-        SELECT transactions.transaction_id , amount, category_id, description, date, transaction_type as "transaction_type: _", receipt_id, transactions.user_id,
-         currency as "currency: _", receipt_url as "receipt_url?"
-        FROM transactions
-        LEFT JOIN receipts ON transactions.receipt_id = receipts.id
-        WHERE transactions.user_id = $1
-        ORDER BY date DESC;
+            SELECT
+                transactions.transaction_id as transaction_id,
+                amount,
+                category_id,
+                description,
+                date,
+                transaction_type as "transaction_type: _",
+                receipt_id,
+                transactions.user_id as user_id,
+                currency as "currency: _",
+                receipts.receipt_url as "receipt_url?"
+            FROM
+                transactions
+                LEFT JOIN receipts ON transactions.receipt_id = receipts.id
+            WHERE 
+                transactions.user_id = $1
+            ORDER BY date DESC;
         "#,
         user_id,
     )
