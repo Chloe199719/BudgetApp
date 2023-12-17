@@ -94,6 +94,7 @@ pub async fn get_all_transactions_by_categories_default_db(
     WHERE
         transactions.user_id = $1
         and categories.is_default = TRUE
+    ORDER BY date DESC;
         "#,
         user_id,
     )
