@@ -41,7 +41,7 @@ pub async fn get_transaction_by_id(
         }
         Err(e) => match e {
             sqlx::Error::RowNotFound => {
-                tracing::event!(target: "session", tracing::Level::INFO, "Transaction not found");
+                tracing::event!(target: "session", tracing::Level::WARN, "Transaction not found");
                 return actix_web::HttpResponse::NotFound().json(ErrorResponse {
                     error: "Transaction not found".to_string(),
                 });
