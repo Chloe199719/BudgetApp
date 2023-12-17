@@ -96,8 +96,8 @@ pub struct TransactionOutcomeWithReceipt {
     pub transaction_type: String,
     pub receipt_id: Option<i32>,
     pub receipt_url: Option<String>,
-    pub user_id: uuid::Uuid,
     pub currency: TransactionCurrency,
+    pub user_id: uuid::Uuid,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
