@@ -1,6 +1,6 @@
 use actix_web::{
     get,
-    web::{Data, Path, Query},
+    web::{Data, Query},
     HttpResponse,
 };
 use serde::{Deserialize, Serialize};
@@ -22,7 +22,7 @@ pub struct GetAllTransactionsByCategoriesRequest {
 pub async fn get_all_transactions_by_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
-    path: Query<GetAllTransactionsByCategoriesRequest>,
+    query: Query<GetAllTransactionsByCategoriesRequest>,
 ) -> HttpResponse {
     //Validate user is logged in and get user id
     let session_uuid = match session_user_id(&session).await {
@@ -35,7 +35,7 @@ pub async fn get_all_transactions_by_category(
             });
         }
     };
-    match path.category_id {
+    match query.category_id {
         Some(category_id) => {
             match get_all_transactions_by_categories_db(&session_uuid, &category_id, &pool).await {
                 Ok(transactions) => {
