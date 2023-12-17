@@ -89,11 +89,10 @@ pub async fn get_all_transactions_by_categories_default_db(
         receipts.receipt_url as "receipt_url?"
     from
         transactions
-        LEFT JOIN users ON transactions.user_id = users.id
         LEFT JOIN categories ON transactions.category_id = categories.category_id
         LEFT JOIN receipts ON transactions.receipt_id = receipts.id
     WHERE
-        users.id = $1
+        transactions.user_id = $1
         and categories.is_default = TRUE
         "#,
         user_id,
