@@ -7,6 +7,7 @@ import axios from "axios";
 import CheckUser from "@/components/auth/CheckUser";
 import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/Theme-Provider";
 const inter = Inter({ subsets: ["latin"] });
 const roboto_mono = Roboto_Mono({
   subsets: ["latin"],
@@ -29,11 +30,18 @@ export default async function RootLayout({
   return (
     <Providers>
       <CheckUser userData={userData} />
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className={roboto_mono.className}>
-          <Navbar />
-          {children}
-          <Toaster />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            {children}
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </Providers>
