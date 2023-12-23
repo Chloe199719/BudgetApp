@@ -1,30 +1,39 @@
 "use client";
 
 import { useSelector } from "@/lib/redux/store";
-import Image from "next/image";
+
+import AvatarComp from "./Avatar";
+import Link from "next/link";
 
 type Props = {};
 function Navbar({}: Props) {
   const auth = useSelector((state) => state.auth);
 
-  if (!auth.isAuthenticated) {
-    return <div>Not Logged</div>;
-  }
   return (
-    <div className="flex w-full justify-between">
-      <div>Chloe Discord Site</div>
-      <div className="flex gap-2 items-center">
-        {auth.display_name}{" "}
-        {auth.profile.avatar_link && (
-          <Image
-            width={50}
-            height={50}
-            src={auth.profile.avatar_link!}
-            alt="asd"
-            priority
-          />
-        )}
-      </div>
+    <div className="flex w-full justify-between p-8">
+      <h1 className="text-5xl text-pink-500 font-bold">
+        <Link href="/">🐱 BudgetApp</Link>
+      </h1>
+      {auth.isAuthenticated ? (
+        <div className="flex gap-2 items-center">
+          {auth.display_name} <AvatarComp />
+        </div>
+      ) : (
+        <div className="flex gap-2 font-bold">
+          <Link
+            className="px-6 bg-blue-300 rounded-xl flex justify-center items-center"
+            href={`/login`}
+          >
+            Sign-In
+          </Link>
+          <Link
+            className="px-6 bg-blue-200 rounded-xl flex justify-center items-center"
+            href={`/login`}
+          >
+            Sign-Up
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
