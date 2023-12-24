@@ -15,9 +15,9 @@ import { useToast } from "../ui/use-toast";
 type Props = {
   avatar_link?: string;
 };
+export const defaultAvatar =
+  "https://chloepratas-discordcopy.s3.eu-central-1.amazonaws.com/media/discord_backend/avatar/a6c0c3ac-31de-4daa-a569-19a3a50fccee/cutechleo.jpg";
 function AvatarComp({ avatar_link }: Props) {
-  const defaultAvatar =
-    "https://chloepratas-discordcopy.s3.eu-central-1.amazonaws.com/media/discord_backend/avatar/a6c0c3ac-31de-4daa-a569-19a3a50fccee/cutechleo.jpg";
   const dispatch = useDispatch();
   const { toast } = useToast();
   return (

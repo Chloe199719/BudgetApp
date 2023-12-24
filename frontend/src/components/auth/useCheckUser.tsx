@@ -15,6 +15,5 @@ function CheckUser({ userData }: Props) {
       userData ? login({ ...userData, isAuthenticated: true }) : logout()
     );
   }, [userData, dispatch]);
-  return null;
 }
 export default CheckUser;
