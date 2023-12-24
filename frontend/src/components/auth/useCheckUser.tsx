@@ -8,7 +8,7 @@ import { useMemo } from "react";
 type Props = {
   userData?: CurrentUserData;
 };
-function CheckUser({ userData }: Props) {
+function useCheckUser({ userData }: Props) {
   const dispatch = useDispatch();
   useMemo(() => {
     dispatch(
@@ -16,4 +16,4 @@ function CheckUser({ userData }: Props) {
     );
   }, [userData, dispatch]);
 }
-export default CheckUser;
+export default useCheckUser;
