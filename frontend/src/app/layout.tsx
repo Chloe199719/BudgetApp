@@ -8,7 +8,7 @@ import useCheckUser from "@/components/auth/useCheckUser";
 import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/Theme-Provider";
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 const roboto_mono = Roboto_Mono({
   subsets: ["latin"],
   display: "swap",
