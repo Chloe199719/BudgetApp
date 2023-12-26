@@ -18,7 +18,7 @@
 3. Api to get transactions by date ✅
 4. Api to edit transactions ❌
 5. Api to switch transaction category ❌
-6. Api to delete transactions ❌
+6. Api to delete transactions ✅
 
 ## Workflows
 
