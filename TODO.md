@@ -5,6 +5,9 @@
 1. ADD tests to make sure no default categories can be deleted ✅
 2. Add tests to make sure there default category when creating a new user ✅
 3. Add tests to get categories by id ✅ #20
+4. Add tests to transaction delete ❌
+5. Add tests to transaction edit ❌
+6. Add tests to transaction switch category ❌
 
 ## Api to create
 
@@ -19,6 +22,15 @@
 4. Api to edit transactions ❌
 5. Api to switch transaction category ❌
 6. Api to delete transactions ✅
+7. Make sure delete transactions also deletes the receipt from s3 ❌
+
+## Frontend
+
+1. Design landing page ❌
+2. Design login page ❌
+3. Design register page ❌
+4. Design dashboard page ❌
+5. Design about us page ❌
 
 ## Workflows
 
