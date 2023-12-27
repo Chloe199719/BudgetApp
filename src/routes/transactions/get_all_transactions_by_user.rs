@@ -62,6 +62,7 @@ pub async fn get_all_transactions_by_user_db(
                 LEFT JOIN receipts ON transactions.receipt_id = receipts.id
             WHERE 
                 transactions.user_id = $1
+                and transactions.deleted = false
             ORDER BY date DESC;
         "#,
         user_id,

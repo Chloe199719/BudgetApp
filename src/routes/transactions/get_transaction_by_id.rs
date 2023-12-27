@@ -82,6 +82,7 @@ pub async fn get_transaction_by_id_db(
             WHERE
                 transactions.user_id = $1 AND
                 transactions.transaction_id = $2
+                and transactions.deleted = false
             "#,
         user_id,
         transaction_id
