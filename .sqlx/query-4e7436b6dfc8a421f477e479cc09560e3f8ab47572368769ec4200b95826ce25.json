@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            INSERT INTO categories (category_name, description, user_id)\n            VALUES ($1, $2, $3)\n            RETURNING *;\n        ",
+  "query": "\n            UPDATE categories\n            SET\n                category_name = COALESCE($1, category_name),\n                description = COALESCE($2, description)\n            WHERE category_id = $3 AND user_id = $4 \n            RETURNING category_id, category_name, description, user_id, created_at, updated_at, is_default;\n        ",
   "describe": {
     "columns": [
       {
@@ -10,23 +10,23 @@
       },
       {
         "ordinal": 1,
-        "name": "user_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 2,
-        "name": "created_at",
-        "type_info": "Timestamptz"
-      },
-      {
-        "ordinal": 3,
         "name": "category_name",
         "type_info": "Varchar"
       },
       {
-        "ordinal": 4,
+        "ordinal": 2,
         "name": "description",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "created_at",
+        "type_info": "Timestamptz"
       },
       {
         "ordinal": 5,
@@ -43,6 +43,7 @@
       "Left": [
         "Varchar",
         "Text",
+        "Int4",
         "Uuid"
       ]
     },
@@ -56,5 +57,5 @@
       false
     ]
   },
-  "hash": "1cf0be8067c6c8e7f45496a1e655eb87478390cb28e3ff64c8919d072fca19a7"
+  "hash": "4e7436b6dfc8a421f477e479cc09560e3f8ab47572368769ec4200b95826ce25"
 }
