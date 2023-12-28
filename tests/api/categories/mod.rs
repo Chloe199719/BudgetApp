@@ -29,7 +29,7 @@ pub async fn create_category_in_db(
         "
                 INSERT INTO categories (category_name, description, user_id)
                 VALUES ($1, $2, $3)
-                RETURNING *;",
+                RETURNING category_id, user_id , created_at, category_name, description, updated_at, is_default;",
         create_category.name,
         create_category.description,
         user_id
