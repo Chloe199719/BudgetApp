@@ -54,10 +54,11 @@ pub async fn delete_transaction( pool: Data<PgPool>, path : Path<DeleteTransacti
 async fn delete_transaction_db(pool: &PgPool, transaction_id: i32, user_id: uuid::Uuid) -> Result<(), sqlx::Error> {
     match sqlx::query!(
         r#"
-        DELETE FROM transactions
+        UPDATE transactions
+        SET deleted = true
         WHERE transaction_id = $1 AND user_id = $2
         returning transaction_id
-        "#,
+       "#,
         transaction_id,
         user_id
     ).fetch_one(pool).await {
