@@ -60,7 +60,7 @@ async fn create_category_in_db(
         r#"
             INSERT INTO categories (category_name, description, user_id)
             VALUES ($1, $2, $3)
-            RETURNING *;
+            RETURNING category_id, category_name, description, user_id, created_at, updated_at, is_default;
         "#,
         name,
         description,

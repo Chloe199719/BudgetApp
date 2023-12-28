@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n                        SELECT * FROM categories\n                        WHERE category_id = $1 AND user_id = $2\n                    ",
+  "query": "\n                        SELECT category_id, user_id, created_at, category_name, description, updated_at , is_default FROM categories\n                        WHERE user_id = $1\n                        ORDER BY created_at ASC\n                    ",
   "describe": {
     "columns": [
       {
@@ -41,7 +41,6 @@
     ],
     "parameters": {
       "Left": [
-        "Int4",
         "Uuid"
       ]
     },
@@ -55,5 +54,5 @@
       false
     ]
   },
-  "hash": "8cd47179ef00cf134ebf537e311d3628e2267e44c62ce611bfe33cc0f35a7ffd"
+  "hash": "fda2c7e9e0e95e748743d8885d02476ebd248e90ef11c062f3d79e40a7dbc0c8"
 }

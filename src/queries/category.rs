@@ -54,7 +54,7 @@ pub async fn check_category_exists_return_it(
     match sqlx::query_as!(
         Category,
         r#"
-                        SELECT * FROM categories
+                        SELECT category_id, user_id, created_at, category_name, description, updated_at , is_default FROM categories
                         WHERE category_id = $1 AND user_id = $2
                     "#,
         category_id,
@@ -80,7 +80,7 @@ pub async fn check_category_exists_return_it(
     }
 }
 
-#[tracing::instrument(name = "Check if category exists", skip(pool))]
+#[tracing::instrument(name = "Get all categories from user", skip(pool))]
 pub async fn get_all_categories_by_user_id(
     pool: &sqlx::PgPool,
     user_id: uuid::Uuid,
@@ -88,7 +88,7 @@ pub async fn get_all_categories_by_user_id(
     match sqlx::query_as!(
         Category,
         r#"
-                        SELECT * FROM categories
+                        SELECT category_id, user_id, created_at, category_name, description, updated_at , is_default FROM categories
                         WHERE user_id = $1
                         ORDER BY created_at ASC
                     "#,

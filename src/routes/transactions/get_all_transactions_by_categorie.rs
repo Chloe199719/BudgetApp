@@ -128,7 +128,8 @@ pub async fn get_all_transactions_by_categories_db(
         transactions
         LEFT JOIN receipts ON transactions.receipt_id = receipts.id
     WHERE 
-        transactions.user_id = $1 AND transactions.category_id = $2
+        transactions.user_id = $1 AND
+        transactions.category_id = $2 AND
         transactions.deleted = FALSE
     ORDER BY date DESC;
         "#,

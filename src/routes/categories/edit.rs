@@ -105,7 +105,7 @@ async fn edit_category_in_db(
                 category_name = COALESCE($1, category_name),
                 description = COALESCE($2, description)
             WHERE category_id = $3 AND user_id = $4 
-            RETURNING *
+            RETURNING category_id, category_name, description, user_id, created_at, updated_at, is_default;
         "#,
         edit_data.name,
         edit_data.description,

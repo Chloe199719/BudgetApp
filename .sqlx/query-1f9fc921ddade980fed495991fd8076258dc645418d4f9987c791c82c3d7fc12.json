@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT\n                transactions.transaction_id as transaction_id,\n                amount,\n                category_id,\n                description,\n                date,\n                transaction_type as \"transaction_type: _\",\n                receipt_id,\n                transactions.user_id as user_id,\n                currency as \"currency: _\",\n                receipts.receipt_url as \"receipt_url?\"\n            FROM\n                transactions\n                LEFT JOIN receipts ON transactions.receipt_id = receipts.id\n            WHERE \n                transactions.user_id = $1\n            ORDER BY date DESC;\n        ",
+  "query": "\n            SELECT\n                transactions.transaction_id as transaction_id,\n                amount,\n                category_id,\n                description,\n                date,\n                transaction_type as \"transaction_type: _\",\n                receipt_id,\n                transactions.user_id as user_id,\n                currency as \"currency: _\",\n                receipts.receipt_url as \"receipt_url?\"\n            FROM\n                transactions\n            LEFT JOIN receipts ON transactions.receipt_id = receipts.id\n            WHERE\n                transactions.user_id = $1 AND\n                transactions.transaction_id = $2\n                and transactions.deleted = false\n            ",
   "describe": {
     "columns": [
       {
@@ -69,7 +69,8 @@
     ],
     "parameters": {
       "Left": [
-        "Uuid"
+        "Uuid",
+        "Int4"
       ]
     },
     "nullable": [
@@ -85,5 +86,5 @@
       false
     ]
   },
-  "hash": "d57393e0ca558f621ea76ff37d34218c7941920fec1b9ac465f7c04595f364e7"
+  "hash": "1f9fc921ddade980fed495991fd8076258dc645418d4f9987c791c82c3d7fc12"
 }
