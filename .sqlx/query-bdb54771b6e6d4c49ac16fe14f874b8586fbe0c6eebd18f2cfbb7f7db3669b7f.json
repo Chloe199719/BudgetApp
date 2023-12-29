@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE categories\n                SET deleted = true\n                WHERE category_id = $1 AND user_id = $2 AND is_default = false\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "bdb54771b6e6d4c49ac16fe14f874b8586fbe0c6eebd18f2cfbb7f7db3669b7f"
+}
