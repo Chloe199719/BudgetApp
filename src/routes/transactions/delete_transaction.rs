@@ -8,6 +8,7 @@ use crate::{routes::users::logout::session_user_id, types::general::{ErrorRespon
 struct DeleteTransaction {
     transaction_id: i32,
 }
+
 #[tracing::instrument(name = "Delete Transaction", skip(pool, session))]
 #[actix_web::delete("/delete_transaction/{transaction_id}")]
 pub async fn delete_transaction( pool: Data<PgPool>, path : Path<DeleteTransaction> ,session:actix_session::Session) -> HttpResponse {
@@ -49,7 +50,7 @@ pub async fn delete_transaction( pool: Data<PgPool>, path : Path<DeleteTransacti
     }
         
 }
-//TODO: SOLFT DELETE
+
 #[tracing::instrument(name = "Delete Transaction in DB", skip(pool))]
 async fn delete_transaction_db(pool: &PgPool, transaction_id: i32, user_id: uuid::Uuid) -> Result<(), sqlx::Error> {
     match sqlx::query!(
