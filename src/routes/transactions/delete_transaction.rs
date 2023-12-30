@@ -1,8 +1,15 @@
-use actix_web::{web::{Data, Path}, HttpResponse};
+use actix_web::{
+    web::{Data, Path},
+    HttpResponse,
+};
 use serde::Deserialize;
 use sqlx::PgPool;
 
-use crate::{routes::users::logout::session_user_id, types::general::{ErrorResponse, SuccessResponse}, utils::constant::BACK_END_TARGET};
+use crate::{
+    routes::users::logout::session_user_id,
+    types::general::{ErrorResponse, SuccessResponse},
+    utils::constant::BACK_END_TARGET,
+};
 
 #[derive(Deserialize, Debug)]
 struct DeleteTransaction {
@@ -10,8 +17,12 @@ struct DeleteTransaction {
 }
 
 #[tracing::instrument(name = "Delete Transaction", skip(pool, session))]
-#[actix_web::delete("/delete_transaction/{transaction_id}")]
-pub async fn delete_transaction( pool: Data<PgPool>, path : Path<DeleteTransaction> ,session:actix_session::Session) -> HttpResponse {
+#[actix_web::delete("/delete/{transaction_id}")]
+pub async fn delete_transaction(
+    pool: Data<PgPool>,
+    path: Path<DeleteTransaction>,
+    session: actix_session::Session,
+) -> HttpResponse {
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
         Err(e) => {
@@ -24,11 +35,9 @@ pub async fn delete_transaction( pool: Data<PgPool>, path : Path<DeleteTransacti
     };
 
     match delete_transaction_db(&pool, path.transaction_id, session_uuid).await {
-        Ok(_) => {
-            HttpResponse::Ok().json(SuccessResponse {
-                message: "Transaction deleted successfully".to_string(),
-            })
-        }
+        Ok(_) => HttpResponse::Ok().json(SuccessResponse {
+            message: "Transaction deleted successfully".to_string(),
+        }),
         //FIXME: CHECK IF THIS WORKS
         Err(e) => {
             match e {
@@ -36,23 +45,25 @@ pub async fn delete_transaction( pool: Data<PgPool>, path : Path<DeleteTransacti
                     tracing::event!(target: BACK_END_TARGET , tracing::Level::WARN, "Transaction not found: {}", e);
                     return HttpResponse::NotFound().json(ErrorResponse {
                         error: "Transaction not found".to_string(),
-                    })
+                    });
                 }
                 _ => {}
             }
-                
-            
+
             tracing::event!(target: "delete_transaction", tracing::Level::ERROR, "Failed to delete transaction: {}", e);
             HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to delete transaction".to_string(),
             })
         }
     }
-        
 }
 
 #[tracing::instrument(name = "Delete Transaction in DB", skip(pool))]
-async fn delete_transaction_db(pool: &PgPool, transaction_id: i32, user_id: uuid::Uuid) -> Result<(), sqlx::Error> {
+async fn delete_transaction_db(
+    pool: &PgPool,
+    transaction_id: i32,
+    user_id: uuid::Uuid,
+) -> Result<(), sqlx::Error> {
     match sqlx::query!(
         r#"
         UPDATE transactions
@@ -62,15 +73,16 @@ async fn delete_transaction_db(pool: &PgPool, transaction_id: i32, user_id: uuid
        "#,
         transaction_id,
         user_id
-    ).fetch_one(pool).await {
+    )
+    .fetch_one(pool)
+    .await
+    {
         Ok(transaction) => {
             if transaction.transaction_id != transaction_id {
                 return Err(sqlx::Error::RowNotFound);
             }
         }
-        Err(e) => {
-            return   Err(e)
-        }
+        Err(e) => return Err(e),
     };
     Ok(())
 }

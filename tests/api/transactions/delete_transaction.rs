@@ -1,10 +1,20 @@
-use budget_app::types::{transactions::create::{TransactionOutcomeWithReceipt, TransactionType}, UserVisible};
+use budget_app::{
+    routes::transactions::delete_transaction::delete_transaction,
+    types::{
+        transactions::create::{TransactionOutcomeWithReceipt, TransactionType},
+        UserVisible, general::SuccessResponse,
+    },
+};
 use chrono::Utc;
 use fake::{faker::lorem::en::Sentence, Fake};
 use reqwest::multipart::Form;
 use sqlx::PgPool;
 
-use crate::{helpers::spawn_app, users::login::LoginUser, transactions::create_a_transaction::CreateTransactionWithCurrencyAndCategory};
+use crate::{
+    helpers::spawn_app,
+    transactions::create_a_transaction::CreateTransactionWithCurrencyAndCategory,
+    users::login::LoginUser,
+};
 
 #[sqlx::test]
 async fn delete_transaction_by_id_success(pool: PgPool) {
@@ -164,5 +174,37 @@ async fn delete_transaction_by_id_success(pool: PgPool) {
         create_transaction_response_body2.category_id,
         create_transaction_body2.category_id
     );
+    let delete_transaction_response = app
+        .api_client
+        .delete(&format!(
+            "{}/transactions/delete/{}",
+            app.address, create_transaction_response_body.transaction_id
+        ))
+        .send()
+        .await
+        .expect("Failed to execute request.");
 
-} 
+    assert!(delete_transaction_response.status().is_success());
+
+    let delete_transaction_response_body = delete_transaction_response
+        .json::<SuccessResponse>()
+        .await
+        .expect("Failed to parse delete transaction response");
+    assert_eq!(
+        delete_transaction_response_body.message,
+        "Transaction deleted successfully"
+    );
+
+    
+        let get_transaction_by_id_first = app
+        .api_client
+        .get(&format!(
+            "{}/transactions/get_transaction_by_id/{}",
+            app.address, create_transaction_response_body.transaction_id
+        ))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+        assert!(get_transaction_by_id_first.status().is_client_error())
+}
