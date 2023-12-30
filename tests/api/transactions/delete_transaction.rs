@@ -1,10 +1,7 @@
-use budget_app::{
-    routes::transactions::delete_transaction::delete_transaction,
-    types::{
-        transactions::create::{TransactionOutcomeWithReceipt, TransactionType},
+use budget_app::types::{
+        transactions::create::TransactionType,
         UserVisible, general::{SuccessResponse, ErrorResponse},
-    },
-};
+    };
 use chrono::Utc;
 use fake::{faker::lorem::en::Sentence, Fake};
 use reqwest::multipart::Form;
