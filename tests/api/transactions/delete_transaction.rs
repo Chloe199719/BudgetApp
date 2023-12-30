@@ -2,7 +2,7 @@ use budget_app::{
     routes::transactions::delete_transaction::delete_transaction,
     types::{
         transactions::create::{TransactionOutcomeWithReceipt, TransactionType},
-        UserVisible, general::SuccessResponse,
+        UserVisible, general::{SuccessResponse, ErrorResponse},
     },
 };
 use chrono::Utc;
@@ -207,4 +207,45 @@ async fn delete_transaction_by_id_success(pool: PgPool) {
         .expect("Failed to execute request.");
 
         assert!(get_transaction_by_id_first.status().is_client_error())
+}
+#[sqlx::test]
+async fn delete_transaction_by_id_error(pool: PgPool) {
+    let app = spawn_app(pool.clone()).await;
+    //Act - Part 1 - Login
+    let login_body = LoginUser {
+        email: app.test_user.email.clone(),
+        password: app.test_user.password.clone(),
+    };
+
+    let login_response = app.post_login(&login_body).await;
+
+    assert!(login_response.status().is_success());
+
+   login_response
+        .json::<UserVisible>()
+        .await
+        .expect("Failed to parse login response");
+
+    //Act - Part 2 - Create transaction
+
+   let delete_transaction_response = app
+        .api_client
+        .delete(&format!(
+            "{}/transactions/delete/{}",
+            app.address,1231231 ))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert!(delete_transaction_response.status().is_client_error());
+
+    let delete_transaction_response_body = delete_transaction_response
+        .json::<ErrorResponse>()
+        .await
+        .expect("Failed to parse delete transaction response");
+
+    assert_eq!(
+        delete_transaction_response_body.error,
+        "Transaction not found"
+    );
 }
