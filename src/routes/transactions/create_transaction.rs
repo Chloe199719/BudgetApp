@@ -135,7 +135,7 @@ pub async fn create_transaction(
     //Save recipe if provided
     if let Some(recipe) = &form.0.receipt {
         let s3_key_prefix = format!(
-            "receipts/{}/{}",
+            "receipts/{}/{}/",
             session_uuid, save_transaction.transaction_id
         );
         let upload_file = s3_client.upload(recipe, &s3_key_prefix).await;
