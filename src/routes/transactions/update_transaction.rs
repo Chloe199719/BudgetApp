@@ -35,7 +35,7 @@ pub struct ObjectTransaction {
 }
 
 #[tracing::instrument(name = "Updating a transaction", skip(form, pool, session, s3_client))]
-#[patch("/transactions/{transaction_id}/update")]
+#[patch("/{transaction_id}/update")]
 pub async fn update_transaction_route(
     pool: Data<PgPool>,
     path: Path<PathUpdate>,
