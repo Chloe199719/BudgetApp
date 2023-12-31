@@ -3,6 +3,7 @@ pub mod delete_transaction;
 pub mod get_all_transactions_by_categorie;
 pub mod get_all_transactions_by_user;
 pub mod get_transaction_by_id;
+pub mod swap_transaction_category;
 pub mod update_transaction;
 
 use actix_web::web::ServiceConfig;
