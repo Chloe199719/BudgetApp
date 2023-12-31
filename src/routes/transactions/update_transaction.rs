@@ -102,12 +102,17 @@ pub async fn update_transaction_route(
     }
 
     if let Some(receipt) = &form.0.receipt{
-        //TODO: Delete old receipt if it exists
         let s3_key_prefix = format!("receipts/{}/{}/", session_uuid,path.transaction_id);
         let upload_file = s3_client.upload(receipt, &s3_key_prefix).await;
 
         let receipt_id = match transaction.receipt_id {
             Some(receipt_id) => {
+                if let Some(receipt_url) = &transaction.receipt_url {
+                    let s3_image_key = &receipt_url[receipt_url.find("receipts").unwrap_or(receipt_url.len())..];
+                    if !s3_client.delete_file(s3_image_key).await {
+                        tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Failed to delete old receipt from s3"); 
+                    }
+                }
                 match update_transaction_db_receipt(&mut db_transaction, receipt_id, path.transaction_id, session_uuid, upload_file.s3_url.clone()).await {
                     Ok(id) => id,
                     Err(e) => {
@@ -171,7 +176,7 @@ async fn update_transaction_db(
             description = COALESCE($1, description),
             amount = COALESCE($2,amount),
             currency = COALESCE($3, currency),
-            receipt_id = COALESCE($4, receipt_id)
+            receipt_id = COALESCE($6, receipt_id)
         WHERE 
             transaction_id = $4 AND user_id = $5
         "#,
@@ -179,7 +184,8 @@ async fn update_transaction_db(
         object.amount,
         object.currency as Option<TransactionCurrency>,
         transaction_id,
-        user_id
+        user_id,
+        object.receipt
     ).execute(pool.as_mut()).await {
         Ok(_) => match sqlx::query_as!(
             TransactionOutcomeWithReceipt,
