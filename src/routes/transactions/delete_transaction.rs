@@ -38,7 +38,6 @@ pub async fn delete_transaction(
         Ok(_) => HttpResponse::Ok().json(SuccessResponse {
             message: "Transaction deleted successfully".to_string(),
         }),
-        //FIXME: CHECK IF THIS WORKS
         Err(e) => {
             match e {
                 sqlx::Error::RowNotFound => {
