@@ -1,0 +1,25 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE receipts\n        SET receipt_url = $1\n        WHERE id = $2 AND transaction_id = $3 AND user_id = $4\n        RETURNING id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Int4",
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "5d52cfdf04cd3c2a87ea02189270b65c6e16e1acfb40eeb75be0397a7884eb2d"
+}
