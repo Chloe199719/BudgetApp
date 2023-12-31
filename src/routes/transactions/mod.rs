@@ -16,6 +16,7 @@ pub fn transactions_routes_config(cfg: &mut ServiceConfig) {
             .service(get_all_transactions_by_categorie::get_all_transactions_by_category)
             .service(get_transaction_by_id::get_transaction_by_id)
             .service(delete_transaction::delete_transaction)
-            .service(update_transaction::update_transaction_route),
+            .service(update_transaction::update_transaction_route)
+            .service(swap_transaction_category::swap_transaction_category),
     );
 }
