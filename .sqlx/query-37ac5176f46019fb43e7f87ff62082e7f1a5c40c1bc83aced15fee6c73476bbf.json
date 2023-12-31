@@ -1,0 +1,32 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE transactions\n        SET \n            description = COALESCE($1, description),\n            amount = COALESCE($2,amount),\n            currency = COALESCE($3, currency),\n            receipt_id = COALESCE($6, receipt_id)\n        WHERE \n            transaction_id = $4 AND user_id = $5\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Float8",
+        {
+          "Custom": {
+            "name": "currencys_type",
+            "kind": {
+              "Enum": [
+                "EUR",
+                "USD",
+                "WON",
+                "YEN",
+                "POUND"
+              ]
+            }
+          }
+        },
+        "Int4",
+        "Uuid",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "37ac5176f46019fb43e7f87ff62082e7f1a5c40c1bc83aced15fee6c73476bbf"
+}
