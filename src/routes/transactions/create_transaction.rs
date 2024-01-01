@@ -155,16 +155,14 @@ pub async fn create_transaction(
                 }
                 Err(e) => {
                     tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to commit transaction: {:#?}", e);
-                    //FIXME: Delete file from s3
-
+                    s3_client.delete_file(&s3_key_prefix).await;
                     return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                         error: "Something unexpected happened. Kindly try again.".to_string(),
                     });
                 }
             },
             Err(e) => {
-                //FIXME: Delete file from s3
-                transaction.rollback().await.unwrap();
+                s3_client.delete_file(&s3_key_prefix).await;
                 tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to save recipe url: {:#?}", e);
                 return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                     error: "Something unexpected happened. Kindly try again.".to_string(),
