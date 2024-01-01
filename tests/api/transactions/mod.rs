@@ -5,3 +5,4 @@ pub mod get_all_transaction_by_category;
 
 pub mod delete_transaction;
 pub mod get_transaction_by_id;
+pub mod update_transaction;
