@@ -88,7 +88,7 @@ async fn delete_transaction_db(
             }
             match sqlx::query!(
                 r#"delete from receipts where id = $1
-                returning *;
+                returning receipt_url;
                 "#,
                 transaction.receipt_id
             )
