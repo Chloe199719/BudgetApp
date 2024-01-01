@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from receipts where id = $1\n                returning receipt_url;\n                ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "receipt_url",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "2d394d0131d95679aa0793b8f2104bcdbdfd2169ef0bdee2e745131d5a4dd24b"
+}

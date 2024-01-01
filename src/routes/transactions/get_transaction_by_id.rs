@@ -9,6 +9,7 @@ use sqlx::PgPool;
 use crate::{
     routes::users::logout::session_user_id,
     types::{general::ErrorResponse, transactions::create::TransactionOutcomeWithReceipt},
+    utils::constant::BACK_END_TARGET,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -36,18 +37,18 @@ pub async fn get_transaction_by_id(
     };
     match get_transaction_by_id_db(&session_uuid, transaction_id.transaction_id, &pool).await {
         Ok(transaction) => {
-            tracing::event!(target: "session", tracing::Level::INFO, "Successfully got transaction from DB");
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "Successfully got transaction from DB");
             return actix_web::HttpResponse::Ok().json(transaction);
         }
         Err(e) => match e {
             sqlx::Error::RowNotFound => {
-                tracing::event!(target: "session", tracing::Level::WARN, "Transaction not found");
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::WARN, "Transaction not found");
                 return actix_web::HttpResponse::NotFound().json(ErrorResponse {
                     error: "Transaction not found".to_string(),
                 });
             }
             _ => {
-                tracing::event!(target: "session", tracing::Level::ERROR, "Unable to get transaction from DB: {:#?}", e);
+                tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Unable to get transaction from DB: {:#?}", e);
                 return actix_web::HttpResponse::InternalServerError().json(ErrorResponse {
                     error: "Something unexpected happened. Kindly try again.".to_string(),
                 });

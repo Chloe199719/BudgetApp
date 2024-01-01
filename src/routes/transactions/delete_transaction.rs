@@ -8,7 +8,7 @@ use sqlx::PgPool;
 use crate::{
     routes::users::logout::session_user_id,
     types::general::{ErrorResponse, SuccessResponse},
-    uploads::client::{self, Client},
+    uploads::client::Client,
     utils::constant::BACK_END_TARGET,
 };
 
