@@ -20,7 +20,7 @@
 2. Api to get transactions by category ✅
 3. Api to get transactions by date ✅
 4. Api to edit transactions ✅
-5. Api to switch transaction category ❌
+5. Api to switch transaction category ✅
 6. Api to delete transactions ✅
 7. Make sure delete transactions also deletes the receipt from s3 ❌
 
