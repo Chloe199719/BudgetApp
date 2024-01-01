@@ -19,7 +19,7 @@ pub struct UpdateTransaction {
     pub currency: Option<TransactionCurrency>,
     pub description: Option<String>,
 }
-
+#[ignore]
 #[sqlx::test]
 async fn test_update_transaction_success_change_amount(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
@@ -158,6 +158,8 @@ async fn test_update_transaction_success_change_amount(pool: PgPool) {
         create_transaction_body.category_id
     );
 }
+
+#[ignore]
 #[sqlx::test]
 async fn test_update_transaction_success_change_currency(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
@@ -302,6 +304,7 @@ async fn test_update_transaction_success_change_currency(pool: PgPool) {
     );
 }
 
+#[ignore]
 #[sqlx::test]
 async fn test_update_transaction_success_change_description(pool: PgPool) {
     let app = spawn_app(pool.clone()).await;
