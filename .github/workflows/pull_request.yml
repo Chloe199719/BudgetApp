@@ -77,4 +77,4 @@ jobs:
         run: cargo test -- --test-threads=32 api categories
 
       - name: Run tests Transactions
-        run: cargo test -- --test-threads=32 api transactions
+        run: cargo test -- --test-threads=64 api transactions

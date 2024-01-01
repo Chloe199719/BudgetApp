@@ -12,9 +12,7 @@ use sqlx::PgPool;
 
 use crate::{
     helpers::spawn_app,
-    transactions::create_a_transaction::{
-        CreateTransactionWithCurrency, CreateTransactionWithCurrencyAndCategory,
-    },
+    transactions::create_a_transaction::CreateTransactionWithCurrencyAndCategory,
     users::login::LoginUser,
 };
 
