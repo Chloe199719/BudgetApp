@@ -8,6 +8,7 @@ use sqlx::PgPool;
 use crate::{
     routes::users::logout::session_user_id,
     types::general::{ErrorResponse, SuccessResponse},
+    uploads::client::{self, Client},
     utils::constant::BACK_END_TARGET,
 };
 
@@ -22,6 +23,7 @@ pub async fn delete_transaction(
     pool: Data<PgPool>,
     path: Path<DeleteTransaction>,
     session: actix_session::Session,
+    s3_client: Data<Client>,
 ) -> HttpResponse {
     let session_uuid = match session_user_id(&session).await {
         Ok(id) => id,
@@ -34,7 +36,7 @@ pub async fn delete_transaction(
         }
     };
 
-    match delete_transaction_db(&pool, path.transaction_id, session_uuid).await {
+    match delete_transaction_db(&pool, path.transaction_id, session_uuid, &s3_client).await {
         Ok(_) => HttpResponse::Ok().json(SuccessResponse {
             message: "Transaction deleted successfully".to_string(),
         }),
@@ -57,18 +59,19 @@ pub async fn delete_transaction(
     }
 }
 
-#[tracing::instrument(name = "Delete Transaction in DB", skip(pool))]
+#[tracing::instrument(name = "Delete Transaction in DB", skip(pool, client))]
 async fn delete_transaction_db(
     pool: &PgPool,
     transaction_id: i32,
     user_id: uuid::Uuid,
+    client: &Client,
 ) -> Result<(), sqlx::Error> {
     match sqlx::query!(
         r#"
         UPDATE transactions
         SET deleted = true
         WHERE transaction_id = $1 AND user_id = $2
-        returning transaction_id
+        returning transaction_id, receipt_id;
        "#,
         transaction_id,
         user_id
@@ -79,6 +82,31 @@ async fn delete_transaction_db(
         Ok(transaction) => {
             if transaction.transaction_id != transaction_id {
                 return Err(sqlx::Error::RowNotFound);
+            }
+            if transaction.receipt_id.is_none() {
+                return Ok(());
+            }
+            match sqlx::query!(
+                r#"delete from receipts where id = $1
+                returning *;
+                "#,
+                transaction.receipt_id
+            )
+            .fetch_one(pool)
+            .await
+            {
+                Ok(receipt) => {
+                    let s3_image_key = &receipt.receipt_url[receipt
+                        .receipt_url
+                        .find("receipts")
+                        .unwrap_or(receipt.receipt_url.len())..];
+                    client.delete_file(s3_image_key).await;
+                }
+
+                Err(e) => {
+                    tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Failed to delete receipt: {}", e);
+                    return Err(e);
+                }
             }
         }
         Err(e) => return Err(e),
