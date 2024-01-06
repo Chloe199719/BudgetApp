@@ -51,7 +51,7 @@ pub async fn delete_transaction(
                 _ => {}
             }
 
-            tracing::event!(target: "delete_transaction", tracing::Level::ERROR, "Failed to delete transaction: {}", e);
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Failed to delete transaction: {}", e);
             HttpResponse::InternalServerError().json(ErrorResponse {
                 error: "Failed to delete transaction".to_string(),
             })
