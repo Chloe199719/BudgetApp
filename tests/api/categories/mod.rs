@@ -27,9 +27,30 @@ pub async fn create_category_in_db(
     match sqlx::query_as!(
         Category,
         "
-                INSERT INTO categories (category_name, description, user_id)
-                VALUES ($1, $2, $3)
-                RETURNING category_id, user_id , created_at, category_name, description, updated_at, is_default;",
+        WITH new_category AS (
+            INSERT INTO categories (category_name, description, user_id)
+            VALUES ($1, $2, $3)
+            RETURNING *
+        )
+        SELECT 
+            nc.category_id, 
+            nc.category_name, 
+            nc.description, 
+            nc.user_id, 
+            nc.created_at, 
+            nc.updated_at, 
+            nc.is_default,
+            nc.budget_id,
+            b.amount,
+            b.start_date,
+            b.end_date,
+            b.recurring
+        FROM 
+            new_category nc
+        LEFT JOIN 
+            budgets b
+        ON 
+            nc.budget_id = b.budget_id;",
         create_category.name,
         create_category.description,
         user_id
