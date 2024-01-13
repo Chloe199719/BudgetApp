@@ -1,0 +1,90 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH new_category AS (\n            INSERT INTO categories (category_name, description, user_id)\n            VALUES ($1, $2, $3)\n            RETURNING *\n        )\n        SELECT \n            nc.category_id, \n            nc.category_name, \n            nc.description, \n            nc.user_id, \n            nc.created_at, \n            nc.updated_at, \n            nc.is_default,\n            nc.budget_id,\n            COALESCE(b.amount, null) as amount,\n            COALESCE(b.start_date,null) as start_date,\n            COALESCE(b.end_date,null) as end_date,\n            COALESCE(b.recurring,null) as recurring\n        FROM \n            new_category nc\n        LEFT JOIN \n            budgets b\n        ON \n            nc.budget_id = b.budget_id;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "category_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "category_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_default",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "budget_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "amount",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 9,
+        "name": "start_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
+        "name": "end_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 11,
+        "name": "recurring",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "e4e9d8c51248038a6480914188ecf86bfd3f51c9f9580a4941c53745bfd92740"
+}

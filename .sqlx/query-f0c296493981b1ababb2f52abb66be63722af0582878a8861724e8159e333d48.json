@@ -1,0 +1,89 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT categories.category_id, categories.user_id, categories.created_at, category_name, description, categories.updated_at , is_default ,categories.budget_id,\n              COALESCE(budgets.amount,null) as amount,  COALESCE(budgets.start_date,null) as start_date, COALESCE(budgets.end_date,null) as end_date,  COALESCE(budgets.recurring,null) as recurring FROM categories\n            LEFT JOIN budgets ON categories.budget_id = budgets.budget_id\n            WHERE categories.category_id = $1 AND categories.user_id = $2\n                    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "category_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 3,
+        "name": "category_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_default",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "budget_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "amount",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 9,
+        "name": "start_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
+        "name": "end_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 11,
+        "name": "recurring",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "f0c296493981b1ababb2f52abb66be63722af0582878a8861724e8159e333d48"
+}
