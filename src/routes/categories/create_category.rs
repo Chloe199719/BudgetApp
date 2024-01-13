@@ -72,10 +72,10 @@ async fn create_category_in_db(
             nc.updated_at, 
             nc.is_default,
             nc.budget_id,
-            b.amount,
-            b.start_date,
-            b.end_date,
-            b.recurring
+            COALESCE(b.amount, null) as amount,
+            COALESCE(b.start_date,null) as start_date,
+            COALESCE(b.end_date,null) as end_date,
+            COALESCE(b.recurring,null) as recurring
         FROM 
             new_category nc
         LEFT JOIN 
