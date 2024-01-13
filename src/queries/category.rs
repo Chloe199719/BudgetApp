@@ -54,8 +54,10 @@ pub async fn check_category_exists_return_it(
     match sqlx::query_as!(
         Category,
         r#"
-                        SELECT category_id, user_id, created_at, category_name, description, updated_at , is_default FROM categories
-                        WHERE category_id = $1 AND user_id = $2
+            SELECT categories.category_id, categories.user_id, categories.created_at, category_name, description, categories.updated_at , is_default ,categories.budget_id,
+              COALESCE(budgets.amount,null) as amount,  COALESCE(budgets.start_date,null) as start_date, COALESCE(budgets.end_date,null) as end_date,  COALESCE(budgets.recurring,null) as recurring FROM categories
+            LEFT JOIN budgets ON categories.budget_id = budgets.budget_id
+            WHERE categories.category_id = $1 AND categories.user_id = $2
                     "#,
         category_id,
         user_id
@@ -88,9 +90,12 @@ pub async fn get_all_categories_by_user_id(
     match sqlx::query_as!(
         Category,
         r#"
-                        SELECT category_id, user_id, created_at, category_name, description, updated_at , is_default FROM categories
-                        WHERE user_id = $1
+        SELECT categories.category_id, categories.user_id, categories.created_at, category_name, description, categories.updated_at , is_default ,categories.budget_id,
+        COALESCE(budgets.amount,null) as amount,  COALESCE(budgets.start_date,null) as start_date, COALESCE(budgets.end_date,null) as end_date,  COALESCE(budgets.recurring,null) as recurring FROM categories
+                        LEFT JOIN budgets ON categories.budget_id = budgets.budget_id
+                        WHERE categories.user_id = $1
                         ORDER BY created_at ASC
+                        
                     "#,
         user_id
     )

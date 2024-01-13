@@ -38,7 +38,6 @@ pub async fn delete_category(
     match check_category_exists_return_it(&pool, data.category_id, session_uuid).await {
         Ok(category) => {
             tracing::event!(target: BACK_END_TARGET, tracing::Level::DEBUG, "CHECK CATEGORY {:#?}",category);
-            println!("{:?}", category);
             if category.is_default {
                 tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Tried to delete default category");
                 return HttpResponse::BadRequest().json(ErrorResponse {

@@ -1,6 +1,6 @@
 use crate::{
     routes::{
-        categories::categories_routes_config, health_check,
+        budgets::budget_routes_config, categories::categories_routes_config, health_check,
         transactions::transactions_routes_config, users::auth_routes_config,
     },
     settings::Settings,
@@ -116,7 +116,7 @@ async fn run(
             .wrap(
                 Cors::default()
                     .allowed_origin(&settings.frontend_url)
-                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "PATCH"])
                     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                     .allowed_header(header::CONTENT_TYPE)
                     .expose_headers(&[header::CONTENT_DISPOSITION])
@@ -136,6 +136,7 @@ async fn run(
             .configure(auth_routes_config)
             .configure(categories_routes_config)
             .configure(transactions_routes_config)
+            .configure(budget_routes_config)
             .app_data(connection_pool.clone())
             .app_data(redis_pool_data.clone())
             .app_data(s3_client.clone())

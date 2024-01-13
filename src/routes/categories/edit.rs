@@ -1,13 +1,17 @@
-use actix_web::{ put, web::{ Data, Path }, HttpResponse };
+use actix_web::{
+    put,
+    web::{Data, Path},
+    HttpResponse,
+};
 use actix_web_validator::Json;
-use serde::{ Deserialize, Serialize };
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use validator::Validate;
 
 use crate::{
     queries::category::check_category_exists_return_it,
     routes::users::logout::session_user_id,
-    types::{ categories::Category, general::ErrorResponse },
+    types::{categories::Category, general::ErrorResponse},
     utils::constant::BACK_END_TARGET,
 };
 
@@ -34,7 +38,7 @@ pub async fn edit_category(
     pool: Data<PgPool>,
     session: actix_session::Session,
     data: Path<PathCategory>,
-    edit_category: Json<EditCategory>
+    edit_category: Json<EditCategory>,
 ) -> HttpResponse {
     if !edit_category.is_some() {
         tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "No fields to edit");
@@ -47,18 +51,20 @@ pub async fn edit_category(
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
             return HttpResponse::Unauthorized().json(ErrorResponse {
-                error: "You are not logged in. Kindly ensure you are logged in and try again".to_string(),
+                error: "You are not logged in. Kindly ensure you are logged in and try again"
+                    .to_string(),
             });
         }
     };
     match check_category_exists_return_it(&pool, data.category_id, session_uuid).await {
         Ok(category) => {
             let edit_category = edit_category.clone();
-            if
-                category.description ==
-                    edit_category.description.unwrap_or(category.description.clone()) &&
-                category.category_name ==
-                    edit_category.name.unwrap_or(category.category_name.clone())
+            if category.description
+                == edit_category
+                    .description
+                    .unwrap_or(category.description.clone())
+                && category.category_name
+                    == edit_category.name.unwrap_or(category.category_name.clone())
             {
                 tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "No fields to edit");
                 return HttpResponse::BadRequest().json(ErrorResponse {
@@ -73,8 +79,13 @@ pub async fn edit_category(
             });
         }
     }
-    let return_data = match
-        edit_category_in_db(&pool, data.category_id, session_uuid, &edit_category).await
+    let return_data = match edit_category_in_db(
+        &pool,
+        data.category_id,
+        session_uuid,
+        &edit_category,
+    )
+    .await
     {
         Ok(e) => e,
         Err(e) => {
@@ -100,12 +111,34 @@ async fn edit_category_in_db(
     match sqlx::query_as!(
         Category,
         r#"
+        
+        WITH updated_categories AS (
             UPDATE categories
             SET
                 category_name = COALESCE($1, category_name),
                 description = COALESCE($2, description)
-            WHERE category_id = $3 AND user_id = $4 
-            RETURNING category_id, category_name, description, user_id, created_at, updated_at, is_default;
+            WHERE category_id = $3 AND user_id = $4
+            RETURNING *
+        )
+        SELECT 
+    uc.category_id, 
+    uc.category_name, 
+    uc.description, 
+    uc.user_id, 
+    uc.created_at, 
+    uc.updated_at, 
+    uc.is_default,
+    uc.budget_id,
+    b.amount,
+    b.start_date,
+    b.end_date,
+    b.recurring
+FROM 
+    updated_categories uc
+LEFT JOIN 
+    budgets b
+ON 
+    uc.budget_id = b.budget_id;
         "#,
         edit_data.name,
         edit_data.description,
