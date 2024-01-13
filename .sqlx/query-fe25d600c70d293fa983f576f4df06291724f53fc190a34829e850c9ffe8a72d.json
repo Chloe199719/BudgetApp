@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE categories\n        SET budget_id = $1\n        WHERE category_id = $2 AND user_id = $3\n\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "fe25d600c70d293fa983f576f4df06291724f53fc190a34829e850c9ffe8a72d"
+}

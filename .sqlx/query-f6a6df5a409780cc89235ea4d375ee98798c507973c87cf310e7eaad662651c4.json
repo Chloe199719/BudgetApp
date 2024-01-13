@@ -1,0 +1,91 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        \n        WITH updated_categories AS (\n            UPDATE categories\n            SET\n                category_name = COALESCE($1, category_name),\n                description = COALESCE($2, description)\n            WHERE category_id = $3 AND user_id = $4\n            RETURNING *\n        )\n        SELECT \n    uc.category_id, \n    uc.category_name, \n    uc.description, \n    uc.user_id, \n    uc.created_at, \n    uc.updated_at, \n    uc.is_default,\n    uc.budget_id,\n    b.amount,\n    b.start_date,\n    b.end_date,\n    b.recurring\nFROM \n    updated_categories uc\nLEFT JOIN \n    budgets b\nON \n    uc.budget_id = b.budget_id;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "category_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "category_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_default",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "budget_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "amount",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 9,
+        "name": "start_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
+        "name": "end_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 11,
+        "name": "recurring",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Text",
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "f6a6df5a409780cc89235ea4d375ee98798c507973c87cf310e7eaad662651c4"
+}
