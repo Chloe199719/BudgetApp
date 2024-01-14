@@ -55,3 +55,25 @@ pub async fn delete_budget_db(
     .await?;
     Ok(())
 }
+
+#[tracing::instrument(name = "Change Budget Amount in DB", skip(pool))]
+pub async fn change_budget_amount_db(
+    pool: &PgPool,
+    budget_id: i32,
+    user_id: uuid::Uuid,
+    amount: f64,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        r#"
+        UPDATE budgets
+        SET amount = $1
+        WHERE budget_id = $2 AND user_id = $3;
+        "#,
+        amount,
+        budget_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
