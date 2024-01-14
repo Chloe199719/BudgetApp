@@ -77,3 +77,29 @@ pub async fn change_budget_amount_db(
     .await?;
     Ok(())
 }
+
+#[tracing::instrument(name = "Change Budget Date in DB", skip(pool))]
+pub async fn change_budget_date_db(
+    pool: &PgPool,
+    budget_id: i32,
+    user_id: uuid::Uuid,
+    start_date: chrono::DateTime<chrono::Utc>,
+    end_date: chrono::DateTime<chrono::Utc>,
+) -> Result<(), sqlx::Error> {
+    let duration_unix = end_date.timestamp() - start_date.timestamp();
+    sqlx::query!(
+        r#"
+        UPDATE budgets
+        SET start_date = $1, end_date = $2, duration_unix = $3
+        WHERE budget_id = $4 AND user_id = $5;
+        "#,
+        start_date,
+        end_date,
+        duration_unix,
+        budget_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
