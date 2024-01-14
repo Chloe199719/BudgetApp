@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE budgets\n        SET start_date = $1, end_date = $2, duration_unix = $3\n        WHERE budget_id = $4 AND user_id = $5;\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Timestamptz",
+        "Timestamptz",
+        "Int8",
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e2c3f4b95256eb3030825cb0331064f83d6e8465492217d516958985e6e5b673"
+}
