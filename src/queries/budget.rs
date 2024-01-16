@@ -103,3 +103,25 @@ pub async fn change_budget_date_db(
     .await?;
     Ok(())
 }
+
+#[tracing::instrument(name = "Change Budget Recursing in DB", skip(pool))]
+pub async fn change_budget_recursing_db(
+    pool: &PgPool,
+    budget_id: i32,
+    user_id: uuid::Uuid,
+    recurring: bool,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        r#"
+        UPDATE budgets
+        SET recurring = $1
+        WHERE budget_id = $2 AND user_id = $3;
+        "#,
+        recurring,
+        budget_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
