@@ -33,7 +33,7 @@ pub async fn change_budget_recursing(
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
-            return actix_web::HttpResponse::Unauthorized().json(ErrorResponse {
+            return HttpResponse::Unauthorized().json(ErrorResponse {
                 error: "You are not logged in. Kindly ensure you are logged in and try again"
                     .to_string(),
             });
