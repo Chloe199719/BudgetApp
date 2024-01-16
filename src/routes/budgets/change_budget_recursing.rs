@@ -1,4 +1,5 @@
 use actix_web::{
+    patch,
     web::{Data, Json, Path},
     HttpResponse,
 };
@@ -22,7 +23,7 @@ pub struct ChangeBudgetPath {
 }
 
 #[tracing::instrument(name = "Change Budget Recursing", skip(pool, session))]
-#[actix_web::put("/change_recurring/{budget_id}")]
+#[patch("/change_recurring/{budget_id}")]
 pub async fn change_budget_recursing(
     pool: Data<sqlx::PgPool>,
     path: Path<ChangeBudgetPath>,

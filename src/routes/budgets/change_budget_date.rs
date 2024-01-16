@@ -1,5 +1,5 @@
 use actix_web::{
-    put,
+    patch,
     web::{Data, Json, Path},
     HttpResponse,
 };
@@ -24,7 +24,7 @@ pub struct ChangeBudgetDateBody {
 }
 
 #[tracing::instrument(name = "Change Budget Date", skip(pool, session))]
-#[put("/change_date/{budget_id}")]
+#[patch("/change_date/{budget_id}")]
 pub async fn change_budget_date_route(
     pool: Data<PgPool>,
     path: Path<ChangeBudgetDatePath>,
