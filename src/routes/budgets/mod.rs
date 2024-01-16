@@ -1,8 +1,8 @@
 pub mod change_budget_amount;
 pub mod change_budget_date;
+pub mod change_budget_recursing;
 pub mod create_budget;
 pub mod delete_budget;
-
 use actix_web::web::ServiceConfig;
 
 pub fn budget_routes_config(cfg: &mut ServiceConfig) {
