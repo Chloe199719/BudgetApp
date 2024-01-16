@@ -9,8 +9,8 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    routes::users::logout::session_user_id, types::general::ErrorResponse,
-    utils::constant::BACK_END_TARGET,
+    queries::category::check_category_exists, routes::users::logout::session_user_id,
+    types::general::ErrorResponse, utils::constant::BACK_END_TARGET,
 };
 
 #[derive(Debug, Deserialize)]
@@ -57,6 +57,20 @@ pub async fn create_budget(
             });
         }
     };
+    match check_category_exists(&pool, path.category_id, session_uuid).await {
+        Ok(false) => {
+            return HttpResponse::NotFound().json(ErrorResponse {
+                error: "Category not found".to_string(),
+            });
+        }
+        Ok(true) => {}
+        Err(e) => {
+            tracing::event!(target: BACK_END_TARGET, tracing::Level::ERROR, "Failed to check if category exists in DB: {}", e);
+            return HttpResponse::InternalServerError().json(ErrorResponse {
+                error: "Failed to check if category exists in DB".to_string(),
+            });
+        }
+    }
 
     match create_budget_db(
         &pool,
