@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE budgets\n        SET recurring = $1\n        WHERE budget_id = $2 AND user_id = $3;\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Bool",
+        "Int4",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ac5415e26d52ebcf1ef323add3ee2f391da79fad72fb6dd52fac93284a6fc3b5"
+}
