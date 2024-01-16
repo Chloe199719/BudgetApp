@@ -1,4 +1,5 @@
 use actix_web::{
+    patch,
     web::{Data, Json, Path},
     HttpResponse,
 };
@@ -22,7 +23,7 @@ pub struct ChangeBudgetPath {
 }
 
 #[tracing::instrument(name = "Change Budget Recursing", skip(pool, session))]
-#[actix_web::put("/change_recurring/{budget_id}")]
+#[patch("/change_recurring/{budget_id}")]
 pub async fn change_budget_recursing(
     pool: Data<sqlx::PgPool>,
     path: Path<ChangeBudgetPath>,
@@ -33,7 +34,7 @@ pub async fn change_budget_recursing(
         Ok(id) => id,
         Err(e) => {
             tracing::event!(target: "session", tracing::Level::ERROR, "Failed to get user from session. User unauthorized: {}", e);
-            return actix_web::HttpResponse::Unauthorized().json(ErrorResponse {
+            return HttpResponse::Unauthorized().json(ErrorResponse {
                 error: "You are not logged in. Kindly ensure you are logged in and try again"
                     .to_string(),
             });

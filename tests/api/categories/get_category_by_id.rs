@@ -86,8 +86,6 @@ async fn test_get_category_by_id_default_success(pool: PgPool) {
         .await
         .expect("Failed to parse get category response");
 
-    println!("{:?}", get_category_response_body);
-
     assert_eq!(get_category_response_body.category_name, TEST_CATEGORY_NAME);
     assert_eq!(
         get_category_response_body.description,
