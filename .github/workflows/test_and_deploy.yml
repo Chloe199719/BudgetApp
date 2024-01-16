@@ -79,6 +79,9 @@ jobs:
       - name: Run tests Transactions
         run: cargo test -- --test-threads=64 api transactions
 
+      - name: Run tests Budgets
+        run: cargo test -- --test-threads=64 api budgets
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
