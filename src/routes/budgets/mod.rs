@@ -11,6 +11,7 @@ pub fn budget_routes_config(cfg: &mut ServiceConfig) {
             .service(create_budget::create_budget)
             .service(delete_budget::delete_budget_route)
             .service(change_budget_amount::change_budget_amount)
-            .service(change_budget_date::change_budget_date_route),
+            .service(change_budget_date::change_budget_date_route)
+            .service(change_budget_recursing::change_budget_recursing),
     );
 }
