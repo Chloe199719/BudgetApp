@@ -33,17 +33,6 @@ pub async fn delete_budget_db(
 ) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"
-        DELETE FROM budgets
-        WHERE budget_id = $1 AND user_id = $2
-        RETURNING budget_id, category_id;
-        "#,
-        budget_id,
-        user_id
-    )
-    .fetch_one(pool.as_mut())
-    .await?;
-    sqlx::query!(
-        r#"
         UPDATE categories
         SET budget_id = NULL
         WHERE budget_id = $1 AND user_id = $2;
@@ -52,6 +41,17 @@ pub async fn delete_budget_db(
         user_id
     )
     .execute(pool.as_mut())
+    .await?;
+    sqlx::query!(
+        r#"
+        DELETE FROM budgets
+        WHERE budget_id = $1 AND user_id = $2
+        RETURNING budget_id, category_id;
+        "#,
+        budget_id,
+        user_id
+    )
+    .fetch_one(pool.as_mut())
     .await?;
     Ok(())
 }
