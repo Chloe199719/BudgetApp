@@ -1,5 +1,7 @@
+use std::time::Duration;
+
 use actix_multipart::form::tempfile::TempFile;
-use aws_sdk_s3::primitives::ByteStream;
+use aws_sdk_s3::{presigning::PresigningConfig, primitives::ByteStream};
 use tokio::{fs::File, io::AsyncReadExt as _};
 
 use crate::types::upload::UploadedFile;
@@ -68,5 +70,17 @@ impl Client {
             .send()
             .await
             .is_ok()
+    }
+
+    pub async fn generate_s3_presigned_url(&self, key: &str) -> String {
+        let url = self
+            .s3
+            .get_object()
+            .bucket(&self.bucket_name)
+            .key(key)
+            .presigned(PresigningConfig::expires_in(Duration::from_secs(24 * 60 * 60)).unwrap())
+            .await
+            .expect("Failed to generate presigned url");
+        url.uri().to_string()
     }
 }
