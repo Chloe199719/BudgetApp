@@ -2,12 +2,12 @@
 
 import axios from "axios";
 import { useState } from "react";
-import { CurrentUserData } from "../layout";
+import { CurrentUserData } from "../../app/layout";
 import { useDispatch } from "@/lib/redux/store";
 import { login } from "@/lib/redux/slices/auth";
 
 type Props = {};
-function TestLogin({}: Props) {
+function LoginForm({}: Props) {
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const [password, setPassword] = useState("");
@@ -55,4 +55,4 @@ function TestLogin({}: Props) {
     </div>
   );
 }
-export default TestLogin;
+export default LoginForm;
