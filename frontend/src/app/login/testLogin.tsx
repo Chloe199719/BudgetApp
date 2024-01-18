@@ -37,6 +37,7 @@ function TestLogin({}: Props) {
           type="text"
           id="username"
           name="username"
+          className="text-black"
         />
         <label htmlFor="password">Password:</label>
         <input
@@ -44,9 +45,10 @@ function TestLogin({}: Props) {
             setPassword(e.currentTarget.value);
           }}
           value={password}
-          type="text"
+          type="password"
           id="password"
           name="password"
+          className="text-black"
         />
         <button>Submit</button>
       </form>

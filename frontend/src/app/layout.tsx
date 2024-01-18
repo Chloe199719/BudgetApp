@@ -4,7 +4,6 @@ import "./globals.css";
 import { Providers } from "@/lib/redux/providers";
 import { cookies } from "next/headers";
 import axios from "axios";
-import useCheckUser from "@/components/auth/useCheckUser";
 import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/Theme-Provider";
@@ -27,11 +26,11 @@ export default async function RootLayout({
   const cookieStore = cookies();
   const sessionId = cookieStore.get("sessionid");
   const userData = await getUserData(sessionId?.value);
-  useCheckUser({ userData });
+
   return (
-    <Providers>
+    <Providers userData={userData}>
       <html lang="en" suppressHydrationWarning={true}>
-        <body className={roboto_mono.className}>
+        <body className={`${roboto_mono.className} min-h-screen flex flex-col`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

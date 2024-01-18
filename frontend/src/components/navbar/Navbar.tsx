@@ -12,15 +12,16 @@ import {
 } from "../ui/hover-card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CalendarIcon } from "@radix-ui/react-icons";
+import { APP_NAME } from "@/lib/constants";
 
 type Props = {};
 function Navbar({}: Props) {
   const auth = useSelector((state) => state.auth);
 
   return (
-    <div className="flex w-full justify-between p-8">
-      <h1 className="text-5xl text-pink-500 dark:text-pink-900 font-bold hover:scale-105 active:scale-95">
-        <Link href="/">🐱 BudgetApp</Link>
+    <div className="flex w-full justify-between p-8 bg-slate-900 dark:bg-black">
+      <h1 className="text-5xl text-pink-500 dark:text-pink-900 font-bold hover:scale-95 active:scale-90">
+        <Link href="/">🐱 {APP_NAME}</Link>
       </h1>
       <div className="flex gap-2 items-center">
         {auth.isAuthenticated ? (
