@@ -7,7 +7,7 @@ import axios from "axios";
 import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/Theme-Provider";
-// const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 const roboto_mono = Roboto_Mono({
   subsets: ["latin"],
   display: "swap",
@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <Providers userData={userData}>
       <html lang="en" suppressHydrationWarning={true}>
-        <body className={`${roboto_mono.className} min-h-screen flex flex-col`}>
+        <body className={`${inter.className} min-h-screen flex flex-col`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
