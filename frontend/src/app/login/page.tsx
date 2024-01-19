@@ -15,7 +15,7 @@ async function page({}: Props) {
   }
   return (
     <main className="flex flex-1">
-      <section className="w-full grid grid-cols-6  justify-items-center">
+      <section className="w-full grid grid-cols-1  md:grid-cols-6  justify-items-center p-10">
         <LoginForm />
         <Carrousel />
       </section>
