@@ -19,6 +19,7 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { APP_NAME } from "@/lib/constants";
+import Link from "next/link";
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(2),
@@ -50,17 +51,19 @@ function LoginForm({}: Props) {
     dispatch(login({ ...data, isAuthenticated: true }));
   }
   return (
-    <div className="w-full col-span-2  px-8 h-full flex items-center justify-center flex-col gap-8">
-      <h2 className="text-4xl text-pretty font-bold text-black">
+    <div className="w-full col-span-2  px-8 h-full flex items-center justify-center flex-col gap-8 max-w-xl">
+      <h2 className="text-4xl text-pretty font-bold ">
         Sign in to your <span className="text-blue-500"> {APP_NAME} </span>{" "}
         Account
       </h2>
+      <h3 className="text-start w-full text-lg">Hi, Welcome Back.👋 </h3>
       <div className="w-full flex flex-col">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onsubmit)}
             className="space-y-4 bg-blue-200 p-8 rounded-md"
           >
+            <h3 className="text-center text-xl">Login</h3>
             <FormField
               control={form.control}
               name="email"
@@ -89,10 +92,22 @@ function LoginForm({}: Props) {
                 </FormItem>
               )}
             />
-
+            <div className="flex justify-end">
+              <Link href="/forgot-password" className="text-blue-500">
+                Forgot Password?
+              </Link>
+            </div>
             <Button className="w-full" type="submit">
               Login
             </Button>
+            <div className="flex justify-center">
+              <FormDescription>
+                Don't have an account?{" "}
+                <Link href="/register" className="text-blue-500">
+                  Sign up
+                </Link>
+              </FormDescription>
+            </div>
           </form>
         </Form>
       </div>
