@@ -46,7 +46,7 @@ export default async function RootLayout({
     </Providers>
   );
 }
-async function getUserData(sessionId?: string) {
+export async function getUserData(sessionId?: string) {
   try {
     if (!sessionId) return;
     const res = await axios.get(BACKEND_URL + "users/current-user", {
