@@ -27,8 +27,7 @@ const formSchema = z.object({
   password: z.string().min(2),
 });
 
-type Props = {};
-function LoginForm({}: Props) {
+function LoginForm() {
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
