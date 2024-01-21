@@ -2,8 +2,7 @@ import { APP_NAME } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = {};
-function CallToAction({}: Props) {
+function CallToAction() {
   return (
     <section className="py-10 flex-1 w-full flex bg-gradient-to-bl from-emerald-400 to-blue-400/95 gap-4  items-center relative justify-center mx-auto ">
       <div className="w-full  flex flex-1 items-center justify-center">
