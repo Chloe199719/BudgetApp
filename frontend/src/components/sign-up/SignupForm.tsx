@@ -88,7 +88,7 @@ function SignUpForm() {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onsubmit)}
-                        className="space-y-4 bg-blue-300 p-8 rounded-md"
+                        className="space-y-4 bg-blue-300 p-8 rounded-md dark:bg-gray-800"
                     >
                         <h3 className="text-center text-xl">Login</h3>
                         <FormField
