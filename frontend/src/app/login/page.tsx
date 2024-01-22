@@ -6,7 +6,7 @@ import { getUserData } from "../layout";
 import { cookies } from "next/headers";
 
 type Props = {};
-async function page({}: Props) {
+async function Page({}: Props) {
   const cookieStore = cookies();
   const sessionId = cookieStore.get("sessionid");
   const user = await getUserData(sessionId?.value);
@@ -22,4 +22,4 @@ async function page({}: Props) {
     </main>
   );
 }
-export default page;
+export default Page;
