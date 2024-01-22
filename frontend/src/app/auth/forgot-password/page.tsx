@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { getUserData } from '../layout';
+import { getUserData } from '../../layout';
 import { redirect } from 'next/navigation';
 import Carrousel from '@/components/Atoms/Carrousel';
 import ForgetPasswordForm from '@/components/forgotPassword/forgotPassword';
