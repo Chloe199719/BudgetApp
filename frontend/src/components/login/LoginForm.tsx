@@ -113,7 +113,7 @@ function LoginForm() {
                         />
                         <div className="flex justify-end">
                             <Link
-                                href="/forgot-password"
+                                href="/auth/forgot-password"
                                 className="text-blue-500"
                             >
                                 Forgot Password?
@@ -129,7 +129,10 @@ function LoginForm() {
                         <div className="flex justify-center">
                             <FormDescription>
                                 Don't have an account?{' '}
-                                <Link href="/sign-up" className="text-blue-500">
+                                <Link
+                                    href="/auth/register"
+                                    className="text-blue-500"
+                                >
                                     Sign up
                                 </Link>
                             </FormDescription>
