@@ -126,7 +126,7 @@ function LoginForm() {
             <div className="flex justify-center">
               <FormDescription>
                 Don't have an account?{" "}
-                <Link href="/register" className="text-blue-500">
+                <Link href="/sign-up" className="text-blue-500">
                   Sign up
                 </Link>
               </FormDescription>
