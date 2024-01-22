@@ -196,7 +196,10 @@ function SignUpForm() {
                         <div className="flex justify-center">
                             <FormDescription>
                                 Already have an account?{' '}
-                                <Link href="/login" className="text-blue-500">
+                                <Link
+                                    href="/auth/login"
+                                    className="text-blue-500"
+                                >
                                     Login
                                 </Link>
                             </FormDescription>
