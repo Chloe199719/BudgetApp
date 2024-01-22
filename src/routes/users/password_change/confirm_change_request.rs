@@ -21,7 +21,7 @@ pub struct Parameters {
 }
 
 #[tracing::instrument(name = "Confirming change password token", skip(params, redis_pool))]
-#[get("/confirm/changepassword")]
+#[get("/password/confirm/change_password")]
 pub async fn confirm_change_password_token(
     params: Query<Parameters>,
     redis_pool: Data<deadpool_redis::Pool>,

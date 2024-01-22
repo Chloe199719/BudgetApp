@@ -1,9 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { CurrentUserData } from '../../app/layout';
-import { useDispatch } from '@/lib/redux/store';
-import { login } from '@/lib/redux/slices/auth';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -19,42 +16,41 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { APP_NAME } from '@/lib/constants';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import axiosInstance from '@/lib/api/axios';
+
+import { useToast } from '../ui/use-toast';
+import { forgotPasswordEmailRequest } from '@/lib/api/auth/forgotPassword';
 
 const formSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(2),
 });
 
-function LoginForm() {
+export type ForgotPasswordFormData = z.infer<typeof formSchema>;
+
+function ForgetPasswordForm() {
     const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: '',
-            password: '',
         },
     });
-    const router = useRouter();
-    const dispatch = useDispatch();
+    const { toast } = useToast();
 
     async function onsubmit(e: z.infer<typeof formSchema>) {
         try {
             setLoading(true);
-            const res = await axiosInstance.post(
-                '/users/login/',
-                {
-                    email: e.email,
-                    password: e.password,
-                },
-                { withCredentials: true },
-            );
-            const data = res.data as CurrentUserData;
-            if (!data) return;
-            dispatch(login({ ...data, isAuthenticated: true }));
-            router.push('/');
-        } catch (error) {
+            const res = await forgotPasswordEmailRequest(e);
+            toast({
+                title: 'Registered',
+                description: res.message,
+            });
+        } catch (error: any) {
+            if (error.message) {
+                toast({
+                    title: 'Error',
+                    description: error.message,
+                });
+            }
             console.log(error);
         } finally {
             setLoading(false);
@@ -63,15 +59,17 @@ function LoginForm() {
     return (
         <div className="w-full col-span-2  px-8 h-full flex items-center justify-center flex-col gap-8 max-w-xl">
             <h2 className="text-4xl text-pretty font-bold ">
-                Sign in to your{' '}
+                Forgot Password for
                 <span className="text-blue-500"> {APP_NAME} </span> Account
             </h2>
-            <h3 className="text-start w-full text-lg">Hi, Welcome Back.👋 </h3>
+            <h3 className="text-start w-full text-lg">
+                Don't worry We Got you👋{' '}
+            </h3>
             <div className="w-full flex flex-col">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onsubmit)}
-                        className="space-y-4 bg-blue-200 p-8 rounded-md dark:bg-gray-800"
+                        className="space-y-4 bg-gray-200 p-8 rounded-md dark:bg-gray-800"
                     >
                         <h3 className="text-center text-xl">Login</h3>
                         <FormField
@@ -92,31 +90,10 @@ function LoginForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            id="password"
-                                            type="password"
-                                            placeholder="Password"
-                                            {...field}
-                                        />
-                                    </FormControl>
 
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <div className="flex justify-end">
-                            <Link
-                                href="/auth/forgot-password"
-                                className="text-blue-500"
-                            >
-                                Forgot Password?
+                            <Link href="/auth/login" className="text-blue-500">
+                                Go Back to Sign-in Page?
                             </Link>
                         </div>
                         <Button
@@ -124,7 +101,7 @@ function LoginForm() {
                             className={`w-full disabled:bg-gray-500 disabled:cursor-not-allowed disabled:dark:bg-gray-800`}
                             type="submit"
                         >
-                            Login
+                            Request Password Reset
                         </Button>
                         <div className="flex justify-center">
                             <FormDescription>
@@ -143,4 +120,4 @@ function LoginForm() {
         </div>
     );
 }
-export default LoginForm;
+export default ForgetPasswordForm;
