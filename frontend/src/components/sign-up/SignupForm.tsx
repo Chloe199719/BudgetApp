@@ -21,6 +21,8 @@ import { APP_NAME } from '@/lib/constants';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/lib/api/axios';
+import { registerUserApi } from '@/lib/api/auth/register';
+import { useToast } from '../ui/use-toast';
 
 const formSchema = z
     .object({
@@ -33,6 +35,10 @@ const formSchema = z
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords don't match",
         path: ['confirmPassword'],
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ['password'],
     });
 
 export type SignUpFormData = z.infer<typeof formSchema>;
@@ -49,25 +55,23 @@ function SignUpForm() {
             display_name: '',
         },
     });
-    const router = useRouter();
-    const dispatch = useDispatch();
+    const { toast } = useToast();
 
     async function onsubmit(e: z.infer<typeof formSchema>) {
         try {
             setLoading(true);
-            const res = await axiosInstance.post(
-                '/users/login/',
-                {
-                    email: e.email,
-                    password: e.password,
-                },
-                { withCredentials: true },
-            );
-            const data = res.data as CurrentUserData;
-            if (!data) return;
-            dispatch(login({ ...data, isAuthenticated: true }));
-            router.push('/');
-        } catch (error) {
+            const res = await registerUserApi(e);
+            toast({
+                title: 'Registered',
+                description: res.message,
+            });
+        } catch (error: any) {
+            if (error.message) {
+                toast({
+                    title: 'Error',
+                    description: error.message,
+                });
+            }
             console.log(error);
         } finally {
             setLoading(false);
@@ -187,7 +191,7 @@ function SignUpForm() {
                             className={`w-full disabled:bg-gray-500 disabled:cursor-not-allowed disabled:dark:bg-gray-800`}
                             type="submit"
                         >
-                            Login
+                            Register
                         </Button>
                         <div className="flex justify-center">
                             <FormDescription>
