@@ -1,7 +1,5 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { CurrentUserData } from "../../app/layout";
 import { useDispatch } from "@/lib/redux/store";
 import { login } from "@/lib/redux/slices/auth";
 import { z } from "zod";
@@ -20,7 +18,6 @@ import { Button } from "../ui/button";
 import { APP_NAME } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axiosInstance from "@/lib/api/axios";
 import { useMutation } from "react-query";
 import { PostLogin } from "@/lib/api/auth/login";
 import { useToast } from "../ui/use-toast";
@@ -55,7 +52,7 @@ function LoginForm() {
         },
     });
 
-    async function onsubmit(e: z.infer<typeof formSchema>) {
+    function onsubmit(e: z.infer<typeof formSchema>) {
         handleSubmitLogin.mutate(e);
     }
     return (
