@@ -152,10 +152,10 @@ async fn run(
             openssl::ssl::SslAcceptor::mozilla_intermediate(openssl::ssl::SslMethod::tls())
                 .unwrap();
         builder
-            .set_private_key_file("chloepratas.com.key", openssl::ssl::SslFiletype::PEM)
+            .set_private_key_file("privkey.pem", openssl::ssl::SslFiletype::PEM)
             .expect("Failed to set private key file.");
         builder
-            .set_certificate_chain_file("chloepratas.com.crt")
+            .set_certificate_chain_file("fullchain.pem")
             .expect("Failed to set certificate chain file");
         let server = server.listen_openssl(listener, builder)?.run();
         Ok(server)
