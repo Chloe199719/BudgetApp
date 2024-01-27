@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "@/lib/redux/store";
 import { login } from "@/lib/redux/slices/auth";
 import { z } from "zod";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { APP_NAME } from "@/lib/constants";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { useMutation } from "react-query";
 import { PostLogin } from "@/lib/api/auth/login";
 import { useToast } from "@/components/ui/use-toast";
 import {
+    Form,
     FormControl,
     FormDescription,
     FormField,
