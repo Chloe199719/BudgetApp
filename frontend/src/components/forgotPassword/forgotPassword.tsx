@@ -1,8 +1,8 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
@@ -11,14 +11,15 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { APP_NAME } from '@/lib/constants';
-import Link from 'next/link';
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { APP_NAME } from "@/lib/constants";
+import Link from "next/link";
 
-import { useToast } from '../ui/use-toast';
-import { forgotPasswordEmailRequest } from '@/lib/api/auth/forgotPassword';
+import { useToast } from "../ui/use-toast";
+import { forgotPasswordEmailRequest } from "@/lib/api/auth/forgotPassword";
+import { useMutation } from "react-query";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -27,34 +28,32 @@ const formSchema = z.object({
 export type ForgotPasswordFormData = z.infer<typeof formSchema>;
 
 function ForgetPasswordForm() {
-    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: '',
+            email: "",
         },
     });
     const { toast } = useToast();
-
-    async function onsubmit(e: z.infer<typeof formSchema>) {
-        try {
-            setLoading(true);
-            const res = await forgotPasswordEmailRequest(e);
+    const handleForgotPassword = useMutation(forgotPasswordEmailRequest, {
+        onSuccess: (data) => {
             toast({
-                title: 'Registered',
-                description: res.message,
+                title: "Success",
+                description: data.message,
             });
-        } catch (error: any) {
-            if (error.message) {
-                toast({
-                    title: 'Error',
-                    description: error.message,
-                });
-            }
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
+            setMessage(data.message);
+        },
+        onError: (error: any) => {
+            toast({
+                title: "Error",
+                description: error.error,
+            });
+        },
+    });
+
+    function onsubmit(e: z.infer<typeof formSchema>) {
+        handleForgotPassword.mutate(e);
     }
     return (
         <div className="w-full col-span-2  px-8 h-full flex items-center justify-center flex-col gap-8 max-w-xl">
@@ -63,9 +62,10 @@ function ForgetPasswordForm() {
                 <span className="text-blue-500"> {APP_NAME} </span> Account
             </h2>
             <h3 className="text-start w-full text-lg">
-                Don't worry We Got you👋{' '}
+                Don't worry We Got you👋{" "}
             </h3>
             <div className="w-full flex flex-col">
+                {message && <p className="bg-green-400">{message}</p>}
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onsubmit)}
@@ -97,7 +97,7 @@ function ForgetPasswordForm() {
                             </Link>
                         </div>
                         <Button
-                            disabled={loading}
+                            disabled={handleForgotPassword.isLoading}
                             className={`w-full disabled:bg-gray-500 disabled:cursor-not-allowed disabled:dark:bg-gray-800`}
                             type="submit"
                         >
@@ -105,7 +105,7 @@ function ForgetPasswordForm() {
                         </Button>
                         <div className="flex justify-center">
                             <FormDescription>
-                                Don't have an account?{' '}
+                                Don't have an account?{" "}
                                 <Link
                                     href="/auth/register"
                                     className="text-blue-500"
