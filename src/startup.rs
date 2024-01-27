@@ -7,12 +7,18 @@ use crate::{
     uploads,
 };
 use actix_cors::Cors;
-use actix_web::{cookie, http::header, web};
+use actix_session::config::PersistentSession;
+use actix_web::{
+    cookie::{self, time::Duration},
+    http::header,
+    web,
+};
 use aws_sdk_s3::config::{Credentials, Region};
 use sqlx;
 use sqlx::postgres;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
+const SECS_IN_WEEK: i64 = 60 * 60 * 24 * 7;
 
 pub struct Application {
     port: u16,
@@ -130,6 +136,9 @@ async fn run(
                     .cookie_same_site(cookie::SameSite::Lax)
                     .cookie_secure(true)
                     .cookie_name("sessionid".to_string())
+                    .session_lifecycle(
+                        PersistentSession::default().session_ttl(Duration::seconds(SECS_IN_WEEK)),
+                    )
                     .build(),
             )
             .service(health_check)
