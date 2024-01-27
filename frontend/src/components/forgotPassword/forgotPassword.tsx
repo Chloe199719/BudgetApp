@@ -19,6 +19,7 @@ import Link from "next/link";
 
 import { useToast } from "../ui/use-toast";
 import { forgotPasswordEmailRequest } from "@/lib/api/auth/forgotPassword";
+import { useMutation } from "react-query";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -36,27 +37,24 @@ function ForgetPasswordForm() {
         },
     });
     const { toast } = useToast();
-
-    async function onsubmit(e: z.infer<typeof formSchema>) {
-        try {
-            setLoading(true);
-            const res = await forgotPasswordEmailRequest(e);
+    const handleForgotPassword = useMutation(forgotPasswordEmailRequest, {
+        onSuccess: (data) => {
             toast({
-                title: "Registered",
-                description: res.message,
+                title: "Success",
+                description: data.message,
             });
-            setMessage(res.message);
-        } catch (error: any) {
-            if (error.message) {
-                toast({
-                    title: "Error",
-                    description: error.error,
-                });
-            }
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
+            setMessage(data.message);
+        },
+        onError: (error: any) => {
+            toast({
+                title: "Error",
+                description: error.error,
+            });
+        },
+    });
+
+    function onsubmit(e: z.infer<typeof formSchema>) {
+        handleForgotPassword.mutate(e);
     }
     return (
         <div className="w-full col-span-2  px-8 h-full flex items-center justify-center flex-col gap-8 max-w-xl">
