@@ -1,10 +1,15 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type Props = {};
 function ErrorPage({}: Props) {
-    const params = useParams<{ error: string }>();
-    return <div>{params.error ? params.error : "Something went wrong"}</div>;
+    const params = useSearchParams();
+    const error = params.get("error");
+    return (
+        <div className="text-amber-600 text-lg md:text-2xl">
+            {error ? error : "Something went wrong"}
+        </div>
+    );
 }
 export default ErrorPage;
