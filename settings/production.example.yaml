@@ -1,6 +1,6 @@
 application:
   protocol: https
-  host: 0.0.0.0
+  host: ${HOST}
   base_url: ""
 
 secret:
