@@ -66,6 +66,7 @@ jobs:
           FRONTEND_URL: ${{ vars.FRONTEND_URL }}
           AXIOM_DATASET: ${{ vars.AXIOM_DATASET }}
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+          HOST: ${{ vars.HOST }}
 
       - name: Build
         run: cargo build
@@ -168,4 +169,4 @@ jobs:
       - name: Check http code Status
         uses: trunkcode/check-http-status-action@v1.0.0
         with:
-          urls: '["https://${{ secrets.LINODE_HOST }}:5000/health-check"]'
+          urls: '["https://${{ vars.HOST }}:5000/health-check"]'
