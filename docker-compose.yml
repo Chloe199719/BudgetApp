@@ -38,8 +38,8 @@ services:
     volumes:
       - /root/base.yaml:/app/settings/base.yaml:ro
       - /root/production.yaml:/app/settings/production.yaml:ro
-      - /root/chloepratas.com.crt:/app/chloepratas.com.crt:ro
-      - /root/chloepratas.com.key:/app/chloepratas.com.key:ro
+      - /root/privkey.pem:/app/privkey.pem:ro
+      - /root/fullchain.pem:/app/fullchain.pem:ro
 volumes:
   db:
     driver: local
