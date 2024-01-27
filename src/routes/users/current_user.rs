@@ -17,6 +17,7 @@ pub async fn get_current_user(pool: Data<PgPool>, session: actix_session::Sessio
     match session_user_id(&session).await {
         Ok(id) => match get_active_user_from_db(Some(&pool), None, Some(id), None).await {
             Ok(user) => {
+                session.renew();
                 tracing::event!(target: BACK_END_TARGET, tracing::Level::INFO, "User retrieved from the DB.");
                 HttpResponse::Ok().json(UserVisible {
                     id: user.id,
