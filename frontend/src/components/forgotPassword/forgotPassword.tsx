@@ -28,7 +28,6 @@ const formSchema = z.object({
 export type ForgotPasswordFormData = z.infer<typeof formSchema>;
 
 function ForgetPasswordForm() {
-    const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -98,7 +97,7 @@ function ForgetPasswordForm() {
                             </Link>
                         </div>
                         <Button
-                            disabled={loading}
+                            disabled={handleForgotPassword.isLoading}
                             className={`w-full disabled:bg-gray-500 disabled:cursor-not-allowed disabled:dark:bg-gray-800`}
                             type="submit"
                         >
