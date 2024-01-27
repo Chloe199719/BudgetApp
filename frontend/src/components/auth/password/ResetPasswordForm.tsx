@@ -39,7 +39,7 @@ function ResetPasswordForm() {
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
 
-    //TODO: Maybe precheck if token is valid
+    //TODO: Maybe pre check if token is valid
 
     const handleSubmitResetPassword = useMutation(PostResetPassword, {
         onSuccess: (data) => {
