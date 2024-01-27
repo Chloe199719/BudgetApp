@@ -1,11 +1,11 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { CurrentUserData } from '../../app/layout';
-import { useDispatch } from '@/lib/redux/store';
-import { login } from '@/lib/redux/slices/auth';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { CurrentUserData } from "../../app/layout";
+import { useDispatch } from "@/lib/redux/store";
+import { login } from "@/lib/redux/slices/auth";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
 import {
     Form,
     FormControl,
@@ -14,15 +14,16 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { APP_NAME } from '@/lib/constants';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import axiosInstance from '@/lib/api/axios';
-import { registerUserApi } from '@/lib/api/auth/register';
-import { useToast } from '../ui/use-toast';
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { APP_NAME } from "@/lib/constants";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/lib/api/axios";
+import { registerUserApi } from "@/lib/api/auth/register";
+import { useToast } from "../ui/use-toast";
+import { useMutation } from "react-query";
 
 const formSchema = z
     .object({
@@ -34,53 +35,49 @@ const formSchema = z
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords don't match",
-        path: ['confirmPassword'],
+        path: ["confirmPassword"],
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords don't match",
-        path: ['password'],
+        path: ["password"],
     });
 
 export type SignUpFormData = z.infer<typeof formSchema>;
 
 function SignUpForm() {
-    const [loading, setLoading] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: '',
-            password: '',
-            confirmPassword: '',
-            unique_name: '',
-            display_name: '',
+            email: "",
+            password: "",
+            confirmPassword: "",
+            unique_name: "",
+            display_name: "",
         },
     });
     const { toast } = useToast();
-
-    async function onsubmit(e: z.infer<typeof formSchema>) {
-        try {
-            setLoading(true);
-            const res = await registerUserApi(e);
+    const handleRegistration = useMutation(registerUserApi, {
+        onSuccess: (data) => {
             toast({
-                title: 'Registered',
-                description: res.message,
+                title: "Success",
+                description: data.message,
             });
-        } catch (error: any) {
-            if (error.message) {
-                toast({
-                    title: 'Error',
-                    description: error.message,
-                });
-            }
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
+        },
+        onError: (error: any) => {
+            toast({
+                title: "Error",
+                description: error.error,
+            });
+        },
+    });
+
+    function onsubmit(e: z.infer<typeof formSchema>) {
+        handleRegistration.mutate(e);
     }
     return (
         <div className="w-full col-span-2  px-8 h-full flex items-center justify-center flex-col gap-8 max-w-xl">
             <h2 className="text-4xl text-pretty font-bold ">
-                Create Your <span className="text-blue-500"> {APP_NAME} </span>{' '}
+                Create Your <span className="text-blue-500"> {APP_NAME} </span>{" "}
                 Account
             </h2>
             <h3 className="text-start w-full text-lg"> Welcome.👋 </h3>
@@ -187,7 +184,7 @@ function SignUpForm() {
                         />
 
                         <Button
-                            disabled={loading}
+                            disabled={handleRegistration.isLoading}
                             className={`w-full disabled:bg-gray-500 disabled:cursor-not-allowed disabled:dark:bg-gray-800`}
                             type="submit"
                         >
@@ -195,7 +192,7 @@ function SignUpForm() {
                         </Button>
                         <div className="flex justify-center">
                             <FormDescription>
-                                Already have an account?{' '}
+                                Already have an account?{" "}
                                 <Link
                                     href="/auth/login"
                                     className="text-blue-500"
