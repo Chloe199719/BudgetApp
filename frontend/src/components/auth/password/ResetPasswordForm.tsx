@@ -24,6 +24,7 @@ const formSchema = z.object({
     password: z.string().min(2),
     confirmPassword: z.string().min(2),
 });
+
 export type ConfirmPasswordFormType = z.infer<typeof formSchema>;
 function ResetPasswordForm() {
     const form = useForm<z.infer<typeof formSchema>>({
