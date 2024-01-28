@@ -2,4 +2,5 @@
 .vscode
 .env
 base.yaml
+production.yaml
 /budget-app
