@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { CurrentUserData } from "../../app/layout";
+import { CurrentUserData } from "../../../app/layout";
 import { useDispatch } from "@/lib/redux/store";
 import { login } from "@/lib/redux/slices/auth";
 import { z } from "zod";
@@ -14,15 +14,15 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 import { APP_NAME } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/api/axios";
 import { registerUserApi } from "@/lib/api/auth/register";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../ui/use-toast";
 import { useMutation } from "react-query";
 
 const formSchema = z

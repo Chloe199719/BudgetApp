@@ -2,7 +2,7 @@ import Carrousel from "@/components/Atoms/Carrousel";
 import { redirect } from "next/navigation";
 import { getUserData } from "../../layout";
 import { cookies } from "next/headers";
-import SignUpForm from "@/components/sign-up/SignupForm";
+import SignUpForm from "@/components/auth/sign-up/SignupForm";
 
 type Props = {};
 async function Page({}: Props) {
