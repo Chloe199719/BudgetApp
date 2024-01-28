@@ -10,6 +10,7 @@ use actix_cors::Cors;
 use actix_session::config::PersistentSession;
 use actix_web::{
     cookie::{self, time::Duration},
+    dev::Server,
     http::header,
     web,
 };
@@ -22,7 +23,7 @@ const SECS_IN_WEEK: i64 = 60 * 60 * 24 * 7;
 
 pub struct Application {
     port: u16,
-    server: actix_web::dev::Server,
+    server: Server,
 }
 
 impl Application {

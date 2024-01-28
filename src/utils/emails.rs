@@ -122,6 +122,11 @@ pub async fn send_multipart_email(
                 "{}:{}",
                 settings.application.base_url, settings.application.port
             )
+        } else if settings.application.port != 80 {
+            format!(
+                "{}:{}",
+                settings.application.base_url, settings.application.port
+            )
         } else {
             settings.application.base_url
         }
