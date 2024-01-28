@@ -1,8 +1,8 @@
-import { SignUpFormData } from '@/components/sign-up/SignupForm';
-import axiosInstance from '../axios';
-import { SuccessResponse } from '@/lib/types/sucesssResponse';
-import { AxiosError } from 'axios';
-import { ErrorResponse } from '@/lib/types/errorResponse';
+import { SignUpFormData } from "@/components/auth/sign-up/SignupForm";
+import axiosInstance from "../axios";
+import { SuccessResponse } from "@/lib/types/sucesssResponse";
+import { AxiosError } from "axios";
+import { ErrorResponse } from "@/lib/types/errorResponse";
 
 export async function registerUserApi({
     email,
@@ -11,7 +11,7 @@ export async function registerUserApi({
     display_name,
 }: SignUpFormData) {
     try {
-        const res = await axiosInstance.post('/users/register', {
+        const res = await axiosInstance.post("/users/register", {
             email,
             password,
             unique_name,
@@ -22,6 +22,6 @@ export async function registerUserApi({
         if (error instanceof AxiosError) {
             throw error.response?.data as ErrorResponse;
         }
-        throw { error: 'Unknown error' };
+        throw { error: "Unknown error" };
     }
 }

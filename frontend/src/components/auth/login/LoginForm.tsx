@@ -12,15 +12,15 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 import { APP_NAME } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation } from "react-query";
 import { PostLogin } from "@/lib/api/auth/login";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../ui/use-toast";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -45,6 +45,14 @@ function LoginForm() {
             router.push("/");
         },
         onError: (error: any) => {
+            form.setError("email", {
+                type: "manual",
+                message: error.error,
+            });
+            form.setError("password", {
+                type: "manual",
+                message: error.error,
+            });
             toast({
                 title: "Error",
                 description: error.error,
@@ -74,7 +82,7 @@ function LoginForm() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel htmlFor="email">Email</FormLabel>
                                     <FormControl>
                                         <Input
                                             id="email"
@@ -92,7 +100,9 @@ function LoginForm() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel htmlFor="password">
+                                        Password
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             id="password"

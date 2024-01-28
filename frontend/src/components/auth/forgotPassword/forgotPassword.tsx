@@ -11,13 +11,13 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 import { APP_NAME } from "@/lib/constants";
 import Link from "next/link";
 
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../ui/use-toast";
 import { forgotPasswordEmailRequest } from "@/lib/api/auth/forgotPassword";
 import { useMutation } from "react-query";
 
