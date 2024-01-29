@@ -15,7 +15,7 @@ name = "budget_app"
 
 
 [dependencies]
-actix-web = { version = "4", features = ["openssl"] }
+actix-web = { version = "4.4.1", features = ["openssl"] }
 tracing-actix-web = "0.7"
 openssl = { version = "0.10.60", features = ["v110"] }
 actix-session = { version = "0.7", features = [ "redis-rs-session","redis-rs-tls-session","cookie-session",] }
@@ -29,7 +29,7 @@ actix-web-validator = "5.0.1"
 validator = { version = "0.16", features = ["derive"] }
 uuid = { version = "1", features = ["serde", "v4"] }
 chrono = { version = "0.4.22", default-features = false, features = ["serde", "clock"] }
-tracing = { version ="0.1", features = ["log"] }
+tracing = { version ="0.1.40", features = ["log"] }
 tracing-subscriber = { version = "0.3", features = [    "fmt",
     "std",
     "env-filter",
