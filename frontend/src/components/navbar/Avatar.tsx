@@ -11,9 +11,10 @@ import logout from "@/lib/api/auth/logout";
 import { logout as reduxLogout } from "@/lib/redux/slices/auth";
 import { useDispatch } from "@/lib/redux/store";
 import { useToast } from "../ui/use-toast";
+import Link from "next/link";
 
 type Props = {
-    avatar_link?: string;
+    avatar_link?: string | null;
 };
 export const defaultAvatar =
     "https://chloepratas-discordcopy.s3.eu-central-1.amazonaws.com/media/discord_backend/avatar/a6c0c3ac-31de-4daa-a569-19a3a50fccee/cutechleo.jpg";
@@ -34,7 +35,10 @@ function AvatarComp({ avatar_link }: Props) {
             <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>
+                    {" "}
+                    <Link href={`/user/profile`}>Profile </Link>{" "}
+                </DropdownMenuItem>
                 <DropdownMenuItem>Billing</DropdownMenuItem>
                 <DropdownMenuItem>Team</DropdownMenuItem>
                 <DropdownMenuItem

@@ -20,8 +20,11 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "../ui/calendar";
-import { useSelector } from "@/lib/redux/store";
+import { useDispatch, useSelector } from "@/lib/redux/store";
 import { postEditProfile } from "@/lib/api/user/editProfile";
+import { useMutation } from "react-query";
+import { useToast } from "../ui/use-toast";
+import { login } from "@/lib/redux/slices/auth";
 const formSchema = z.object({
     displayName: z.string().min(2),
     avatar: z
@@ -49,7 +52,8 @@ export type ProfilePageFormType = z.infer<typeof formSchema>;
 type Props = {};
 function EditProfilePageForm({}: Props) {
     const auth = useSelector((state) => state.auth);
-
+    const { toast } = useToast();
+    const dispatch = useDispatch();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -70,8 +74,24 @@ function EditProfilePageForm({}: Props) {
                 : "",
         },
     });
+    const EditProfileMutation = useMutation(postEditProfile, {
+        onSuccess: (data) => {
+            toast({
+                title: "Profile Updated",
+                description: "Your profile has been updated",
+            });
+            dispatch(login({ ...data, isAuthenticated: true }));
+        },
+        onError: (error: any) => {
+            toast({
+                title: "Error",
+                description: error.message,
+            });
+            console.log(error);
+        },
+    });
+
     async function onsubmit(e: z.infer<typeof formSchema>) {
-        console.log(e);
         const fromData = new FormData();
         fromData.append("display_name", e.displayName);
         if (e.birthdate)
@@ -81,8 +101,7 @@ function EditProfilePageForm({}: Props) {
         if (e.githubLink) fromData.append("github_link", e.githubLink);
         if (e.phoneNumber) fromData.append("phone_number", e.phoneNumber);
         if (e.avatar) fromData.append("avatar", e.avatar);
-        const data = await postEditProfile(fromData);
-        console.log(data);
+        EditProfileMutation.mutate(fromData);
     }
 
     return (
@@ -297,6 +316,7 @@ function EditProfilePageForm({}: Props) {
                 <Button
                     className="w-full bg-blue-500 hover:bg-blue-700 text-white"
                     type="submit"
+                    disabled={EditProfileMutation.isLoading}
                 >
                     Save Changes
                 </Button>

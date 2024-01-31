@@ -8,6 +8,7 @@ import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/Theme-Provider";
 import axiosInstance from "@/lib/api/axios";
+import MainBar from "@/components/navbar/MainBar";
 const inter = Inter({ subsets: ["latin"] });
 const roboto_mono = Roboto_Mono({
     subsets: ["latin"],
@@ -40,7 +41,7 @@ export default async function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <Navbar />
+                        <MainBar />
                         {children}
                         <Toaster />
                     </ThemeProvider>
@@ -70,15 +71,15 @@ export type CurrentUserData = {
     is_active: boolean;
     is_staff: boolean;
     is_superuser: boolean;
-    thumbnail?: string;
+    thumbnail?: string | null;
     data_joined: string;
     profile: {
         id: string;
-        phone_number?: string;
-        about_me?: string;
-        pronouns?: string;
-        avatar_link?: string;
-        birth_date?: string;
-        github_link?: string;
+        phone_number?: string | null;
+        about_me?: string | null;
+        pronouns?: string | null;
+        avatar_link?: string | null;
+        birth_date?: string | null;
+        github_link?: string | null;
     };
 };
