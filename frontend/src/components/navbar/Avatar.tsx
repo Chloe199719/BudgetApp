@@ -13,7 +13,7 @@ import { useDispatch } from "@/lib/redux/store";
 import { useToast } from "../ui/use-toast";
 
 type Props = {
-    avatar_link?: string;
+    avatar_link?: string | null;
 };
 export const defaultAvatar =
     "https://chloepratas-discordcopy.s3.eu-central-1.amazonaws.com/media/discord_backend/avatar/a6c0c3ac-31de-4daa-a569-19a3a50fccee/cutechleo.jpg";
