@@ -49,16 +49,15 @@ pub async fn regenerate_token(
             .unwrap();
             HttpResponse::Ok().json(SuccessResponse {
                 message: "We have sent you a new verification email.".to_string(),
-            });
+            })
         }
         Err(e) => {
             tracing::event!(target: "sqlx",tracing::Level::ERROR, "User not found:{:#?}", e);
             HttpResponse::NotFound().json(ErrorResponse {
                 error: "A user with this e-mail address does not exist. If you registered with this email, ensure you haven't activated it yet. You can check by logging in".to_string(),
-            });
+            })
         }
     }
-    todo!("Regenerate token for a user")
 }
 
 #[tracing::instrument(

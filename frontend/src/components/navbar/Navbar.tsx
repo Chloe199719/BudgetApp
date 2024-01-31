@@ -1,23 +1,22 @@
-'use client';
+"use client";
 
-import { useSelector } from '@/lib/redux/store';
+import { useSelector } from "@/lib/redux/store";
 
-import AvatarComp, { defaultAvatar } from './Avatar';
-import Link from 'next/link';
-import { ModeToggle } from './ThemeTogle';
+import AvatarComp, { defaultAvatar } from "./Avatar";
+import Link from "next/link";
+import { ModeToggle } from "./ThemeTogle";
 import {
     HoverCard,
     HoverCardContent,
     HoverCardTrigger,
-} from '../ui/hover-card';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { CalendarIcon } from '@radix-ui/react-icons';
-import { APP_NAME } from '@/lib/constants';
+} from "../ui/hover-card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { APP_NAME } from "@/lib/constants";
 
 type Props = {};
 function Navbar({}: Props) {
     const auth = useSelector((state) => state.auth);
-
     return (
         <div className="flex w-full justify-between p-8 bg-slate-900 dark:bg-black">
             <h1 className="text-5xl text-pink-500 dark:text-pink-900 font-bold hover:scale-95 active:scale-90">
@@ -31,7 +30,9 @@ function Navbar({}: Props) {
                                 <span className="text-xl">
                                     {auth.display_name}
                                 </span>
-                                <AvatarComp />
+                                <AvatarComp
+                                    avatar_link={auth.profile.avatar_link}
+                                />
                             </div>
                         </HoverCardTrigger>
                         <HoverCardContent className="w-80">
@@ -54,12 +55,12 @@ function Navbar({}: Props) {
                                         This is suppose to be a bio
                                     </p>
                                     <div className="flex items-center pt-2">
-                                        <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />{' '}
+                                        <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />{" "}
                                         <span className="text-xs text-muted-foreground">
-                                            Joined on{' '}
+                                            Joined on{" "}
                                             {new Date(
                                                 auth.data_joined,
-                                            ).toLocaleDateString('de-De')}
+                                            ).toLocaleDateString("de-De")}
                                         </span>
                                     </div>
                                 </div>
