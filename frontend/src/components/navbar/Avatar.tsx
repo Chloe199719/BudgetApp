@@ -11,6 +11,7 @@ import logout from "@/lib/api/auth/logout";
 import { logout as reduxLogout } from "@/lib/redux/slices/auth";
 import { useDispatch } from "@/lib/redux/store";
 import { useToast } from "../ui/use-toast";
+import Link from "next/link";
 
 type Props = {
     avatar_link?: string | null;
@@ -32,7 +33,10 @@ function AvatarComp({ avatar_link }: Props) {
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                    {" "}
+                    <Link href={`/user/profile`}>My Account </Link>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Billing</DropdownMenuItem>
