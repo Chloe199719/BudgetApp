@@ -8,6 +8,7 @@ import Navbar from "@/components/navbar/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/Theme-Provider";
 import axiosInstance from "@/lib/api/axios";
+import MainBar from "@/components/navbar/MainBar";
 const inter = Inter({ subsets: ["latin"] });
 const roboto_mono = Roboto_Mono({
     subsets: ["latin"],
@@ -40,7 +41,7 @@ export default async function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <Navbar />
+                        <MainBar />
                         {children}
                         <Toaster />
                     </ThemeProvider>
