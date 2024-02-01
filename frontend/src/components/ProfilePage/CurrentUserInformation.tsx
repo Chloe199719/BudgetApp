@@ -37,7 +37,11 @@ function CurrentUserInformation({}: Props) {
                         {auth.profile.birth_date
                             ? new Date(
                                   auth.profile.birth_date,
-                              ).toLocaleDateString()
+                              ).toLocaleDateString("en-DE", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                              })
                             : "Not Provided"}
                     </p>
                 </div>
