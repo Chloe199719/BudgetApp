@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/Theme-Provider";
 import axiosInstance from "@/lib/api/axios";
 import MainBar from "@/components/navbar/MainBar";
+import Footer from "@/components/footer/Footer";
 const inter = Inter({ subsets: ["latin"] });
 const roboto_mono = Roboto_Mono({
     subsets: ["latin"],
@@ -43,6 +44,7 @@ export default async function RootLayout({
                     >
                         <MainBar />
                         {children}
+                        <Footer />
                         <Toaster />
                     </ThemeProvider>
                 </body>

@@ -43,6 +43,7 @@ const formSchema = z.object({
         .optional()
         .nullable(),
     birthdate: z.date().optional().nullable(),
+
     aboutme: z.string().optional(),
     pronouns: z.string().optional(),
     githubLink: z.string().optional(),
@@ -101,6 +102,7 @@ function EditProfilePageForm({}: Props) {
         if (e.githubLink) fromData.append("github_link", e.githubLink);
         if (e.phoneNumber) fromData.append("phone_number", e.phoneNumber);
         if (e.avatar) fromData.append("avatar", e.avatar);
+
         EditProfileMutation.mutate(fromData);
     }
 
@@ -197,8 +199,19 @@ function EditProfilePageForm({}: Props) {
                                 >
                                     <Calendar
                                         mode="single"
+                                        ISOWeek
                                         selected={field.value!}
-                                        onSelect={field.onChange}
+                                        onSelect={(e) => {
+                                            if (!e) return field.onChange(null);
+                                            const zDate = new Date(
+                                                e.getTime() -
+                                                    e.getTimezoneOffset() *
+                                                        60 *
+                                                        1000,
+                                            );
+
+                                            field.onChange(zDate);
+                                        }}
                                         disabled={(date) =>
                                             date > new Date() ||
                                             date < new Date("1900-01-01")
