@@ -54,11 +54,13 @@ export default async function RootLayout({
 }
 export async function getUserData(sessionId?: string) {
     try {
+        console.log("sessionId", sessionId);
         if (!sessionId) return;
         const res = await axiosInstance.get("/users/current-user", {
             withCredentials: true,
             headers: { Cookie: `sessionid=${sessionId}` },
         });
+        console.log("res", res);
         return res.data as CurrentUserData;
     } catch (error) {
         return;
