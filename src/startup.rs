@@ -134,12 +134,12 @@ async fn run(
             .wrap(
                 actix_session::SessionMiddleware::builder(redis_store.clone(), secret_key.clone())
                     .cookie_http_only(true)
-                    .cookie_same_site(cookie::SameSite::Lax)
+                    .cookie_same_site(cookie::SameSite::None)
                     .cookie_secure(true)
                     .cookie_name("sessionid".to_string())
                     .session_lifecycle(
                         PersistentSession::default()
-                            .session_ttl(Duration::seconds(SECS_IN_WEEK))
+                            .session_ttl(Duration::days(SECS_IN_WEEK))
                             .session_ttl_extension_policy(TtlExtensionPolicy::OnEveryRequest),
                     )
                     .build(),
