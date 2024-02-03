@@ -7,7 +7,7 @@ use crate::{
     uploads,
 };
 use actix_cors::Cors;
-use actix_session::config::PersistentSession;
+use actix_session::config::{PersistentSession, TtlExtensionPolicy};
 use actix_web::{
     cookie::{self, time::Duration},
     dev::Server,
@@ -138,7 +138,9 @@ async fn run(
                     .cookie_secure(true)
                     .cookie_name("sessionid".to_string())
                     .session_lifecycle(
-                        PersistentSession::default().session_ttl(Duration::seconds(SECS_IN_WEEK)),
+                        PersistentSession::default()
+                            .session_ttl(Duration::seconds(SECS_IN_WEEK))
+                            .session_ttl_extension_policy(TtlExtensionPolicy::OnEveryRequest),
                     )
                     .build(),
             )
