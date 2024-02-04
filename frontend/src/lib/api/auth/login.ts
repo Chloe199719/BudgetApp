@@ -1,3 +1,4 @@
+"use client";
 import { CurrentUserData } from "@/app/layout";
 import axiosInstance from "../axios";
 import { LoginFormType } from "@/components/auth/login/LoginForm";
