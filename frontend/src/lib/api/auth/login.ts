@@ -6,10 +6,14 @@ import { ErrorResponse } from "@/lib/types/errorResponse";
 
 export async function PostLogin(e: LoginFormType) {
     try {
-        const res = await axiosInstance.post("/users/login/", {
-            email: e.email,
-            password: e.password,
-        });
+        const res = await axiosInstance.post(
+            "/users/login/",
+            {
+                email: e.email,
+                password: e.password,
+            },
+            { withCredentials: true },
+        );
         const data = res.data as CurrentUserData;
         return data;
     } catch (error) {
