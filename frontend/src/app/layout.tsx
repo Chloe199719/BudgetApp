@@ -56,10 +56,13 @@ export async function getUserData(sessionId?: string) {
     try {
         console.log("sessionId", sessionId);
         if (!sessionId) return;
-        const res = await axiosInstance.get("/users/current-user", {
-            withCredentials: true,
-            headers: { Cookie: `sessionid=${sessionId}` },
-        });
+        const res = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/current-user`,
+            {
+                withCredentials: true,
+                headers: { Cookie: `sessionid=${sessionId}` },
+            },
+        );
         console.log("res", res);
         return res.data as CurrentUserData;
     } catch (error) {
