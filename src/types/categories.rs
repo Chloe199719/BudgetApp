@@ -17,4 +17,3 @@ pub struct Category {
     pub recurring: Option<bool>,
     pub amount: Option<f64>,
 }
-//TODO: add updated_at
